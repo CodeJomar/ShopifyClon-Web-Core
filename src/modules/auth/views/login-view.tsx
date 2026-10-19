@@ -129,7 +129,7 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
         <Button
           type="submit"
           variant="default"
-          size="md"
+          size="default"
           disabled={isSubmitting || bloqueado}
           className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
         >

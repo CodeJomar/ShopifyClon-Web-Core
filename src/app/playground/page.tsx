@@ -48,44 +48,44 @@ export default function PlaygroundPage() {
 
               {/* Success */}
               <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="success" leftIcon={<CheckCircle2 size={18} />}>Cobrar</Button>
-                <Button variant="success-outline">Cobrar</Button>
-                <Button variant="success-ghost">Cobrar</Button>
+                <Button variant="default" leftIcon={<CheckCircle2 size={18} />}>Cobrar</Button>
+                <Button variant="outline">Cobrar</Button>
+                <Button variant="soft">Cobrar</Button>
               </div>
 
               {/* Danger */}
               <div className="flex flex-wrap gap-4 items-center">
                 <Button variant="danger" leftIcon={<AlertCircle size={18} />}>Cancelar</Button>
                 <Button variant="danger-outline">Cancelar</Button>
-                <Button variant="danger-ghost">Cancelar</Button>
+                <Button variant="danger-outline">Cancelar</Button>
               </div>
 
               {/* Info */}
               <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="info" leftIcon={<Info size={18} />}>Imprimir</Button>
-                <Button variant="info-outline">Imprimir</Button>
-                <Button variant="info-ghost">Imprimir</Button>
+                <Button variant="default" leftIcon={<Info size={18} />}>Imprimir</Button>
+                <Button variant="outline">Imprimir</Button>
+                <Button variant="soft">Imprimir</Button>
               </div>
 
               {/* Warning */}
               <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="warning" leftIcon={<AlertTriangle size={18} />}>Pausar Orden</Button>
-                <Button variant="warning-outline">Pausar Orden</Button>
-                <Button variant="warning-ghost">Pausar Orden</Button>
+                <Button variant="default" leftIcon={<AlertTriangle size={18} />}>Pausar Orden</Button>
+                <Button variant="outline">Pausar Orden</Button>
+                <Button variant="soft">Pausar Orden</Button>
               </div>
 
               {/* Neutral y Danger fuerte (diálogos de confirmación) */}
               <div className="flex flex-wrap gap-4 items-center">
                 <Button variant="neutral">Neutral</Button>
-                <Button variant="neutral-outline">Neutral</Button>
-                <Button variant="danger-strong">Danger fuerte</Button>
+                <Button variant="neutral">Neutral</Button>
+                <Button variant="danger">Danger fuerte</Button>
               </div>
 
               {/* Disabled State (Funciona con cualquier variante) */}
               <div className="flex flex-wrap gap-4 items-center border-t pt-4">
                 <Button disabled>Inactivo Default</Button>
-                <Button variant="success-outline" disabled>Inactivo Outline</Button>
-                <Button variant="danger-ghost" disabled>Inactivo Ghost</Button>
+                <Button variant="outline" disabled>Inactivo Outline</Button>
+                <Button variant="danger-outline" disabled>Inactivo Ghost</Button>
               </div>
             </CardContent>
           </Card>

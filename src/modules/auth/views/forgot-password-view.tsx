@@ -72,7 +72,7 @@ export function ForgotPasswordView() {
           <Button
             type="submit"
             variant="default"
-            size="md"
+            size="default"
             disabled={isLoading}
             className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
           >
@@ -108,7 +108,7 @@ export function ForgotPasswordView() {
             <Button
               type="submit"
               variant="default"
-              size="md"
+              size="default"
               disabled={otpCode.length < 6 || isLoading}
               className="w-full font-semibold shadow-sm cursor-pointer"
             >
