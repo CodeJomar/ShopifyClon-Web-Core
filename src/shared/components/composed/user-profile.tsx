@@ -34,7 +34,7 @@ export function UserProfile({
       </Avatar>
 
       <div className="flex flex-col">
-        <span className="font-display text-[17px] font-semibold leading-tight text-foreground ">
+        <span className="font-extrabold text-[17px] font-semibold leading-tight text-foreground ">
           {name}
         </span>
         <span className="text-[13px] font-normal text-muted-foreground ">

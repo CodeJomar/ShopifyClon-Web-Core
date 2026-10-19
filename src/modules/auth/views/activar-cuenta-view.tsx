@@ -22,7 +22,7 @@ export function ActivarCuentaView({ token }: ActivarCuentaViewProps) {
         <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white shadow-sm">
           <Store size={30} strokeWidth={2.2} />
         </div>
-        <h1 className="font-display text-2xl font-bold text-foreground  tracking-tight">
+        <h1 className="font-extrabold text-2xl font-bold text-foreground  tracking-tight">
           OTemu
         </h1>
         <p className="text-xs text-muted-foreground  font-medium">

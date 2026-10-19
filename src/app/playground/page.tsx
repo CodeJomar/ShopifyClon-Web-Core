@@ -1,266 +1,251 @@
-import React from "react";
+"use client";
+
+import * as React from "react";
+import { useTheme } from "next-themes";
+import { Eye, Lock, Mail, ArrowRight, RotateCcw, Check, Info, Inbox, Moon, Sun, Store, TriangleAlert, Package } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
+import { toast } from "@/shared/components/ui/toast";
 import { FloatingInput } from "@/shared/components/composed/floating-input";
-import { IconSwitch } from "@/shared/components/composed/icon-switch";
-import { Users, Eye, Lock, Mail, ArrowRight, Monitor, RotateCcw, CheckCircle2, AlertCircle, Info, Moon, Sun, Bell, AlertTriangle } from "lucide-react";
-import { Switch } from "@/shared/components/ui/switch";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/components/ui/tabs";
-import { UserProfile } from "@/shared/components/composed/user-profile";
 import { FloatingSelect } from "@/shared/components/composed/floating-select";
+import { FloatingTextarea } from "@/shared/components/composed/floating-textarea";
 import { SelectContent, SelectItem } from "@/shared/components/ui/select";
+import { EstadoVacio } from "@/shared/components/composed/estado-vacio";
+import { BarraPaginacion } from "@/shared/components/composed/barra-paginacion";
+import type { TonoInsignia } from "@/shared/components/ui/badge";
 import { OverlaysDemo } from "./overlays-demo";
 import { ComposedDemo } from "./composed-demo";
 import { ErroresDemo } from "./errores-demo";
 
-export default function PlaygroundPage() {
+// Cada sección del playground corresponde a un componente de docs/diseno-web.md §4 con sus estados.
+const VARIANTES_BOTON = [
+  "default", "shadow", "outline", "soft", "ghost", "link", "neutral", "danger", "danger-outline",
+] as const;
+
+const TONOS: { tono: TonoInsignia; texto: string }[] = [
+  { tono: "neutro", texto: "Por preparar" },
+  { tono: "contorno", texto: "Borrador" },
+  { tono: "info", texto: "Pagada" },
+  { tono: "exito", texto: "Entregada" },
+  { tono: "marca", texto: "Activo en tienda" },
+  { tono: "aviso", texto: "Pago pendiente" },
+  { tono: "peligro", texto: "Anulada" },
+  { tono: "naranja", texto: "Cancelada" },
+  { tono: "morado", texto: "En ruta" },
+  { tono: "indigo", texto: "Preparada" },
+];
+
+const TIPOS_TOAST = [
+  { type: "success", etiqueta: "Éxito", title: "Producto publicado", description: "Ya se ve en tu tienda." },
+  { type: "error", etiqueta: "Error", title: "No se pudo guardar", description: "Revisa tu conexión e inténtalo de nuevo." },
+  { type: "warning", etiqueta: "Aviso", title: "Quedan 2 unidades", description: "El stock está por agotarse." },
+  { type: "info", etiqueta: "Información", title: "Cambios sin publicar", description: "Publícalos para verlos en la vitrina." },
+  { type: "loading", etiqueta: "Cargando", title: "Guardando cambios…" },
+] as const;
+
+function Seccion({ id, titulo, children }: { id: string; titulo: string; children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-muted p-8">
-      <div className="mx-auto max-w-5xl space-y-12">
+    <section id={id} aria-labelledby={`${id}-titulo`} className="space-y-4">
+      <h2 id={`${id}-titulo`} className="text-lg font-extrabold tracking-tight text-foreground">{titulo}</h2>
+      <Card>
+        <CardContent className="flex flex-col gap-6">{children}</CardContent>
+      </Card>
+    </section>
+  );
+}
 
-        {/* Cabecera */}
-        <div className="border-b pb-4">
-          <h1 className="text-3xl font-bold text-foreground">UI / Components Playground</h1>
-          <p className="text-muted-foreground mt-2">
-            Entorno aislado para auditar y personalizar los componentes base y compuestos de OTemu.
-          </p>
-        </div>
+function Rotulo({ children }: { children: React.ReactNode }) {
+  return <p className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">{children}</p>;
+}
 
-        {/* 1. Botones */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">1. Buttons</h2>
-          <Card>
-            <CardContent className="flex flex-col gap-6 pt-6">
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="default" rightIcon={<ArrowRight size={18} />}>
-                  Generar Pedido
+export default function PlaygroundPage() {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [pagina, setPagina] = React.useState(1);
+
+  return (
+    <div className="min-h-screen bg-background p-4 sm:p-8">
+      <div className="mx-auto max-w-5xl space-y-10">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Componentes de OTemu</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Referencia visual de docs/diseno-web.md §4. Revisa cada estado en claro y en oscuro.
+            </p>
+          </div>
+          <Button
+            variant="neutral"
+            size="sm"
+            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            aria-label="Cambiar entre tema claro y oscuro"
+          >
+            {resolvedTheme === "dark" ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+            {resolvedTheme === "dark" ? "Tema claro" : "Tema oscuro"}
+          </Button>
+        </header>
+
+        <Seccion id="botones" titulo="1. Botones (§4.1)">
+          <div className="space-y-3">
+            <Rotulo>Variantes</Rotulo>
+            <div className="flex flex-wrap gap-3">
+              {VARIANTES_BOTON.map((variante) => (
+                <Button key={variante} variant={variante}>
+                  {variante}
                 </Button>
-
-                <Button variant="outline" leftIcon={<RotateCcw size={18} />}>
-                  Volver a hacer
-                </Button>
-
-                <Button variant="ghost" leftIcon={<Monitor size={18} />}>
-                  Panel
-                </Button>
-              </div>
-
-              {/* Success */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="default" leftIcon={<CheckCircle2 size={18} />}>Cobrar</Button>
-                <Button variant="outline">Cobrar</Button>
-                <Button variant="soft">Cobrar</Button>
-              </div>
-
-              {/* Danger */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="danger" leftIcon={<AlertCircle size={18} />}>Cancelar</Button>
-                <Button variant="danger-outline">Cancelar</Button>
-                <Button variant="danger-outline">Cancelar</Button>
-              </div>
-
-              {/* Info */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="default" leftIcon={<Info size={18} />}>Imprimir</Button>
-                <Button variant="outline">Imprimir</Button>
-                <Button variant="soft">Imprimir</Button>
-              </div>
-
-              {/* Warning */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="default" leftIcon={<AlertTriangle size={18} />}>Pausar Orden</Button>
-                <Button variant="outline">Pausar Orden</Button>
-                <Button variant="soft">Pausar Orden</Button>
-              </div>
-
-              {/* Neutral y Danger fuerte (diálogos de confirmación) */}
-              <div className="flex flex-wrap gap-4 items-center">
-                <Button variant="neutral">Neutral</Button>
-                <Button variant="neutral">Neutral</Button>
-                <Button variant="danger">Danger fuerte</Button>
-              </div>
-
-              {/* Disabled State (Funciona con cualquier variante) */}
-              <div className="flex flex-wrap gap-4 items-center border-t pt-4">
-                <Button disabled>Inactivo Default</Button>
-                <Button variant="outline" disabled>Inactivo Outline</Button>
-                <Button variant="danger-outline" disabled>Inactivo Ghost</Button>
-              </div>
-            </CardContent>
-          </Card>
-        </section>
-
-        {/* 2. Inputs & Formularios */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">4. Icon Switches</h2>
-          <div className="flex flex-wrap gap-6 p-6 bg-card rounded-3xl shadow-sm border">
-
-            {/* Réplica exacta de tu imagen (Modo Oscuro / Claro) */}
-            <IconSwitch
-              leftIcon={<Moon size={18} className="text-brand-text" />}
-              rightIcon={<Sun size={18} className="text-brand-text" />}
-              defaultChecked
-            />
-
-            {/* Variante con un solo ícono */}
-            <IconSwitch
-              leftIcon={<Bell size={18} />}
-            />
-
-            {/* Switch Base sin contenedor (para formularios simples) */}
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">Activo</span>
-              <Switch />
+              ))}
+              <Button variant="shadow" rightIcon={<ArrowRight />}>Publicar producto</Button>
             </div>
-
           </div>
-        </section>
-        {/* 3. Badges / Estados */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">3. Badges</h2>
-          <Card>
-            <CardContent className="flex flex-wrap gap-4 pt-6">
-              <Badge variant="default">Activo</Badge>
-              <Badge variant="secondary">Borrador</Badge>
-              <Badge variant="destructive">Cancelado</Badge>
-              <Badge variant="outline">Pendiente</Badge>
-            </CardContent>
-          </Card>
-        </section>
+          <div className="space-y-3">
+            <Rotulo>Tamaños</Rotulo>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="sm">Pequeño</Button>
+              <Button size="default">Normal</Button>
+              <Button size="lg">Grande (móvil)</Button>
+              <Button size="icon" variant="soft" aria-label="Ver"><Eye /></Button>
+              <Button size="icon-sm" variant="ghost" aria-label="Ver"><Eye /></Button>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <Rotulo>Estados</Rotulo>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="default" disabled>Deshabilitado</Button>
+              <Button variant="outline" disabled>Deshabilitado</Button>
+              <Button variant="default" loading>Guardando</Button>
+              <Button variant="outline" leftIcon={<RotateCcw />}>Volver a hacer</Button>
+            </div>
+          </div>
+        </Seccion>
 
-        {/* 4. Componentes compuestos: texto largo, búsqueda y estados de lista */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">4. Composed: Textarea, Búsqueda y Estados</h2>
-          <ComposedDemo />
-        </section>
-
-        {/* 5. Pantallas de error: una sola vista dinámica según el código */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold">5. Pantallas de error</h2>
-          <ErroresDemo />
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">2. Neomorphic Floating Inputs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-card rounded-3xl shadow-sm border">
-
-            {/* Estado Normal */}
-            <FloatingInput
-              label="Correo Electrónico"
-              type="email"
-              leftIcon={<Mail size={18} />}
-            />
-
-            {/* Estado Normal con Icono Derecho */}
-            <FloatingInput
-              label="Contraseña"
-              type="password"
-              leftIcon={<Lock size={18} />}
-              rightIcon={<Eye size={18} />}
-            />
-
-            {/* Estado Éxito */}
-            <FloatingInput
-              label="Código de Verificación"
-              state="success"
-              defaultValue="123456"
-            />
-
-            {/* Estado Error */}
-            <FloatingInput
-              label="Nombre de Usuario"
-              state="error"
-              defaultValue="jomar_"
-            />
-
-            {/* Estado Deshabilitado */}
-            <FloatingInput
-              label="Input Deshabilitado"
-              disabled
-            />
-
-            <FloatingSelect label="Rol de Usuario" leftIcon={<Users size={18} />}>
+        <Seccion id="campos" titulo="2. Campos outlined cut (§4.2)">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <FloatingInput label="Correo electrónico" autoFocus leftIcon={<Mail className="size-4" />} ayuda="Usaremos este correo para avisarte de tus pedidos." />
+            <FloatingInput label="Nombre de la tienda" defaultValue="Café del Parque" />
+            <FloatingInput label="Contraseña" state="error" type="password" defaultValue="12345" mensajeError="Debe tener 8 caracteres o más." leftIcon={<Lock className="size-4" />} />
+            <FloatingInput label="Número de orden" disabled defaultValue="ORD-2026-0042" />
+            <FloatingInput label="Enlace de tu tienda" readOnly copiable defaultValue="otemu.com/tienda/cafe-parque" />
+            <FloatingSelect label="Categoría" defaultValue="ropa">
               <SelectContent>
-                <SelectItem value="admin">Administrador Principal</SelectItem>
-                <SelectItem value="dueño">Dueño de Franquicia</SelectItem>
-                <SelectItem value="empleado">Empleado Base</SelectItem>
+                <SelectItem value="ropa">Ropa</SelectItem>
+                <SelectItem value="hogar">Hogar</SelectItem>
               </SelectContent>
             </FloatingSelect>
-
-            <FloatingSelect label="Estado (Con Error)" state="error">
+            <FloatingSelect label="Estado" state="success" defaultValue="activo">
               <SelectContent>
                 <SelectItem value="activo">Activo</SelectItem>
-                <SelectItem value="inactivo">Inactivo</SelectItem>
+                <SelectItem value="borrador">Borrador</SelectItem>
               </SelectContent>
             </FloatingSelect>
-
-            <FloatingSelect label="Estado (Con Success)" state="success">
-              <SelectContent>
-                <SelectItem value="activo">Activo</SelectItem>
-                <SelectItem value="inactivo">Inactivo</SelectItem>
-              </SelectContent>
-            </FloatingSelect>
+            <div className="sm:col-span-2">
+              <FloatingTextarea label="Descripción del producto" defaultValue="Taza de cerámica hecha a mano." />
+            </div>
           </div>
+        </Seccion>
 
-
-
-        </section>
-
-        {/* ... */}
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">5. Segmented Controls (Tabs)</h2>
-          <div className="flex flex-col gap-8 p-6 bg-card rounded-3xl shadow-sm border">
-
-            <Tabs defaultValue="admin">
-              <TabsList>
-                <TabsTrigger
-                  value="empleado"
-                >
-                  Empleado
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="dueño"
-                >
-                  Dueño
-                </TabsTrigger>
-
-                <TabsTrigger
-                  value="admin"
-                >
-                  Administrador
-                </TabsTrigger>
-              </TabsList>
-
-              <div className="mt-4 p-4 border rounded-xl bg-muted text-sm text-muted-foreground">
-                <TabsContent value="empleado">Vista de Empleado (Limitada)</TabsContent>
-                <TabsContent value="dueño">Vista de Dueño (Métricas y reportes)</TabsContent>
-                <TabsContent value="admin">Vista de Administrador (Acceso total)</TabsContent>
-              </div>
-            </Tabs>
-
+        <Seccion id="insignias" titulo="3. Insignias de estado (§4.3)">
+          <div className="flex flex-wrap gap-2">
+            {TONOS.map(({ tono, texto }) => (
+              <Badge key={tono} variant="estado" tono={tono}>{texto}</Badge>
+            ))}
           </div>
-        </section>
+        </Seccion>
 
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">6. User Profile (Avatar Composition)</h2>
-          <div className="flex flex-col gap-6 p-6 bg-card rounded-3xl shadow-sm border">
-
-            {/* Clon exacto del diseño */}
-            <UserProfile
-              name="Jomar Peralta"
-              role="Administrador"
-            />
-
+        <Seccion id="avisos" titulo="4. Notificaciones y alertas (§4.4)">
+          <div className="space-y-3">
+            <Rotulo>Notificaciones (toast)</Rotulo>
+            <div className="flex flex-wrap gap-2">
+              {TIPOS_TOAST.map((t) => (
+                <Button
+                  key={t.type}
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    toast.add({
+                      type: t.type,
+                      title: t.title,
+                      description: "description" in t ? t.description : undefined,
+                    })
+                  }
+                >
+                  {t.etiqueta}
+                </Button>
+              ))}
+            </div>
           </div>
-        </section>
+          <div className="space-y-3">
+            <Rotulo>Alertas dentro de la pantalla</Rotulo>
+            <div className="grid gap-3">
+              <Alert>
+                <Info aria-hidden="true" />
+                <AlertTitle>Tu prueba gratis termina en 5 días</AlertTitle>
+                <AlertDescription>Elige un plan para no perder el acceso a tu tienda.</AlertDescription>
+              </Alert>
+              <Alert variant="success">
+                <Check aria-hidden="true" />
+                <AlertTitle>Pago aprobado</AlertTitle>
+                <AlertDescription>La orden ya está en preparación.</AlertDescription>
+              </Alert>
+              <Alert variant="warning">
+                <TriangleAlert aria-hidden="true" />
+                <AlertTitle>Sin stock en 2 variantes</AlertTitle>
+                <AlertDescription>Reponlas antes de publicar la tienda.</AlertDescription>
+              </Alert>
+              <Alert variant="destructive">
+                <TriangleAlert aria-hidden="true" />
+                <AlertTitle>No se pudo cobrar</AlertTitle>
+                <AlertDescription>Revisa el medio de pago e inténtalo de nuevo.</AlertDescription>
+              </Alert>
+            </div>
+          </div>
+        </Seccion>
 
-        <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-foreground">7. Overlays (Toast y Confirm)</h2>
+        <Seccion id="vacio" titulo="5. Estado vacío (§4.5)">
+          <div className="grid gap-6 sm:grid-cols-2">
+            <EstadoVacio titulo="Aún no tienes productos" descripcion="Crea el primero para empezar a vender." icono={Package} accion={{ texto: "Crear producto", onClick: () => undefined }} />
+            <EstadoVacio titulo="Sin resultados" descripcion="Prueba con otra búsqueda." icono={Inbox} accion={{ texto: "Limpiar filtros", onClick: () => undefined }} />
+          </div>
+        </Seccion>
+
+        <Seccion id="paginacion" titulo="6. Paginación (§4.6)">
+          <BarraPaginacion pagina={pagina} totalPaginas={5} total={38} porPagina={8} etiqueta="productos" onCambiar={setPagina} />
+        </Seccion>
+
+        <Seccion id="islas" titulo="7. Isla (§4.7)">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ventas de hoy</CardTitle>
+                <CardDescription>Isla con borde y sombra suave sobre el lienzo.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-2xl font-extrabold text-foreground">$ 1 240</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Tu tienda</CardTitle>
+                <CardDescription>Activa desde el lunes.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex items-center gap-3">
+                <Store className="size-5 text-brand-text" aria-hidden="true" />
+                <Badge variant="estado" tono="marca">Activo en tienda</Badge>
+              </CardContent>
+            </Card>
+          </div>
+        </Seccion>
+
+        <Seccion id="confirmacion" titulo="8. Confirmación y panel">
           <OverlaysDemo />
-        </section>
+        </Seccion>
 
+        <Seccion id="compuestos" titulo="9. Compuestos">
+          <ComposedDemo />
+        </Seccion>
+
+        <Seccion id="errores" titulo="10. Pantallas de error">
+          <ErroresDemo />
+        </Seccion>
       </div>
     </div>
   );

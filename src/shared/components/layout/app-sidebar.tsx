@@ -78,7 +78,7 @@ export function AppSidebar({
               </Avatar>
 
               <div className="flex flex-col overflow-hidden">
-                <span className="font-display text-base font-bold leading-tight text-foreground  truncate">
+                <span className="font-extrabold text-base font-bold leading-tight text-foreground  truncate">
                   OTemu
                 </span>
                 <span className="text-xs text-muted-foreground  truncate">

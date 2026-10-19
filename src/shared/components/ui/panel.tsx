@@ -4,7 +4,7 @@ import * as React from "react"
 import { Dialog as PanelPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 /**
  * Panel lateral flotante para formularios (crear, editar, ver detalle).
@@ -112,7 +112,7 @@ function PanelTitle({ className, ...props }: PanelPrimitive.Title.Props) {
   return (
     <PanelPrimitive.Title
       data-slot="panel-title"
-      className={cn("font-display text-lg font-semibold text-foreground ", className)}
+      className={cn("font-extrabold text-lg font-semibold text-foreground ", className)}
       {...props}
     />
   )
