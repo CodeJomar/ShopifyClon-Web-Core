@@ -1,4 +1,4 @@
-import { ForgotPasswordView } from "@/modules/auth/views/forgot-password-view"
+import { ForgotPasswordView } from "@/modules/auth"
 
 export const metadata = {
   title: "Recuperar Contraseña | Coffy Flow",

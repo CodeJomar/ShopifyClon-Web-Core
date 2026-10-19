@@ -1,0 +1,10 @@
+// Superficie pública del módulo Auth
+export { LoginView } from "./views/login-view"
+export { ForgotPasswordView } from "./views/forgot-password-view"
+export { ActivarCuentaView } from "./views/activar-cuenta-view"
+export { SessionProvider, useSession, useRefrescarSesion } from "./components/session-provider"
+export { Can } from "./components/can"
+export { useCan } from "./hooks/use-can"
+export { useLogout } from "./hooks/use-logout"
+export { etiquetaCuenta, etiquetaRol, iniciales } from "./utils"
+export { passwordNuevaSchema } from "./schema"

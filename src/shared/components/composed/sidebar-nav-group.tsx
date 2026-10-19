@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/shared/components/ui/collapsible"
 import { SidebarNavItem } from "./sidebar-nav-item"
 import { ChevronDown } from "lucide-react"
@@ -9,6 +10,8 @@ import { cn } from "@/shared/utils/cn"
 export interface SubMenuItem {
   title: string;
   icon?: React.ReactNode;
+  /** Si se indica, el subítem navega a esta ruta. */
+  href?: string;
   isActive?: boolean;
   onClick?: () => void;
 }
@@ -54,17 +57,20 @@ export function SidebarNavGroup({
       </CollapsibleTrigger>
 
       <CollapsibleContent className="pt-1 pb-1 pl-4 space-y-1">
-        {items.map((subItem, index) => (
-          <SidebarNavItem
-            key={index}
-            isSubItem
-            icon={subItem.icon}
-            isActive={subItem.isActive}
-            onClick={subItem.onClick}
-          >
-            {subItem.title}
-          </SidebarNavItem>
-        ))}
+        {items.map((subItem) => {
+          const item = (
+            <SidebarNavItem isSubItem icon={subItem.icon} isActive={subItem.isActive} onClick={subItem.onClick}>
+              {subItem.title}
+            </SidebarNavItem>
+          )
+          return subItem.href ? (
+            <Link key={subItem.title} href={subItem.href} className="block w-full cursor-pointer">
+              {item}
+            </Link>
+          ) : (
+            <React.Fragment key={subItem.title}>{item}</React.Fragment>
+          )
+        })}
       </CollapsibleContent>
     </Collapsible>
   )

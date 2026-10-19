@@ -70,7 +70,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("font-bold text-slate-900", className)}
+      className={cn("font-bold text-slate-900 dark:text-stone-100", className)}
       {...props}
     />
   )

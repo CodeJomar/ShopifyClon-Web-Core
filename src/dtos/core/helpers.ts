@@ -20,8 +20,8 @@ export type EmptyString = "";
 export type OptionalData<T> = T | null | undefined;
 
 // Constructor flexible tipado para instanciación
-// biome-ignore lint/suspicious/noExplicitAny: Constructor genérico para instanciación por reflexión
-export type ConstructorLike<T> = new (data: any) => T;
+// Constructor genérico: cada DTO recibe el cuerpo de la respuesta (o undefined si la petición falló).
+export type ConstructorLike<T> = new (data?: Record<string, unknown>) => T;
 
 export type LocalDateString = `${string}/${string}/${number}`;
 export type LocalDateTimeString = `${string}/${string}/${number} ${string}:${string}:${string}`;

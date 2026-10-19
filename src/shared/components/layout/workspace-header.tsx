@@ -21,33 +21,34 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/components/ui/breadcrumb"
-import { Tabs, TabsList, TabsTrigger } from "@/shared/components/ui/tabs"
 import { Switch } from "@/shared/components/ui/switch"
 import { Button } from "@/shared/components/ui/button"
 import { Separator } from "@/shared/components/ui/separator"
 import { cn } from "@/shared/utils/cn"
+import { useMounted } from "@/shared/hooks/use-mounted"
+import { HOME_HREF, migasDe, rutaDe } from "@/shared/constants/navegacion"
 
 interface WorkspaceHeaderProps {
   isCollapsed: boolean
   onToggleCollapse: () => void
+  /** Cierra la sesión; si no se provee, solo navega al login. */
+  onLogout?: () => void
+  /** Tipo de cuenta de la sesión ("Dueño" o "Empleado"); solo informativo. */
+  etiquetaCuenta?: string
 }
 
 export function WorkspaceHeader({
   isCollapsed,
   onToggleCollapse,
+  onLogout,
+  etiquetaCuenta,
 }: WorkspaceHeaderProps) {
   const pathname = usePathname()
   const router = useRouter()
 
-  const [selectedRole, setSelectedRole] = React.useState("dueno")
-
   // Integración real de modo claro / oscuro
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
+  const mounted = useMounted()
 
   const isDarkMode = mounted && theme === "dark"
 
@@ -55,25 +56,11 @@ export function WorkspaceHeader({
     setTheme(checked ? "dark" : "light")
   }
 
-  const getRouteInfo = () => {
-    if (pathname.includes("/dashboard")) {
-      return { parent: "Dashboard", href: "/dashboard", current: "Resumen" }
-    }
-    if (pathname.includes("/pos")) {
-      return { parent: "Punto de Venta", href: "/pos", current: "Terminal" }
-    }
-    if (pathname.includes("/kds")) {
-      return { parent: "KDS", href: "/kds", current: "Comandas" }
-    }
-    if (pathname.includes("/menu")) {
-      return { parent: "Menú", href: "/menu", current: "Catálogo" }
-    }
-    return { parent: "Workspace", href: "/dashboard", current: "General" }
-  }
-
-  const { parent, href, current } = getRouteInfo()
+  const [seccion, pantalla] = migasDe(pathname)
+  const href = rutaDe(pathname)?.item.href ?? HOME_HREF
 
   const handleLogout = () => {
+    if (onLogout) return onLogout()
     router.push("/login")
   }
 
@@ -100,39 +87,25 @@ export function WorkspaceHeader({
             <BreadcrumbList className="flex items-center gap-2 text-xs">
               <BreadcrumbItem>
                 <BreadcrumbLink render={<Link href={href} />}>
-                  {parent}
+                  {seccion}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage className="dark:text-white">{current}</BreadcrumbPage>
+                <BreadcrumbPage className="dark:text-white">{pantalla}</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </div>
 
-        {/* Zona Derecha: Tabs, Theme Switch y Logout */}
+        {/* Zona Derecha: Theme Switch y Logout */}
         <div className="flex items-center gap-3 shrink-0">
-          <Tabs
-            value={selectedRole}
-            onValueChange={setSelectedRole}
-            className="hidden md:block w-auto"
-          >
-            <TabsList className="h-9 items-center bg-[#EDE5E6]/40 dark:bg-stone-800 p-1 rounded-full border-none shadow-none">
-              <TabsTrigger
-                value="empleado"
-                className="h-7 rounded-full px-3.5 text-xs font-semibold data-[state=active]:bg-[#4C0107] data-[state=active]:text-white transition-all shadow-none cursor-pointer dark:text-slate-300"
-              >
-                Empleado
-              </TabsTrigger>
-              <TabsTrigger
-                value="dueno"
-                className="h-7 rounded-full px-3.5 text-xs font-semibold data-[state=active]:bg-[#4C0107] data-[state=active]:text-white transition-all shadow-none cursor-pointer dark:text-slate-300"
-              >
-                Dueño
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {etiquetaCuenta && (
+            <span className="hidden h-9 items-center rounded-full bg-[#4C0107] px-3.5 text-xs font-semibold text-white md:inline-flex">
+              {etiquetaCuenta}
+            </span>
+          )}
+
 
           {/* Switch activo conectado al ThemeProvider */}
           <div className="flex h-9 items-center gap-2 px-3 rounded-full bg-[#EDE5E6]/40 dark:bg-stone-800">

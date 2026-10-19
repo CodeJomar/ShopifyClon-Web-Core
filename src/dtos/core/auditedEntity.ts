@@ -1,6 +1,7 @@
-export type AuditedEntity = {
-  fecha_creacion?: string;
-  usuario_creacion?: string;
-  fecha_edicion?: string;
-  usuario_edicion?: string;
-};
+import type { EntidadAuditada } from "./entidadAuditada";
+
+/**
+ * Auditoría que expone la API: solo las fechas. El usuario que creó o editó nunca viaja al navegador.
+ * (Alias de `EntidadAuditada`, conservado por compatibilidad.)
+ */
+export type AuditedEntity = EntidadAuditada;

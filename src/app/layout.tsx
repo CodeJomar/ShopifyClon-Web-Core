@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Hanken_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
+import { Toaster } from "@/shared/components/ui/toast"
+import { ConfirmProvider } from "@/shared/providers/confirm-provider"
+import { BloqueoMovil } from "@/shared/components/composed/bloqueo-movil"
+import { EstadoConexionModal } from "@/shared/components/composed/estado-conexion-modal"
 import "./globals.css";
 
 // Inter: Fuente global por defecto
@@ -39,7 +43,14 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          {children}
+          <Toaster limit={3} timeout={5000}>
+            <BloqueoMovil />
+            {/* En celular la app se oculta por completo (display: contents mantiene el layout normal en pantallas grandes) */}
+            <div className="contents pantalla-pequena:hidden">
+              <ConfirmProvider>{children}</ConfirmProvider>
+              <EstadoConexionModal />
+            </div>
+          </Toaster>
         </ThemeProvider>
       </body>
     </html>

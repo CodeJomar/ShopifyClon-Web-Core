@@ -2,24 +2,67 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { Button } from "@/shared/components/ui/button"
 import { Mail, Lock, Eye, EyeOff, Coffee } from "lucide-react"
+import { toast } from "@/shared/components/ui/toast"
+import { useLogin } from "../hooks/use-login"
+import { SesionActivaModal } from "../components/sesion-activa-modal"
 
-export function LoginView() {
-  const [email, setEmail] = React.useState("")
-  const [password, setPassword] = React.useState("")
+interface LoginViewProps {
+  /** Ruta a la que volver tras iniciar sesión (la fija el Proxy al redirigir), vía ?siguiente= */
+  siguiente?: string
+  /** Por qué se volvió al login: se avisa con un toast (inactividad o sesión reemplazada desde otro navegador). */
+  motivo?: "inactividad" | "reemplazada"
+}
+
+export function LoginView({ siguiente, motivo }: LoginViewProps) {
+  const router = useRouter()
   const [showPassword, setShowPassword] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  // Se volvió al login por un cierre de sesión: se explica con un toast y se limpia la dirección para no repetirlo al recargar.
+  const avisado = React.useRef(false)
+  React.useEffect(() => {
+    if (!motivo || avisado.current) return
+    avisado.current = true
+    if (motivo === "inactividad") {
+      toast.add({
+        type: "warning",
+        title: "Tu sesión se cerró por inactividad",
+        description: "Ingresa de nuevo para continuar.",
+        timeout: 8000,
+      })
+    } else {
+      toast.add({
+        type: "error",
+        title: "Tu sesión se cerró",
+        description: (
+          <>
+            Se inició sesión con tu cuenta en otro dispositivo o navegador. Si no fuiste tú,{" "}
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
+              className="cursor-pointer font-semibold text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+            >
+              cambia tu contraseña
+            </button>
+            .
+          </>
+        ),
+        timeout: 15000,
+      })
+    }
+    router.replace("/login")
+  }, [motivo, router])
 
-    setTimeout(() => {
-      window.location.href = "/dashboard"
-    }, 1200)
-  }
+  const { form, submit, bloqueoSegundos, sesionActiva } = useLogin(siguiente)
+  const {
+    register,
+    formState: { errors, isSubmitting },
+  } = form
+
+  const bloqueado = bloqueoSegundos > 0
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -37,39 +80,42 @@ export function LoginView() {
       </div>
 
       {/* Formulario utilizando FloatingInput y Button base */}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <FloatingInput
-          label="Correo Electrónico"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          leftIcon={<Mail size={18} />}
-          disabled={isLoading}
-          autoComplete="email"
-          required
-        />
+      <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+        <div className="space-y-1">
+          <FloatingInput
+            label="Correo Electrónico"
+            type="email"
+            leftIcon={<Mail size={18} />}
+            state={errors.email ? "error" : "default"}
+            disabled={isSubmitting}
+            autoComplete="email"
+            {...register("email")}
+          />
+          {errors.email && <p className="px-2 text-[11px] text-red-600">{errors.email.message}</p>}
+        </div>
 
         <div className="space-y-1">
           <FloatingInput
             label="Contraseña"
             type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
             leftIcon={<Lock size={18} />}
             rightIcon={
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 tabIndex={-1}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                 className="flex items-center justify-center text-slate-400 hover:text-slate-600 outline-none cursor-pointer"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             }
-            disabled={isLoading}
+            state={errors.password ? "error" : "default"}
+            disabled={isSubmitting}
             autoComplete="current-password"
-            required
+            {...register("password")}
           />
+          {errors.password && <p className="px-2 text-[11px] text-red-600">{errors.password.message}</p>}
           <div className="flex justify-end pt-1">
             <Link
               href="/forgot-password"
@@ -84,12 +130,22 @@ export function LoginView() {
           type="submit"
           variant="default"
           size="md"
-          loading={isLoading}
+          disabled={isSubmitting || bloqueado}
           className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
         >
-          <span>{isLoading ? "Iniciando Sesión..." : "Iniciar Sesión"}</span>
+          <span>
+            {bloqueado ? `Reintentar en ${bloqueoSegundos}s` : "Iniciar Sesión"}
+          </span>
         </Button>
       </form>
+
+      <SesionActivaModal
+        open={sesionActiva.abierta}
+        enviando={sesionActiva.enviando}
+        onContinuar={() => void sesionActiva.continuar()}
+        onCancelar={sesionActiva.cancelar}
+        onNoSoyYo={sesionActiva.noSoyYo}
+      />
     </div>
   )
 }

@@ -13,7 +13,7 @@ const Switch = React.forwardRef<
     data-size={size}
     className={cn(
       "peer group/switch relative inline-flex shrink-0 items-center rounded-full border-2 border-transparent transition-colors outline-none cursor-pointer",
-      "focus-visible:ring-2 focus-visible:ring-slate-800 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
+      "focus-visible:ring-2 focus-visible:ring-[#4C0107]/40 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
       "data-[size=default]:h-6 data-[size=default]:w-11",
       "data-[size=sm]:h-5 data-[size=sm]:w-9",
       // Colores de la marca y estados

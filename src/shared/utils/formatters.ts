@@ -24,3 +24,7 @@ export const formatDateStrict = (date: Date | string | number): string => {
     year: "numeric",
   }).format(d);
 };
+
+// Normaliza texto para búsquedas sin tildes ni mayúsculas ("Capuccino Café" → "capuccino cafe")
+export const normalizarTexto = (texto: string): string =>
+  texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();

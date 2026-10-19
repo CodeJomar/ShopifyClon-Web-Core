@@ -4,6 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Celular: pantalla angosta, o un celular girado (apaisado y muy bajo). Ahí la app se reemplaza por <BloqueoMovil />. */
+@custom-variant pantalla-pequena {
+  @media (max-width: 639px), (orientation: landscape) and (max-height: 480px) {
+    @slot;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -66,7 +73,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: oklch(0.3 0.1 22); /* burdeos de marca; se usa con opacidad (ring-ring/50) para un foco discreto */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -101,7 +108,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: #27272A;
   --input: #27272A;
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.78 0.07 22);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -127,4 +134,13 @@
   html {
     @apply font-sans;
   }
+}
+/* Los buscadores ya traen su propio botón para limpiar: se oculta la "x" nativa del navegador (si no, salen dos). */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
 }

@@ -32,14 +32,14 @@ export const zodDateRangeRefine = <T extends z.ZodRawShape>({
   endDateKey: keyof T;
   message?: string;
 }) => {
-  return (data: Record<string, any>, ctx: z.RefinementCtx) => {
+  return (data: Record<string, unknown>, ctx: z.RefinementCtx) => {
     const start = data[startDateKey as string];
     const end = data[endDateKey as string];
 
     if (!start || !end) return;
 
-    const startDate = new Date(start);
-    const endDate = new Date(end);
+    const startDate = new Date(start as string | number | Date);
+    const endDate = new Date(end as string | number | Date);
 
     if (startDate > endDate) {
       ctx.addIssue({

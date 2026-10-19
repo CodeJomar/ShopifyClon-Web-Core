@@ -22,6 +22,11 @@ export class BaseResponse<AMC extends ApiMensajeCodigo = ApiMensajeCodigo> {
   unknownError: unknown;
   httpStatusCode?: number;
 
+  /** Intentos de login que quedan antes del bloqueo temporal (solo en respuestas 401 de login). */
+  intentosRestantes?: number;
+  /** Segundos de espera tras un 429 por bloqueo temporal. */
+  retryAfterSegundos?: number;
+
   constructor(response?: Record<string, unknown>) {
     if (!response) return;
     this.fillFromResponse(response);
@@ -32,8 +37,14 @@ export class BaseResponse<AMC extends ApiMensajeCodigo = ApiMensajeCodigo> {
       return false;
     }
 
-    this.status = (response.status ??
-      API_RESPONSE_STATUS.Error) as ApiResponseStatus;
+    // NestJS responde "OK"/"CREATED" en éxito y el nombre HTTP ("UNAUTHORIZED", ...) en error.
+    const estadoApi = String(response.status ?? "").toLowerCase();
+    this.status =
+      estadoApi === "ok" || estadoApi === "created"
+        ? API_RESPONSE_STATUS.Ok
+        : API_RESPONSE_STATUS.Error;
+    if (typeof response.intentos_restantes === "number") this.intentosRestantes = response.intentos_restantes;
+    if (typeof response.retry_after_segundos === "number") this.retryAfterSegundos = response.retry_after_segundos;
     this.mensajes = (response.mensajes ?? []) as {
       codigo: AMC;
       descripcion: string;

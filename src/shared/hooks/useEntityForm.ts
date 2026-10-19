@@ -44,34 +44,41 @@ export function useEntityForm<
   onSaveError,
 }: UseEntityFormProps<TDetail, TFormValues, TCreatePayload, TUpdatePayload, TCreateResponse>) {
   const isEditing = Boolean(id);
-  const [isLoading, setIsLoading] = useState(false);
+  // Al editar, arranca "cargando": así el efecto de carga inicial no necesita un setState sincrónico.
+  const [isLoading, setIsLoading] = useState(isEditing);
   const [hasLoadingError, setHasLoadingError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [entity, setEntity] = useState<TDetail | null>(null);
 
-  const load = useCallback(async () => {
-    if (!id || !actionGet) return;
-    setIsLoading(true);
-    setHasLoadingError(false);
-    try {
-      const res = await actionGet(id);
-      if (!res.isOk()) {
+  // Con promesas encadenadas: los setState ocurren al resolver, nunca de forma sincrónica dentro del efecto.
+  const fetchEntity = useCallback((): Promise<void> => {
+    if (!id || !actionGet) return Promise.resolve();
+    return actionGet(id)
+      .then((res) => {
+        if (!res.isOk()) {
+          setHasLoadingError(true);
+          onLoadError?.(res.getMessage());
+          return;
+        }
+        setEntity(res.data);
+      })
+      .catch(() => {
         setHasLoadingError(true);
-        onLoadError?.(res.getMessage());
-        return;
-      }
-      setEntity(res.data);
-    } catch {
-      setHasLoadingError(true);
-      onLoadError?.('Error inesperado al cargar el registro');
-    } finally {
-      setIsLoading(false);
-    }
+        onLoadError?.('Error inesperado al cargar el registro');
+      })
+      .finally(() => setIsLoading(false));
   }, [actionGet, id, onLoadError]);
 
+  // Reintento manual (botón "reintentar"): aquí sí se limpia el error y se vuelve a mostrar la carga.
+  const reload = useCallback(async () => {
+    setIsLoading(true);
+    setHasLoadingError(false);
+    await fetchEntity();
+  }, [fetchEntity]);
+
   useEffect(() => {
-    if (isEditing) load();
-  }, [isEditing, load]);
+    if (isEditing) void fetchEntity();
+  }, [isEditing, fetchEntity]);
 
   const submit = useCallback(
     async (values: TFormValues): Promise<TFormValues | null> => {
@@ -126,5 +133,5 @@ export function useEntityForm<
     return mapEntityToForm(entity);
   }, [entity, mapEntityToForm]);
 
-  return { isEditing, entity, formValues, isLoading, hasLoadingError, isSubmitting, reload: load, submit };
+  return { isEditing, entity, formValues, isLoading, hasLoadingError, isSubmitting, reload, submit };
 }

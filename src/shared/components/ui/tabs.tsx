@@ -56,7 +56,7 @@ function TabsTrigger({
       className={cn(
         // CAMBIO CLAVE: Añadimos 'w-full' para que el tab ocupe toda la celda del grid equitativo
         "group/trigger inline-flex h-full items-center justify-center gap-2 rounded-full px-8 py-2 text-base font-semibold transition-all outline-none whitespace-nowrap cursor-pointer",
-        "focus-visible:ring-2 focus-visible:ring-slate-800 focus-visible:ring-offset-0",
+        "focus-visible:ring-2 focus-visible:ring-[#4C0107]/40 focus-visible:ring-offset-0",
         "disabled:pointer-events-none disabled:opacity-50",
 
         "hover:text-[#4C0107] hover:bg-[#EDE5E6] dark:hover:bg-stone-800 dark:hover:text-white",

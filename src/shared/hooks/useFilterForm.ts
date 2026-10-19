@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef } from 'react';
-import { useForm, type DefaultValues, type FieldValues } from 'react-hook-form';
+import { useForm, type DefaultValues, type FieldValues, type Resolver } from 'react-hook-form';
 
 export type UseFilterFormOptions<TFieldValues extends FieldValues> = {
-  schema: unknown;
+  /** Esquema Zod del filtro. */
+  schema: Parameters<typeof zodResolver>[0];
   defaultValues: DefaultValues<TFieldValues>;
   autoFetch?: boolean;
   clearMode?: 'reset-only' | 'reset-and-filter';
@@ -20,8 +21,8 @@ export function useFilterForm<TFieldValues extends FieldValues>({
   const autoFetchRef = useRef(autoFetch);
 
   const form = useForm<TFieldValues>({
-    resolver: zodResolver(schema as any),
-    defaultValues: defaultValues as any,
+    resolver: zodResolver(schema) as unknown as Resolver<TFieldValues>,
+    defaultValues,
   });
 
   useEffect(() => {

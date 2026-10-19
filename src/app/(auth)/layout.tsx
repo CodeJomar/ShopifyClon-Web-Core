@@ -1,4 +1,5 @@
 import * as React from "react"
+import Image from "next/image"
 
 export default function AuthLayout({
   children,
@@ -9,12 +10,16 @@ export default function AuthLayout({
     <div className="min-h-screen w-full bg-white grid grid-cols-12 overflow-hidden">
       {/* Sección Izquierda: 8 Columnas (Imagen de ambientación) */}
       <div className="hidden lg:relative lg:col-span-8 lg:block h-full bg-slate-900 z-10 shadow-[10px_0_30px_-5px_#4C010780]">
-        <img
-          src="/images/login-coffee.jpg"
-          alt="Coffy Flow Ambiente"
-          className="h-full w-full object-cover"
+        <Image
+          src="/images/login.webp"
+          alt="Barista preparando café en una cafetería acogedora"
+          fill
+          priority
+          sizes="66vw"
+          // El encuadre apunta al barista y la máquina de espresso (zona media-derecha de la ilustración vertical)
+          className="object-cover object-[50%_62%]"
         />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
       </div>
 
       {/* Sección Derecha: 4 Columnas (Formulario) */}

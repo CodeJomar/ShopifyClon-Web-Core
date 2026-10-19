@@ -19,7 +19,7 @@ function DropdownMenuContent({
   Pick<DropdownPrimitive.Positioner.Props, "side" | "align" | "sideOffset">) {
   return (
     <DropdownPrimitive.Portal>
-      <DropdownPrimitive.Positioner side={side} align={align} sideOffset={sideOffset} className="isolate z-50">
+      <DropdownPrimitive.Positioner side={side} align={align} sideOffset={sideOffset} className="isolate z-[200]">
         <DropdownPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(

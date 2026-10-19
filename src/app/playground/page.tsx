@@ -1,17 +1,18 @@
 import React from "react";
 import { Button } from "@/shared/components/ui/button";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Card, CardContent } from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { FloatingInput } from "@/shared/components/composed/floating-input";
 import { IconSwitch } from "@/shared/components/composed/icon-switch";
-import { Users, Eye, Coffee, Croissant, CupSoda, CakeSlice, Lock, Mail, ArrowRight, Monitor, RotateCcw, CheckCircle2, AlertCircle, Info, Moon, Sun, Bell, AlertTriangle } from "lucide-react";
+import { Users, Eye, Lock, Mail, ArrowRight, Monitor, RotateCcw, CheckCircle2, AlertCircle, Info, Moon, Sun, Bell, AlertTriangle } from "lucide-react";
 import { Switch } from "@/shared/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/shared/components/ui/tabs";
 import { UserProfile } from "@/shared/components/composed/user-profile";
 import { FloatingSelect } from "@/shared/components/composed/floating-select";
 import { SelectContent, SelectItem } from "@/shared/components/ui/select";
+import { OverlaysDemo } from "./overlays-demo";
+import { ComposedDemo } from "./composed-demo";
+import { ErroresDemo } from "./errores-demo";
 
 export default function PlaygroundPage() {
   return (
@@ -73,6 +74,13 @@ export default function PlaygroundPage() {
                 <Button variant="warning-ghost">Pausar Orden</Button>
               </div>
 
+              {/* Neutral y Danger fuerte (diálogos de confirmación) */}
+              <div className="flex flex-wrap gap-4 items-center">
+                <Button variant="neutral">Neutral</Button>
+                <Button variant="neutral-outline">Neutral</Button>
+                <Button variant="danger-strong">Danger fuerte</Button>
+              </div>
+
               {/* Disabled State (Funciona con cualquier variante) */}
               <div className="flex flex-wrap gap-4 items-center border-t pt-4">
                 <Button disabled>Inactivo Default</Button>
@@ -121,14 +129,16 @@ export default function PlaygroundPage() {
           </Card>
         </section>
 
-        {/* 4. Componentes Compuestos (Composed) */}
+        {/* 4. Componentes compuestos: texto largo, búsqueda y estados de lista */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold">4. Composed Components (Próximamente)</h2>
-          <Card className="border-dashed">
-            <CardContent className="flex items-center justify-center h-32 pt-6 text-slate-400">
-              Aquí montaremos los SearchInputs, ConfirmModals y DataTables personalizados.
-            </CardContent>
-          </Card>
+          <h2 className="text-xl font-semibold">4. Composed: Textarea, Búsqueda y Estados</h2>
+          <ComposedDemo />
+        </section>
+
+        {/* 5. Pantallas de error: una sola vista dinámica según el código */}
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">5. Pantallas de error</h2>
+          <ErroresDemo />
         </section>
 
         <section className="space-y-4">
@@ -244,6 +254,11 @@ export default function PlaygroundPage() {
             />
 
           </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold text-slate-800">7. Overlays (Toast y Confirm)</h2>
+          <OverlaysDemo />
         </section>
 
       </div>
