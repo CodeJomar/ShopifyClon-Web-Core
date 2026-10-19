@@ -4,48 +4,72 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Celular: pantalla angosta, o un celular girado (apaisado y muy bajo). Ahí la app se reemplaza por <BloqueoMovil />. */
-@custom-variant pantalla-pequena {
-  @media (max-width: 639px), (orientation: landscape) and (max-height: 480px) {
-    @slot;
-  }
-}
-
 @theme inline {
+  --font-sans: var(--font-dm-sans);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-heading: var(--font-dm-sans);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-text: var(--destructive-text);
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+  --color-island-border: var(--island-border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-text: var(--brand-text);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-warning-text: var(--warning-text);
+  --color-info: var(--info);
+  --color-info-text: var(--info-text);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-tono-neutro-bg: var(--tono-neutro-bg);
+  --color-tono-neutro-fg: var(--tono-neutro-fg);
+  --color-tono-contorno-fg: var(--tono-contorno-fg);
+  --color-tono-info-bg: var(--tono-info-bg);
+  --color-tono-info-fg: var(--tono-info-fg);
+  --color-tono-exito-bg: var(--tono-exito-bg);
+  --color-tono-exito-fg: var(--tono-exito-fg);
+  --color-tono-marca-bg: var(--tono-marca-bg);
+  --color-tono-marca-fg: var(--tono-marca-fg);
+  --color-tono-aviso-bg: var(--tono-aviso-bg);
+  --color-tono-aviso-fg: var(--tono-aviso-fg);
+  --color-tono-peligro-bg: var(--tono-peligro-bg);
+  --color-tono-peligro-fg: var(--tono-peligro-fg);
+  --color-tono-naranja-bg: var(--tono-naranja-bg);
+  --color-tono-naranja-fg: var(--tono-naranja-fg);
+  --color-tono-morado-bg: var(--tono-morado-bg);
+  --color-tono-morado-fg: var(--tono-morado-fg);
+  --color-tono-indigo-bg: var(--tono-indigo-bg);
+  --color-tono-indigo-fg: var(--tono-indigo-fg);
+  --shadow-isla: var(--shadow-isla);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -55,73 +79,133 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Claro (docs/diseno-web.md §2). Ningún componente usa hex: todo sale de aquí. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.3 0.1 22); /* burdeos de marca; se usa con opacidad (ring-ring/50) para un foco discreto */
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #EEF2F7;
+  --foreground: #1F2A44;
+  --card: #FFFFFF;
+  --card-foreground: #1F2A44;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2A44;
+  --primary: #00E699;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F4F7FB;
+  --secondary-foreground: #1F2A44;
+  --muted: #F4F7FB;
+  --muted-foreground: #64748B;
+  --accent: #F4F7FB;
+  --accent-foreground: #1F2A44;
+  --destructive: #E91E63;
+  --destructive-text: #C2185B;
+  --border: #CFD8E3;
+  --border-hover: #94A3B8;
+  --island-border: rgb(148 163 184 / 0.22);
+  --input: #CFD8E3;
+  --ring: #00A36C;
+  --brand-strong: #00A36C;
+  --brand-text: #007A52;
+  --brand-rgb: 0 230 153;
+  --success: #1E9E6A;
+  --warning: #E8C100;
+  --warning-text: #A16207;
+  --info: #00A2EC;
+  --info-text: #0369A1;
+  --chart-1: #00E699;
+  --chart-2: #00A2EC;
+  --chart-3: #7E22CE;
+  --chart-4: #E8C100;
+  --chart-5: #E91E63;
+  --radius: 0.75rem;
+  --border-w: 1.8px;
+  --float-gap: 14px;
+  --shadow-isla: 0 8px 24px -6px rgb(15 23 42 / 0.05), 0 2px 6px -1px rgb(15 23 42 / 0.03);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1F2A44;
+  --sidebar-primary: #00E699;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgb(0 230 153 / 0.14);
+  --sidebar-accent-foreground: #007A52;
+  --sidebar-border: rgb(148 163 184 / 0.22);
+  --sidebar-ring: #00A36C;
+  --tono-neutro-bg: #EEF2F6;
+  --tono-neutro-fg: #475569;
+  --tono-contorno-fg: #334155;
+  --tono-info-bg: #E0F2FE;
+  --tono-info-fg: #0369A1;
+  --tono-exito-bg: #DCFCE7;
+  --tono-exito-fg: #15803D;
+  --tono-marca-bg: rgb(0 230 153 / 0.18);
+  --tono-marca-fg: #007A52;
+  --tono-aviso-bg: #FEF9C3;
+  --tono-aviso-fg: #A16207;
+  --tono-peligro-bg: #FEE2E2;
+  --tono-peligro-fg: #B91C1C;
+  --tono-naranja-bg: #FFEDD5;
+  --tono-naranja-fg: #C2410C;
+  --tono-morado-bg: #F3E8FF;
+  --tono-morado-fg: #7E22CE;
+  --tono-indigo-bg: #E0E7FF;
+  --tono-indigo-fg: #4338CA;
 }
 
+/* Oscuro (docs/diseno-web.md §2). */
 .dark {
-  --background: #0F0F10;
-  --foreground: #FAFAFA;
-  --card: #18181B;
-  --card-foreground: #FAFAFA;
-  --popover: #18181B;
-  --popover-foreground: #FAFAFA;
-  --primary: #FFFFFF;
-  --primary-foreground: #000000;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: #18181B;
-  --muted-foreground: #A1A1AA;
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: #27272A;
-  --input: #27272A;
-  --ring: oklch(0.78 0.07 22);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: #18181B;
-  --sidebar-foreground: #FAFAFA;
-  --sidebar-primary: #FFFFFF;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: #27272A;
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #070B10;
+  --foreground: #F1F5F9;
+  --card: #0F1622;
+  --card-foreground: #F1F5F9;
+  --popover: #0F1622;
+  --popover-foreground: #F1F5F9;
+  --primary: #00E699;
+  --primary-foreground: #FFFFFF;
+  --secondary: #172133;
+  --secondary-foreground: #F1F5F9;
+  --muted: #172133;
+  --muted-foreground: #94A3B8;
+  --accent: #172133;
+  --accent-foreground: #F1F5F9;
+  --destructive: #F06292;
+  --destructive-text: #F48FB1;
+  --border: #26354D;
+  --border-hover: #3B5173;
+  --island-border: rgb(255 255 255 / 0.07);
+  --input: #26354D;
+  --ring: #00E699;
+  --brand-strong: #00E699;
+  --brand-text: #00E699;
+  --success: #34D399;
+  --warning: #E8C100;
+  --warning-text: #FCD34D;
+  --info: #00A2EC;
+  --info-text: #7DD3FC;
+  --shadow-isla: 0 12px 30px -8px rgb(0 0 0 / 0.5);
+  --sidebar: #0F1622;
+  --sidebar-foreground: #F1F5F9;
+  --sidebar-primary: #00E699;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgb(0 230 153 / 0.14);
+  --sidebar-accent-foreground: #00E699;
+  --sidebar-border: rgb(255 255 255 / 0.07);
+  --sidebar-ring: #00E699;
+  --tono-neutro-bg: #1E293B;
+  --tono-neutro-fg: #CBD5E1;
+  --tono-contorno-fg: #CBD5E1;
+  --tono-info-bg: #0C4A6E;
+  --tono-info-fg: #7DD3FC;
+  --tono-exito-bg: #064E3B;
+  --tono-exito-fg: #86EFAC;
+  --tono-marca-bg: rgb(0 230 153 / 0.16);
+  --tono-marca-fg: #00E699;
+  --tono-aviso-bg: #422006;
+  --tono-aviso-fg: #FCD34D;
+  --tono-peligro-bg: #450A0A;
+  --tono-peligro-fg: #FCA5A5;
+  --tono-naranja-bg: #431407;
+  --tono-naranja-fg: #FDBA74;
+  --tono-morado-bg: #3B0764;
+  --tono-morado-fg: #D8B4FE;
+  --tono-indigo-bg: #1E1B4B;
+  --tono-indigo-fg: #A5B4FC;
 }
 
 @layer base {
@@ -129,12 +213,14 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    font-variant-numeric: tabular-nums;
   }
   html {
     @apply font-sans;
   }
 }
+
 /* Los buscadores ya traen su propio botón para limpiar: se oculta la "x" nativa del navegador (si no, salen dos). */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration,

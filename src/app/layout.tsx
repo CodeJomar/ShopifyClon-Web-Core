@@ -1,21 +1,24 @@
 import type { Metadata } from "next";
-import { Inter, Hanken_Grotesk } from "next/font/google";
+import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { Toaster } from "@/shared/components/ui/toast"
 import { ConfirmProvider } from "@/shared/providers/confirm-provider"
 import { EstadoConexionModal } from "@/shared/components/composed/estado-conexion-modal"
 import "./globals.css";
 
-// Inter: Fuente global por defecto
-const inter = Inter({
+// DM Sans: fuente de toda la interfaz y los títulos (docs/diseno-web.md §3)
+const dmSans = DM_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-dm-sans",
   display: "swap",
 });
 
-// Hanken Grotesk: Fuente manual para titulares
-const hankenGrotesk = Hanken_Grotesk({
+// JetBrains Mono: solo códigos (SKU, número de orden, subdominio)
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-hanken",
+  weight: ["400", "500", "600"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -32,10 +35,10 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${hankenGrotesk.variable} h-full antialiased`}
+      className={`${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className={`${inter.className} min-h-full flex flex-col`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
