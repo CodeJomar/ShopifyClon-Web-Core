@@ -1,23 +1,11 @@
 import type { LucideIcon } from "lucide-react"
-import {
-  Clock,
-  Coins,
-  FileText,
-  Grid2X2,
-  House,
-  LayoutDashboard,
-  ReceiptText,
-  Refrigerator,
-  ShieldCheck,
-  Store,
-  Users,
-  UtensilsCrossed,
-} from "lucide-react"
 
-import { ACCION, MODULO, type Puede, type Requisito } from "./permisos"
+import type { Puede, Requisito } from "./permisos"
 
-/** Pantalla de inicio: la ven todos los usuarios con sesión. Se llega por el logo del menú y tras iniciar sesión. */
-export const HOME_HREF = "/home"
+// TODO(W-007): la navegación del panel se define al rehacer el layout del panel. Vacía tras W-001.
+
+/** Pantalla de inicio. TODO(W-007): sin pantallas de workspace todavía; la raíz "/" es el marcador. */
+export const HOME_HREF = "/"
 
 /**
  * Mapa único de navegación del workspace. De aquí salen: el menú lateral, las migas de pan, la protección de
@@ -39,92 +27,11 @@ export interface NavItem {
   oculto?: boolean
 }
 
-export const NAVEGACION: NavItem[] = [
-  { id: "home", label: "Inicio", icon: House, href: HOME_HREF, oculto: true, migas: ["Inicio", "Bienvenida"] },
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    href: "/dashboard",
-    permiso: { modulo: MODULO.DASHBOARD, accion: ACCION.LEER },
-    migas: ["Dashboard", "Resumen"],
-  },
-  {
-    id: "pos",
-    label: "POS",
-    icon: ReceiptText,
-    href: "/pos",
-    permiso: { modulo: MODULO.ORDERS, accion: ACCION.CREAR },
-    migas: ["Punto de Venta", "Terminal"],
-  },
-  {
-    id: "kds",
-    label: "KDS",
-    icon: Refrigerator,
-    href: "/kds",
-    permiso: { modulo: MODULO.KDS, accion: ACCION.LEER },
-    migas: ["KDS", "Comandas"],
-  },
-  {
-    id: "menu",
-    label: "Menú",
-    icon: UtensilsCrossed,
-    href: "/menu",
-    permiso: { modulo: MODULO.MENU, accion: ACCION.LEER },
-    migas: ["Menú", "Catálogo"],
-  },
-  {
-    id: "local-equipo",
-    label: "Local y Equipo",
-    icon: Store,
-    hijos: [
-      {
-        id: "personal",
-        label: "Gestión de Empleados",
-        icon: Users,
-        href: "/local-equipo/personal",
-        permiso: { modulo: MODULO.USERS, accion: ACCION.LEER },
-      },
-      {
-        id: "roles-permisos",
-        label: "Roles y Permisos",
-        icon: ShieldCheck,
-        href: "/local-equipo/roles-permisos",
-        permiso: { modulo: MODULO.ROLES, accion: ACCION.LEER },
-      },
-      {
-        id: "mesas",
-        label: "Gestión de Mesas",
-        icon: Grid2X2,
-        href: "/local-equipo/mesas",
-        permiso: { modulo: MODULO.TABLES, accion: ACCION.LEER },
-      },
-    ],
-  },
-  {
-    id: "transacciones",
-    label: "Transacciones",
-    icon: FileText,
-    hijos: [
-      {
-        id: "cajas",
-        label: "Gestión de cajas",
-        icon: Coins,
-        href: "/transacciones/cajas",
-        permiso: { modulo: MODULO.TRANSACTIONS, accion: ACCION.LEER },
-      },
-      {
-        id: "pedidos",
-        label: "Historial de Pedidos",
-        icon: Clock,
-        href: "/transacciones/pedidos",
-        permiso: { modulo: MODULO.ORDERS, accion: ACCION.LEER },
-      },
-    ],
-  },
-]
+// TODO(W-007): entradas del panel (Q-W-001: lista vacía hasta que el diseño y los módulos se definan)
+export const NAVEGACION: NavItem[] = []
 
 /** Mi perfil: no está en el menú; se abre desde el usuario al pie de la barra lateral y no pide permiso. */
+// TODO(W-007): la ruta /perfil se define al rehacer la cuenta; hoy no existe.
 export const PERFIL_HREF = "/perfil"
 
 /** Una pantalla encontrada en el mapa, junto con el grupo al que pertenece (si lo tiene). */
@@ -171,7 +78,7 @@ export function filtrarNavegacion(items: NavItem[], puede: Puede): NavItem[] {
   })
 }
 
-/** Pantalla a la que se vuelve cuando no hay otra mejor: la primera que el usuario puede abrir (Inicio, que todos pueden ver). */
+/** Pantalla a la que se vuelve cuando no hay otra mejor: la primera que el usuario puede abrir. */
 export function rutaInicial(puede: Puede): string | null {
   return RUTAS.find(({ item }) => permitido(item, puede))?.item.href ?? null
 }
