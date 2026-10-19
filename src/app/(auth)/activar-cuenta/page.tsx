@@ -1,7 +1,7 @@
 import { ActivarCuentaView } from "@/modules/auth"
 
 export const metadata = {
-  title: "Activar cuenta | Coffy Flow",
+  title: "Activar cuenta | OTemu",
   description: "Define tu contraseña para activar tu cuenta de acceso.",
   // El enlace lleva un token de un solo uso: no se filtra a otros sitios por el encabezado Referer.
   referrer: "no-referrer" as const,

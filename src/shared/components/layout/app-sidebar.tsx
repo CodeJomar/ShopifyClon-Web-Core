@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Coffee } from "lucide-react"
+import { Store } from "lucide-react"
 
 import { HOME_HREF, PERFIL_HREF, type NavItem } from "@/shared/constants/navegacion"
 import { SidebarNavItem } from "@/shared/components/composed/sidebar-nav-item"
@@ -58,7 +58,7 @@ export function AppSidebar({
                   >
                     <Avatar className="size-12 shrink-0 border-none">
                       <AvatarFallback className="bg-[#4C0107] text-white">
-                        <Coffee className="size-6" />
+                        <Store className="size-6" />
                       </AvatarFallback>
                     </Avatar>
                   </Link>
@@ -73,16 +73,16 @@ export function AppSidebar({
             >
               <Avatar className="size-12 shrink-0 border-none">
                 <AvatarFallback className="bg-[#4C0107] text-white">
-                  <Coffee className="size-6" />
+                  <Store className="size-6" />
                 </AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col overflow-hidden">
                 <span className="font-display text-base font-bold leading-tight text-slate-900 dark:text-stone-100 truncate">
-                  Coffy Flow
+                  OTemu
                 </span>
                 <span className="text-xs text-slate-500 dark:text-stone-400 truncate">
-                  Cafetería Empresarial
+                  Tu tienda en línea
                 </span>
               </div>
             </Link>

@@ -35,7 +35,7 @@ export function useRefrescarSesion(): () => Promise<void> {
  * Confirma la sesión real con la API (/auth/me) antes de mostrar el workspace y la vuelve a confirmar cada vez que
  * el usuario regresa a la pestaña: así un cambio de cargo o de permisos hecho por el propietario se refleja sin
  * tener que cerrar sesión. El cliente HTTP renueva el access token si venció; si la sesión no se puede recuperar,
- * vuelve al login. La autorización sigue en NestJS.
+ * vuelve al login. La autorización sigue en la API.
  *
  * Mientras la pestaña está visible repite la consulta cada 10 s (sin contar como actividad): así un aviso de la cuenta
  * (un intento de inicio de sesión ajeno) llega aunque la persona no esté tocando la pantalla, y una sesión reemplazada

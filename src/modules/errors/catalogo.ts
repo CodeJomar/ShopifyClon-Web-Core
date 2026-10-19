@@ -19,25 +19,25 @@ export interface DefinicionError {
  */
 export const ERRORES: Record<CodigoError, DefinicionError> = {
   403: {
-    titulo: "esta mesa está reservada.",
-    descripcion: "Tu cargo no incluye el permiso para esta sección. Si crees que es un error, pídeselo al encargado del local.",
+    titulo: "no tienes acceso a esta sección.",
+    descripcion: "Tu cargo no incluye el permiso para esta sección. Si crees que es un error, pídeselo al administrador de tu tienda.",
     ilustracion: Cup403Illustration,
     reintentable: false,
   },
   404: {
-    titulo: "aquí también hay buen café.",
-    descripcion: "Pero la página que buscas no existe o el enlace se preparó de forma incorrecta.",
+    titulo: "esta página se nos perdió.",
+    descripcion: "Pero la página que buscas no existe o el enlace está incompleto.",
     ilustracion: Cup404Illustration,
     reintentable: false,
   },
   429: {
-    titulo: "la cafetera necesita un respiro.",
-    descripcion: "Has enviado demasiadas solicitudes seguidas. Espera un momento antes de pedir otra taza.",
+    titulo: "demasiadas solicitudes por ahora.",
+    descripcion: "Has enviado demasiadas solicitudes seguidas. Espera un momento antes de intentarlo de nuevo.",
     ilustracion: Cup429Illustration,
     reintentable: true,
   },
   500: {
-    titulo: "se nos derramó el espresso.",
+    titulo: "algo salió mal en el camino.",
     descripcion: "Ocurrió un fallo inesperado, pero ya estamos limpiando la barra. Intenta de nuevo en unos segundos.",
     ilustracion: Cup500Illustration,
     reintentable: true,

@@ -9,7 +9,7 @@ import type {
   ValidarActivacionDto,
 } from "@/dtos/auth"
 
-// Llamadas finas a la API NestJS: la autenticación, los códigos y las contraseñas se resuelven en el backend.
+// Llamadas finas a la API Spring: la autenticación, los códigos y las contraseñas se resuelven en el backend.
 
 /** `reemplazarSesion`: el usuario confirmó cerrar la sesión activa de la cuenta para iniciar esta (modal «Continuar»). */
 export const loginAction = (email: string, password: string, reemplazarSesion = false) =>

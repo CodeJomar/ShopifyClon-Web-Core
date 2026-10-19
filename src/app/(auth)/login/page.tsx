@@ -1,7 +1,7 @@
 import { LoginView } from "@/modules/auth"
 
 export const metadata = {
-  title: "Iniciar sesión | Coffy Flow",
+  title: "Iniciar sesión | OTemu",
   description: "Ingresar credenciales para el accesso al sistema.",
 }
 

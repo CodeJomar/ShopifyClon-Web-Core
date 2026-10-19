@@ -1,6 +1,12 @@
-import { redirect } from "next/navigation"
+import { Store } from "lucide-react"
 
-// La raíz no tiene contenido propio: lleva a Inicio. El Proxy manda al login si no hay sesión.
+import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
+
+// Marcador provisional de la raíz: la vitrina y el panel llegan en W-014 y W-007.
 export default function Page() {
-  redirect("/home")
+  return (
+    <main className="flex min-h-screen items-center justify-center p-6">
+      <EstadoVacio titulo="OTemu" descripcion="En construcción." icono={Store} />
+    </main>
+  )
 }

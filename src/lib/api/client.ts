@@ -6,8 +6,8 @@ import { conexion, esFalloDeConexion } from "@/lib/connection"
 import { MOTIVO_SESION_REEMPLAZADA, marcarSesionReemplazada, sesionReemplazada } from "./sesion-reemplazada"
 
 /**
- * Cliente tipado hacia la API NestJS.
- * - La sesión viaja en cookies HttpOnly emitidas por NestJS (`withCredentials`); el frontend nunca ve ni guarda tokens.
+ * Cliente tipado hacia la API Spring.
+ * - La sesión viaja en cookies HttpOnly emitidas por la API (`withCredentials`); el frontend nunca ve ni guarda tokens.
  * - Solo se envían credenciales al origen de la API configurado.
  */
 export const api = axios.create({

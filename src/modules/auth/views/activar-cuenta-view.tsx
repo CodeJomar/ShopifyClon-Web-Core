@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Coffee, ArrowLeft, MailWarning } from "lucide-react"
+import { Store, ArrowLeft, MailWarning } from "lucide-react"
 
 import { Spinner } from "@/shared/components/ui/spinner"
 import { NewPasswordForm } from "@/modules/auth/components/new-password-form"
@@ -20,10 +20,10 @@ export function ActivarCuentaView({ token }: ActivarCuentaViewProps) {
       {/* Cabecera idéntica al Login */}
       <div className="flex flex-col items-center text-center gap-2 select-none">
         <div className="flex size-16 items-center justify-center rounded-full bg-[#4C0107] text-white shadow-sm">
-          <Coffee size={30} strokeWidth={2.2} />
+          <Store size={30} strokeWidth={2.2} />
         </div>
         <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-stone-100 tracking-tight">
-          Coffy Flow
+          OTemu
         </h1>
         <p className="text-xs text-slate-500 dark:text-stone-400 font-medium">
           {estado === "invalido" ? "Enlace no disponible" : "Activar Cuenta"}
@@ -39,7 +39,7 @@ export function ActivarCuentaView({ token }: ActivarCuentaViewProps) {
 
       {estado === "valido" && (
         <NewPasswordForm
-          description={`Hola ${nombre}, define la contraseña con la que ingresarás a Coffy Flow.`}
+          description={`Hola ${nombre}, define la contraseña con la que ingresarás a OTemu.`}
           submitLabel="Activar Cuenta"
           onSubmit={activar}
         />

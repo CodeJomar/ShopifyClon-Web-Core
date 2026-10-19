@@ -12,7 +12,7 @@ export default function AuthLayout({
       <div className="hidden lg:relative lg:col-span-8 lg:block h-full bg-slate-900 z-10 shadow-[10px_0_30px_-5px_#4C010780]">
         <Image
           src="/images/login.webp"
-          alt="Barista preparando café en una cafetería acogedora"
+          alt="Imagen de inicio de sesión"
           fill
           priority
           sizes="66vw"

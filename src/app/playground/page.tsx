@@ -23,7 +23,7 @@ export default function PlaygroundPage() {
         <div className="border-b pb-4">
           <h1 className="text-3xl font-bold text-slate-900">UI / Components Playground</h1>
           <p className="text-slate-500 mt-2">
-            Entorno aislado para auditar y personalizar los componentes base y compuestos de Coffy Flow.
+            Entorno aislado para auditar y personalizar los componentes base y compuestos de OTemu.
           </p>
         </div>
 
@@ -42,7 +42,7 @@ export default function PlaygroundPage() {
                 </Button>
 
                 <Button variant="ghost" leftIcon={<Monitor size={18} />}>
-                  KDS
+                  Panel
                 </Button>
               </div>
 

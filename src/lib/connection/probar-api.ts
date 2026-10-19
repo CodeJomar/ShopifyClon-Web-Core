@@ -1,5 +1,6 @@
-/** Ruta de la web que Next reenvía al /health de la API (ver next.config.ts). Es pública: no exige sesión. */
-const RUTA_ESTADO_API = "/estado-api"
+/** Ruta de la web que Next reenvía a la API Spring (ver next.config.ts). Debe ser pública: no exige sesión. */
+// TODO(Q-W-001): la API Spring no tiene /health; se usa GET /api/planes como latido. Confirmar que es pública.
+const RUTA_ESTADO_API = "/api/planes"
 
 /** Pregunta a la API si está viva. true = responde; false = sin respuesta, tiempo agotado o error del servidor. */
 export async function probarApi(tiempoMaximoMs = 4000): Promise<boolean> {

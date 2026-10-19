@@ -1,21 +1,13 @@
 /**
- * Permisos del sistema. Espejo de los nombres que define la API (NestJS es la autoridad):
+ * Permisos del sistema. Espejo de los nombres que define la API Spring (la API es la autoridad):
  * la API entrega en /auth/me una lista "MODULO:ACCION" (el propietario recibe "*") y la interfaz solo la usa para
  * mostrar u ocultar. Nada de esto autoriza: la API vuelve a comprobar cada petición.
  *
  * Los roles son datos que el propietario configura, así que la interfaz NUNCA decide por nombre de rol:
  * pregunta siempre por permisos.
  */
-export const MODULO = {
-  USERS: "USERS",
-  ROLES: "ROLES",
-  MENU: "MENU",
-  TABLES: "TABLES",
-  ORDERS: "ORDERS",
-  KDS: "KDS",
-  TRANSACTIONS: "TRANSACTIONS",
-  DASHBOARD: "DASHBOARD",
-} as const
+// TODO(W-007): lista de módulos de la API Spring (Q-W-001: vacía hasta que el panel defina sus permisos).
+export const MODULO = {} as const
 
 export const ACCION = {
   LEER: "LEER",

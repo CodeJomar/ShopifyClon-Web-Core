@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { Button } from "@/shared/components/ui/button"
-import { Mail, Lock, Eye, EyeOff, Coffee } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, Store } from "lucide-react"
 import { toast } from "@/shared/components/ui/toast"
 import { useLogin } from "../hooks/use-login"
 import { SesionActivaModal } from "../components/sesion-activa-modal"
@@ -66,13 +66,13 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      {/* Identidad Coffy Flow con Icono de Café */}
+      {/* Identidad OTemu */}
       <div className="flex flex-col items-center text-center gap-2">
         <div className="flex size-16 items-center justify-center rounded-full bg-[#4C0107] text-white shadow-sm">
-          <Coffee size={30} strokeWidth={2.2} />
+          <Store size={30} strokeWidth={2.2} />
         </div>
         <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
-          Coffy Flow
+          OTemu
         </h1>
         <p className="text-xs text-slate-500 font-medium">
           Acceso de Personal

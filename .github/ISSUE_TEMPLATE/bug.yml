@@ -11,7 +11,7 @@ body:
   - type: dropdown
     attributes:
       label: Módulo
-      options: [Auth, Usuarios, Roles, Menú, Mesas, Pedidos, KDS, Caja, Dashboard, Web, Infra]
+      options: [Auth, Cuenta, Tienda, Catálogo, Órdenes, Vitrina, Plataforma, Web, Infra]
     validations:
       required: true
   - type: input

@@ -43,7 +43,7 @@ export function Cup500Illustration({ className = "" }: { className?: string }) {
         {/* Sombra base */}
         <ellipse cx="200" cy="340" rx="170" ry="24" fill="url(#shadowGrad500)" />
 
-        {/* Charco de café derramado en el plato y mesa */}
+        {/* Charco de café derramado en el plato y la superficie */}
         <path
           d="M130 310 C150 295 190 290 240 295 C295 300 340 310 330 325 C320 338 270 345 210 343 C155 342 110 332 120 318 C123 313 126 311 130 310 Z"
           fill="url(#spillCoffeeGrad)"

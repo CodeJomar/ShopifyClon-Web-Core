@@ -37,7 +37,7 @@ export class BaseResponse<AMC extends ApiMensajeCodigo = ApiMensajeCodigo> {
       return false;
     }
 
-    // NestJS responde "OK"/"CREATED" en éxito y el nombre HTTP ("UNAUTHORIZED", ...) en error.
+    // La API responde "OK"/"CREATED" en éxito y el nombre HTTP ("UNAUTHORIZED", ...) en error.
     const estadoApi = String(response.status ?? "").toLowerCase();
     this.status =
       estadoApi === "ok" || estadoApi === "created"
