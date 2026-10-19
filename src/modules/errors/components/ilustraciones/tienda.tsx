@@ -7,7 +7,7 @@ interface IlustracionTiendaProps {
 }
 
 /**
- * Ilustración neutra de tienda para las pantallas de error (reemplaza las tazas de café de la plantilla, W-002).
+ * Ilustración neutra de tienda para las pantallas de error (reemplaza las tazas de la plantilla, W-002).
  * Solo clases de token (fill-*, stroke-*, text-*): se repinta solo con el tema claro u oscuro.
  */
 export function IlustracionTienda({ codigo, className }: IlustracionTiendaProps) {

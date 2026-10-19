@@ -121,10 +121,10 @@ export default function PlaygroundPage() {
         <Seccion id="campos" titulo="2. Campos outlined cut (§4.2)">
           <div className="grid gap-6 sm:grid-cols-2">
             <FloatingInput label="Correo electrónico" autoFocus leftIcon={<Mail className="size-4" />} ayuda="Usaremos este correo para avisarte de tus pedidos." />
-            <FloatingInput label="Nombre de la tienda" defaultValue="Café del Parque" />
+            <FloatingInput label="Nombre de la tienda" defaultValue="Tienda Aurora" />
             <FloatingInput label="Contraseña" state="error" type="password" defaultValue="12345" mensajeError="Debe tener 8 caracteres o más." leftIcon={<Lock className="size-4" />} />
             <FloatingInput label="Número de orden" disabled defaultValue="ORD-2026-0042" />
-            <FloatingInput label="Enlace de tu tienda" readOnly copiable defaultValue="otemu.com/tienda/cafe-parque" />
+            <FloatingInput label="Enlace de tu tienda" readOnly copiable defaultValue="otemu.com/tienda/aurora-tienda" />
             <FloatingSelect label="Categoría" defaultValue="ropa">
               <SelectContent>
                 <SelectItem value="ropa">Ropa</SelectItem>
