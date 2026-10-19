@@ -39,7 +39,7 @@ export function OverlaysDemo() {
       <div className="space-y-3">
         <p className="text-sm font-semibold text-slate-700">Toast — resultado de una acción</p>
         <div className="flex flex-wrap gap-3">
-          <Button variant="success-outline" size="sm" onClick={() => toast.add({ type: "success", title: "Producto guardado", description: "Los cambios ya están en el menú." })}>
+          <Button variant="success-outline" size="sm" onClick={() => toast.add({ type: "success", title: "Producto guardado", description: "Los cambios ya están guardados." })}>
             Éxito
           </Button>
           <Button variant="danger-outline" size="sm" onClick={() => toast.add({ type: "error", title: "No se pudo guardar", description: "Revisa tu conexión e inténtalo de nuevo." })}>
@@ -48,7 +48,7 @@ export function OverlaysDemo() {
           <Button variant="warning-outline" size="sm" onClick={() => toast.add({ type: "warning", title: "Stock bajo", description: "Quedan 3 unidades de Croissant." })}>
             Advertencia
           </Button>
-          <Button variant="info-outline" size="sm" onClick={() => toast.add({ type: "info", title: "Nueva comanda en KDS" })}>
+          <Button variant="info-outline" size="sm" onClick={() => toast.add({ type: "info", title: "Nueva notificación" })}>
             Info
           </Button>
           <Button
@@ -57,7 +57,7 @@ export function OverlaysDemo() {
             onClick={() =>
               toast.promise(esperar(1800), {
                 loading: { title: "Guardando pedido..." },
-                success: { title: "Pedido enviado a cocina" },
+                success: { title: "Pedido enviado" },
                 error: { title: "No se pudo enviar" },
               })
             }
@@ -70,7 +70,7 @@ export function OverlaysDemo() {
             onClick={() =>
               toast.promise(esperar(1800).then(() => Promise.reject(new Error("fallo simulado"))), {
                 loading: { title: "Guardando pedido..." },
-                success: { title: "Pedido enviado a cocina" },
+                success: { title: "Pedido enviado" },
                 error: { title: "No se pudo enviar", description: "El servidor no respondió." },
               })
             }

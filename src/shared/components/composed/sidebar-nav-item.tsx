@@ -25,7 +25,7 @@ export function SidebarNavItem({
           ? "h-9 px-6 text-slate-600 dark:text-stone-400 text-[13px] hover:text-[#4C0107] dark:hover:text-white hover:bg-[#EDE5E6]/60 dark:hover:bg-stone-800"
           : "h-11 px-5 text-slate-700 dark:text-stone-400 hover:bg-[#EDE5E6]/70 dark:hover:bg-stone-800 hover:text-[#4C0107] dark:hover:text-white",
 
-        // Estado Activo (como KDS en tu prototipo)
+        // Estado Activo (como en el prototipo)
         isActive && "bg-[#EDE5E6] dark:bg-stone-800 text-[#4C0107] dark:text-white font-semibold",
 
         className

@@ -1,7 +1,7 @@
 import { ForgotPasswordView } from "@/modules/auth"
 
 export const metadata = {
-  title: "Recuperar Contraseña | Coffy Flow",
+  title: "Recuperar Contraseña | OTemu",
   description: "Flujo de recuperación y verificación de acceso",
 }
 

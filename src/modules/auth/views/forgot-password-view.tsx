@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Mail, Coffee, ArrowLeft } from "lucide-react"
+import { Mail, Store, ArrowLeft } from "lucide-react"
 
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { Button } from "@/shared/components/ui/button"
@@ -37,10 +37,10 @@ export function ForgotPasswordView() {
       {/* Cabecera idéntica al Login */}
       <div className="flex flex-col items-center text-center gap-2 select-none">
         <div className="flex size-16 items-center justify-center rounded-full bg-[#4C0107] text-white shadow-sm">
-          <Coffee size={30} strokeWidth={2.2} />
+          <Store size={30} strokeWidth={2.2} />
         </div>
         <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-stone-100 tracking-tight">
-          Coffy Flow
+          OTemu
         </h1>
         <p className="text-xs text-slate-500 dark:text-stone-400 font-medium">
           {step === "email" && "Recuperación de Contraseña"}

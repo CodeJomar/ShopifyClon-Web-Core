@@ -13,7 +13,7 @@ interface CanProps extends Requisito {
 
 /**
  * Muestra a sus hijos solo si la sesión tiene el permiso:
- *   <Can modulo={MODULO.MENU} accion={ACCION.CREAR}><Button>Nuevo producto</Button></Can>
+ *   <Can modulo={MODULO.EJEMPLO} accion={ACCION.CREAR}><Button>Crear</Button></Can>
  */
 export function Can({ modulo, accion, children, fallback = null }: CanProps) {
   const { puede } = useCan()
