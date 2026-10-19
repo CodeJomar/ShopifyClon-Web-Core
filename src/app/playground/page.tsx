@@ -16,13 +16,13 @@ import { ErroresDemo } from "./errores-demo";
 
 export default function PlaygroundPage() {
   return (
-    <div className="min-h-screen bg-slate-50 p-8">
+    <div className="min-h-screen bg-muted p-8">
       <div className="mx-auto max-w-5xl space-y-12">
 
         {/* Cabecera */}
         <div className="border-b pb-4">
-          <h1 className="text-3xl font-bold text-slate-900">UI / Components Playground</h1>
-          <p className="text-slate-500 mt-2">
+          <h1 className="text-3xl font-bold text-foreground">UI / Components Playground</h1>
+          <p className="text-muted-foreground mt-2">
             Entorno aislado para auditar y personalizar los componentes base y compuestos de OTemu.
           </p>
         </div>
@@ -93,13 +93,13 @@ export default function PlaygroundPage() {
 
         {/* 2. Inputs & Formularios */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-800">4. Icon Switches</h2>
-          <div className="flex flex-wrap gap-6 p-6 bg-white rounded-3xl shadow-sm border">
+          <h2 className="text-xl font-semibold text-foreground">4. Icon Switches</h2>
+          <div className="flex flex-wrap gap-6 p-6 bg-card rounded-3xl shadow-sm border">
 
             {/* Réplica exacta de tu imagen (Modo Oscuro / Claro) */}
             <IconSwitch
-              leftIcon={<Moon size={18} className="text-[#4C0107]" />}
-              rightIcon={<Sun size={18} className="text-[#4C0107]" />}
+              leftIcon={<Moon size={18} className="text-brand-text" />}
+              rightIcon={<Sun size={18} className="text-brand-text" />}
               defaultChecked
             />
 
@@ -110,7 +110,7 @@ export default function PlaygroundPage() {
 
             {/* Switch Base sin contenedor (para formularios simples) */}
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-slate-700">Activo</span>
+              <span className="text-sm font-medium text-foreground">Activo</span>
               <Switch />
             </div>
 
@@ -142,8 +142,8 @@ export default function PlaygroundPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-800">2. Neomorphic Floating Inputs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-white rounded-3xl shadow-sm border">
+          <h2 className="text-xl font-semibold text-foreground">2. Neomorphic Floating Inputs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-card rounded-3xl shadow-sm border">
 
             {/* Estado Normal */}
             <FloatingInput
@@ -209,8 +209,8 @@ export default function PlaygroundPage() {
 
         {/* ... */}
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-800">5. Segmented Controls (Tabs)</h2>
-          <div className="flex flex-col gap-8 p-6 bg-white rounded-3xl shadow-sm border">
+          <h2 className="text-xl font-semibold text-foreground">5. Segmented Controls (Tabs)</h2>
+          <div className="flex flex-col gap-8 p-6 bg-card rounded-3xl shadow-sm border">
 
             <Tabs defaultValue="admin">
               <TabsList>
@@ -233,7 +233,7 @@ export default function PlaygroundPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <div className="mt-4 p-4 border rounded-xl bg-slate-50 text-sm text-slate-600">
+              <div className="mt-4 p-4 border rounded-xl bg-muted text-sm text-muted-foreground">
                 <TabsContent value="empleado">Vista de Empleado (Limitada)</TabsContent>
                 <TabsContent value="dueño">Vista de Dueño (Métricas y reportes)</TabsContent>
                 <TabsContent value="admin">Vista de Administrador (Acceso total)</TabsContent>
@@ -244,8 +244,8 @@ export default function PlaygroundPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-800">6. User Profile (Avatar Composition)</h2>
-          <div className="flex flex-col gap-6 p-6 bg-white rounded-3xl shadow-sm border">
+          <h2 className="text-xl font-semibold text-foreground">6. User Profile (Avatar Composition)</h2>
+          <div className="flex flex-col gap-6 p-6 bg-card rounded-3xl shadow-sm border">
 
             {/* Clon exacto del diseño */}
             <UserProfile
@@ -257,7 +257,7 @@ export default function PlaygroundPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-xl font-semibold text-slate-800">7. Overlays (Toast y Confirm)</h2>
+          <h2 className="text-xl font-semibold text-foreground">7. Overlays (Toast y Confirm)</h2>
           <OverlaysDemo />
         </section>
 

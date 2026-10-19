@@ -35,9 +35,9 @@ export function OverlaysDemo() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6 bg-white rounded-3xl shadow-sm border">
+    <div className="flex flex-col gap-6 p-6 bg-card rounded-3xl shadow-sm border">
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Toast — resultado de una acción</p>
+        <p className="text-sm font-semibold text-foreground">Toast — resultado de una acción</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="outline" size="sm" onClick={() => toast.add({ type: "success", title: "Producto guardado", description: "Los cambios ya están guardados." })}>
             Éxito
@@ -81,7 +81,7 @@ export function OverlaysDemo() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Confirm — decisión del usuario (AlertDialog)</p>
+        <p className="text-sm font-semibold text-foreground">Confirm — decisión del usuario (AlertDialog)</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="default" size="sm" onClick={() => probarConfirm("default")}>
             Confirmación normal
@@ -96,7 +96,7 @@ export function OverlaysDemo() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Panel — formularios (crear, editar, ver detalle)</p>
+        <p className="text-sm font-semibold text-foreground">Panel — formularios (crear, editar, ver detalle)</p>
         <Button variant="ghost" size="sm" onClick={() => setPanelAbierto(true)}>
           Abrir panel lateral
         </Button>

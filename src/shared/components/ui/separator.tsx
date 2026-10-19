@@ -15,7 +15,7 @@ function Separator({
       orientation={orientation}
       className={cn(
         // Color Ghost corporativo de la marca
-        "shrink-0 bg-[#EDE5E6]",
+        "shrink-0 bg-brand-strong/12",
         "data-[orientation=horizontal]:h-[1px] data-[orientation=horizontal]:w-full",
         "data-[orientation=vertical]:h-full data-[orientation=vertical]:w-[1px]",
         className

@@ -42,17 +42,17 @@ export function FloatingSelect({
             leftIcon ? "left-11" : "left-4",
 
             // Estado activo (arriba)
-            "top-2 text-[10px] font-semibold text-slate-500 dark:text-stone-400 tracking-wider",
+            "top-2 text-[10px] font-semibold text-muted-foreground  tracking-wider",
 
             // Estado vacío (centrado vertical)
-            "peer-data-[placeholder]:top-1/2 peer-data-[placeholder]:-translate-y-1/2 peer-data-[placeholder]:text-sm peer-data-[placeholder]:font-normal peer-data-[placeholder]:text-slate-400 dark:peer-data-[placeholder]:text-stone-500 peer-data-[placeholder]:tracking-normal",
+            "peer-data-[placeholder]:top-1/2 peer-data-[placeholder]:-translate-y-1/2 peer-data-[placeholder]:text-sm peer-data-[placeholder]:font-normal peer-data-[placeholder]:text-muted-foreground  peer-data-[placeholder]:tracking-normal",
 
             // Estado abierto / foco
-            "peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-slate-700 dark:peer-focus:text-stone-200 peer-focus:tracking-wider",
-            "peer-data-popup-open:top-2 peer-data-popup-open:translate-y-0 peer-data-popup-open:text-[10px] peer-data-popup-open:font-bold peer-data-popup-open:text-slate-700 dark:peer-data-popup-open:text-stone-200 peer-data-popup-open:tracking-wider",
+            "peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-foreground  peer-focus:tracking-wider",
+            "peer-data-popup-open:top-2 peer-data-popup-open:translate-y-0 peer-data-popup-open:text-[10px] peer-data-popup-open:font-bold peer-data-popup-open:text-foreground  peer-data-popup-open:tracking-wider",
 
-            state === "error" && "text-red-500 peer-focus:text-red-600",
-            state === "success" && "text-green-600 peer-focus:text-green-700"
+            state === "error" && "text-destructive-text peer-focus:text-destructive-text",
+            state === "success" && "text-tono-exito-fg peer-focus:text-tono-exito-fg"
           )}
         >
           {label}

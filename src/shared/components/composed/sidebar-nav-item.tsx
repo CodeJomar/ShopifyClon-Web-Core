@@ -22,11 +22,11 @@ export function SidebarNavItem({
         // Respeto estricto a la regla de curva: rounded-full con altura fija y padding horizontal seguro
         "flex w-full items-center gap-3 rounded-full text-sm font-medium transition-all duration-150 outline-none select-none cursor-pointer",
         isSubItem
-          ? "h-9 px-6 text-slate-600 dark:text-stone-400 text-[13px] hover:text-[#4C0107] dark:hover:text-white hover:bg-[#EDE5E6]/60 dark:hover:bg-stone-800"
-          : "h-11 px-5 text-slate-700 dark:text-stone-400 hover:bg-[#EDE5E6]/70 dark:hover:bg-stone-800 hover:text-[#4C0107] dark:hover:text-white",
+          ? "h-9 px-6 text-muted-foreground  text-[13px] hover:text-brand-text dark:hover:text-white hover:bg-brand-strong/12 "
+          : "h-11 px-5 text-foreground  hover:bg-brand-strong/12  hover:text-brand-text dark:hover:text-white",
 
         // Estado Activo (como en el prototipo)
-        isActive && "bg-[#EDE5E6] dark:bg-stone-800 text-[#4C0107] dark:text-white font-semibold",
+        isActive && "bg-brand-strong/12  text-brand-text dark:text-white font-semibold",
 
         className
       )}
@@ -35,7 +35,7 @@ export function SidebarNavItem({
       {icon && (
         <span className={cn(
           "flex items-center justify-center shrink-0",
-          isActive ? "text-[#4C0107] dark:text-white" : "text-slate-500 dark:text-stone-400",
+          isActive ? "text-brand-text dark:text-white" : "text-muted-foreground ",
           isSubItem ? "size-4" : "size-5"
         )}>
           {icon}

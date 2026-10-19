@@ -65,9 +65,9 @@ export function OtpInput({ value, onChange, disabled }: OtpInputProps) {
           onKeyDown={(e) => handleKeyDown(i, e)}
           onPaste={handlePaste}
           className={cn(
-            "size-12 sm:size-13 rounded-2xl bg-slate-50 dark:bg-stone-900 border border-slate-200 dark:border-stone-800",
-            "text-center text-xl font-bold text-slate-900 dark:text-stone-100 outline-none transition-all",
-            "focus:border-[#4C0107] focus:ring-2 focus:ring-[#4C0107]/20 focus:bg-white dark:focus:bg-stone-850",
+            "size-12 sm:size-13 rounded-2xl bg-muted  border border-border ",
+            "text-center text-xl font-bold text-foreground  outline-none transition-all",
+            "focus:border-brand-strong focus:ring-2 focus:ring-ring focus:bg-card ",
             "disabled:opacity-50 disabled:cursor-not-allowed"
           )}
         />

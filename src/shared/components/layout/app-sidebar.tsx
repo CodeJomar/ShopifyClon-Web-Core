@@ -57,7 +57,7 @@ export function AppSidebar({
                     className="flex items-center justify-center pt-1 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
                   >
                     <Avatar className="size-12 shrink-0 border-none">
-                      <AvatarFallback className="bg-[#4C0107] text-white">
+                      <AvatarFallback className="bg-primary text-white">
                         <Store className="size-6" />
                       </AvatarFallback>
                     </Avatar>
@@ -72,16 +72,16 @@ export function AppSidebar({
               className="flex items-center gap-3 pt-1 px-2 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
             >
               <Avatar className="size-12 shrink-0 border-none">
-                <AvatarFallback className="bg-[#4C0107] text-white">
+                <AvatarFallback className="bg-primary text-white">
                   <Store className="size-6" />
                 </AvatarFallback>
               </Avatar>
 
               <div className="flex flex-col overflow-hidden">
-                <span className="font-display text-base font-bold leading-tight text-slate-900 dark:text-stone-100 truncate">
+                <span className="font-display text-base font-bold leading-tight text-foreground  truncate">
                   OTemu
                 </span>
-                <span className="text-xs text-slate-500 dark:text-stone-400 truncate">
+                <span className="text-xs text-muted-foreground  truncate">
                   Tu tienda en línea
                 </span>
               </div>
@@ -89,7 +89,7 @@ export function AppSidebar({
           )}
 
           {/* Separador superior del UI Kit */}
-          <Separator className="bg-[#EDE5E6] dark:bg-[#373232]" />
+          <Separator className="bg-brand-strong/12 " />
         </div>
 
         {/* Enlaces del Menú (generados desde el mapa de navegación) */}
@@ -123,7 +123,7 @@ export function AppSidebar({
 
       {/* Zona Inferior: Separador y Perfil de Usuario */}
       <div className={cn("w-full flex flex-col gap-4 pt-2 shrink-0", isCollapsed && "items-center")}>
-        <Separator className="bg-[#EDE5E6] dark:bg-[#373232]" />
+        <Separator className="bg-brand-strong/12 " />
 
         {isCollapsed ? (
           <Tooltip>
@@ -141,8 +141,8 @@ export function AppSidebar({
             href={PERFIL_HREF}
             aria-label="Mi perfil"
             className={cn(
-              "w-full rounded-2xl p-2 transition-colors outline-none hover:bg-[#EDE5E6]/60 focus-visible:ring-2 focus-visible:ring-[#4C0107]/40 dark:hover:bg-stone-800",
-              pathname === PERFIL_HREF && "bg-[#EDE5E6] dark:bg-stone-800"
+              "w-full rounded-2xl p-2 transition-colors outline-none hover:bg-brand-strong/12 focus-visible:ring-2 focus-visible:ring-ring ",
+              pathname === PERFIL_HREF && "bg-brand-strong/12 "
             )}
           >
             <UserProfile name={userName} role={userRole} initials={userInitials} className="cursor-pointer" />

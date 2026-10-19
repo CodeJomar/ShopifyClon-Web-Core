@@ -51,10 +51,10 @@ function PaginationLink({ className, isActive, disabled, children, ...props }: P
       data-active={isActive}
       className={cn(
         "inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-sm font-semibold tabular-nums transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4C0107]/40 disabled:pointer-events-none disabled:opacity-40",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40",
         isActive
-          ? "bg-[#4C0107] text-white shadow-sm dark:bg-stone-100 dark:text-stone-900"
-          : "text-slate-600 hover:bg-[#EDE5E6] hover:text-[#4C0107] dark:text-stone-300 dark:hover:bg-stone-800 dark:hover:text-stone-100",
+          ? "bg-primary text-white shadow-sm  "
+          : "text-muted-foreground hover:bg-brand-strong/12 hover:text-brand-text   ",
         className
       )}
       {...props}
@@ -89,7 +89,7 @@ function PaginationEllipsis({
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
-        "flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4 text-slate-400 dark:text-stone-500",
+        "flex size-9 items-center justify-center [&_svg:not([class*='size-'])]:size-4 text-muted-foreground ",
         className
       )}
       {...props}
@@ -160,7 +160,7 @@ export function BarraPaginacion({
   if (compacta) {
     return (
       <div className="flex shrink-0 items-center justify-between gap-2">
-        <p className="truncate text-xs text-slate-500 tabular-nums dark:text-stone-400">
+        <p className="truncate text-xs text-muted-foreground tabular-nums ">
           {desde}–{hasta} de {total}
         </p>
         <Pagination className="mx-0 w-auto justify-end">
@@ -176,7 +176,7 @@ export function BarraPaginacion({
               </PaginationLink>
             </PaginationItem>
             <PaginationItem>
-              <span className="px-1 text-xs font-semibold text-slate-600 tabular-nums dark:text-stone-300">
+              <span className="px-1 text-xs font-semibold text-muted-foreground tabular-nums ">
                 {pagina} / {totalPaginas}
               </span>
             </PaginationItem>
@@ -198,7 +198,7 @@ export function BarraPaginacion({
 
   return (
     <div className="flex shrink-0 items-center justify-between gap-3">
-      <p className="truncate text-xs text-slate-500 tabular-nums dark:text-stone-400">
+      <p className="truncate text-xs text-muted-foreground tabular-nums ">
         <span className="hidden sm:inline">Mostrando </span>
         {desde}–{hasta} de {total}
         <span className="hidden sm:inline"> {etiqueta}</span>

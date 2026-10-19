@@ -50,7 +50,7 @@ function BreadcrumbLink({
     props: mergeProps<"a">(
       {
         className: cn(
-          "font-medium text-slate-500 transition-colors hover:text-[#4C0107] dark:text-stone-400 dark:hover:text-white",
+          "font-medium text-muted-foreground transition-colors hover:text-brand-text  dark:hover:text-white",
           className
         ),
       },
@@ -70,7 +70,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("font-bold text-slate-900 dark:text-stone-100", className)}
+      className={cn("font-bold text-foreground ", className)}
       {...props}
     />
   )
@@ -86,7 +86,7 @@ function BreadcrumbSeparator({
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("[&>svg]:size-3.5 text-slate-400 shrink-0", className)}
+      className={cn("[&>svg]:size-3.5 text-muted-foreground shrink-0", className)}
       {...props}
     >
       {children ?? <ChevronRightIcon className="stroke-[2.5]" />}
@@ -104,7 +104,7 @@ function BreadcrumbEllipsis({
       role="presentation"
       aria-hidden="true"
       className={cn(
-        "flex size-4 items-center justify-center [&>svg]:size-3.5 text-slate-400",
+        "flex size-4 items-center justify-center [&>svg]:size-3.5 text-muted-foreground",
         className
       )}
       {...props}

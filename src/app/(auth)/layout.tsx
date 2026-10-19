@@ -7,9 +7,9 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen w-full bg-white grid grid-cols-12 overflow-hidden">
+    <div className="min-h-screen w-full bg-card grid grid-cols-12 overflow-hidden">
       {/* Sección Izquierda: 8 Columnas (Imagen de ambientación) */}
-      <div className="hidden lg:relative lg:col-span-8 lg:block h-full bg-slate-900 z-10 shadow-[10px_0_30px_-5px_#4C010780]">
+      <div className="hidden lg:relative lg:col-span-8 lg:block h-full bg-foreground z-10 shadow-[10px_0_30px_-5px_#4C010780]">
         <Image
           src="/images/login.webp"
           alt="Imagen de inicio de sesión"

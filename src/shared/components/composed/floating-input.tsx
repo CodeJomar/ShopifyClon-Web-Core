@@ -18,7 +18,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
         {leftIcon && (
           <div className={cn(
             "absolute left-4 top-1/2 -translate-y-1/2 z-10 pointer-events-none flex items-center transition-colors",
-            disabled ? "text-slate-300 dark:text-stone-600" : "text-slate-400 dark:text-stone-500"
+            disabled ? "text-muted-foreground " : "text-muted-foreground "
           )}>
             {leftIcon}
           </div>
@@ -45,21 +45,21 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             leftIcon ? "left-11" : "left-4",
 
             // Si está deshabilitado
-            disabled && "text-slate-400 dark:text-stone-600",
+            disabled && "text-muted-foreground ",
 
             // Flotando arriba (cuando tiene valor o foco)
             "top-2 text-[10px] font-semibold tracking-wider",
-            !disabled && "text-slate-500 dark:text-stone-400",
+            !disabled && "text-muted-foreground ",
 
             // Placeholder centrado cuando está vacío
             "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-placeholder-shown:font-normal peer-placeholder-shown:tracking-normal",
-            !disabled && "peer-placeholder-shown:text-slate-400 dark:peer-placeholder-shown:text-stone-500",
+            !disabled && "peer-placeholder-shown:text-muted-foreground ",
 
             // Foco
-            !disabled && "peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-slate-700 dark:peer-focus:text-stone-200 peer-focus:tracking-wider",
+            !disabled && "peer-focus:top-2 peer-focus:translate-y-0 peer-focus:text-[10px] peer-focus:font-bold peer-focus:text-foreground  peer-focus:tracking-wider",
 
-            state === "error" && "text-red-500 peer-focus:text-red-600",
-            state === "success" && "text-green-600 peer-focus:text-green-700"
+            state === "error" && "text-destructive-text peer-focus:text-destructive-text",
+            state === "success" && "text-tono-exito-fg peer-focus:text-tono-exito-fg"
           )}
         >
           {label}
@@ -69,8 +69,8 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
           <div className={cn(
             "absolute right-4 top-1/2 -translate-y-1/2 z-10 flex items-center transition-colors",
             disabled
-              ? "text-slate-300 dark:text-stone-600 cursor-not-allowed"
-              : "text-slate-400 dark:text-stone-500 cursor-pointer hover:text-slate-600 dark:hover:text-stone-300"
+              ? "text-muted-foreground  cursor-not-allowed"
+              : "text-muted-foreground  cursor-pointer hover:text-muted-foreground "
           )}>
             {rightIcon}
           </div>

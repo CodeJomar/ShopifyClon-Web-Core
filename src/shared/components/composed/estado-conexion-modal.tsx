@@ -38,7 +38,7 @@ export function EstadoConexionModal() {
     <AlertDialog open={hayProblema} onOpenChange={() => undefined}>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
-          <AlertDialogMedia className="bg-amber-50 text-amber-600 ring-amber-50/60 dark:bg-amber-950/40 dark:text-amber-400 dark:ring-amber-950/30">
+          <AlertDialogMedia className="bg-warning/12 text-warning-text ring-warning/25   ">
             <Icono strokeWidth={1.75} />
           </AlertDialogMedia>
           <AlertDialogTitle>{sinInternet ? "Sin conexión a internet" : "No hay conexión con el servidor"}</AlertDialogTitle>
@@ -47,7 +47,7 @@ export function EstadoConexionModal() {
               ? "Este equipo perdió su conexión. Revisa el Wi‑Fi o el cable de red; seguiremos intentando y esta ventana se cerrará sola."
               : "El sistema está encendido, pero el servidor no responde. Seguiremos intentando y esta ventana se cerrará sola cuando vuelva."}
           </AlertDialogDescription>
-          <p className="text-xs text-slate-500 dark:text-stone-400">Lo que ya tenías en pantalla no se pierde.</p>
+          <p className="text-xs text-muted-foreground ">Lo que ya tenías en pantalla no se pierde.</p>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <Button
