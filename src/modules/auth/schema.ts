@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-// Misma política que el backend (NestJS la vuelve a validar): 8+ caracteres con letras, números y un símbolo.
+// Misma política que el backend (la API la vuelve a validar): 8+ caracteres con letras, números y un símbolo.
 export const passwordNuevaSchema = z
   .string()
   .min(8, "La contraseña debe tener al menos 8 caracteres.")

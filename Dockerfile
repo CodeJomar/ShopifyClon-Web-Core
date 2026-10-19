@@ -29,16 +29,11 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
-# URL de la API NestJS para los rewrites de /api (se hornea en el build)
-ARG API_INTERNAL_URL=http://api-core:4000
+# URL de la API Spring para los rewrites de /api (se hornea en el build)
+ARG API_INTERNAL_URL=http://api-core:8080
 ENV API_INTERNAL_URL=$API_INTERNAL_URL
 # La API se consume por el mismo origen (/api)
 ENV NEXT_PUBLIC_API_URL=/api
-
-# URL pública de la API para el WebSocket del KDS (tiempo real). NEXT_PUBLIC_* se hornea al compilar:
-# en Railway se define como variable del servicio y llega aquí como argumento de build. Vacía = el KDS usa solo sondeo.
-ARG NEXT_PUBLIC_WS_URL=
-ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
 
 # Compilación de producción
 RUN npm run build

@@ -1,5 +1,5 @@
 /**
- * Reglas de texto compartidas por los formularios. Son las mismas que valida la API (CofflyFlow-Api-Core,
+ * Reglas de texto compartidas por los formularios. Son las mismas que valida la API (API del backend,
  * common/validators/is-sql-xss-safe.validator.ts): la API vuelve a validar, esto solo da el aviso al instante.
  */
 
