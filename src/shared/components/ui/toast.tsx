@@ -35,7 +35,7 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
     <ToastPrimitive.Root
       data-slot="toast"
       className={cn(
-        "group/toast pointer-events-auto absolute right-0 bottom-0 z-[calc(1000-var(--toast-index))] w-full origin-bottom overflow-hidden rounded-2xl border border-l-4 border-border border-l-brand-strong bg-card text-foreground shadow-lg will-change-transform outline-none select-none focus-visible:ring-2 focus-visible:ring-ring    ",
+        "group/toast pointer-events-auto absolute right-0 bottom-0 z-[calc(1000-var(--toast-index))] w-full origin-bottom overflow-hidden rounded-xl border border-island-border border-l-[6px] shadow-isla border-border border-l-brand-strong bg-card text-foreground will-change-transform outline-none select-none focus-visible:ring-2 focus-visible:ring-ring    ",
         "data-[type=success]:border-l-success data-[type=error]:border-l-destructive data-[type=warning]:border-l-warning data-[type=info]:border-l-info",
         "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]",
         "h-(--height) [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms]",
@@ -75,7 +75,7 @@ function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
       data-slot="toast-title"
-      className={cn("text-sm font-semibold leading-tight text-foreground ", className)}
+      className={cn("text-[13.5px] font-extrabold leading-tight text-foreground ", className)}
       {...props}
     />
   )
@@ -88,7 +88,7 @@ function ToastDescription({
   return (
     <ToastPrimitive.Description
       data-slot="toast-description"
-      className={cn("text-xs leading-relaxed text-muted-foreground ", className)}
+      className={cn("text-[12.5px] leading-relaxed text-muted-foreground ", className)}
       {...props}
     />
   )
@@ -173,7 +173,14 @@ function ToastIcon({ type }: { type: string | undefined }) {
   return (
     <span
       data-slot="toast-icon"
-      className="shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-5"
+      className={cn(
+        "flex size-9 shrink-0 items-center justify-center rounded-full [&_svg]:pointer-events-none [&_svg]:size-[18px]",
+        type === "success" && "bg-success/16",
+        type === "info" && "bg-info/16",
+        type === "warning" && "bg-warning/16",
+        type === "error" && "bg-destructive/16",
+        type === "loading" && "bg-brand-strong/14"
+      )}
     >
       {icon}
     </span>

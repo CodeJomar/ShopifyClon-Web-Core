@@ -8,7 +8,10 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-card text-card-foreground",
+        // Isla con barra lateral de 6 px (docs/diseno-web.md §4.4)
+        default: "rounded-xl border-island-border border-l-[6px] border-l-info bg-card text-card-foreground shadow-isla",
+        success: "rounded-xl border-island-border border-l-[6px] border-l-success bg-card text-card-foreground shadow-isla",
+        warning: "rounded-xl border-island-border border-l-[6px] border-l-warning bg-card text-card-foreground shadow-isla",
         destructive:
           "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
       },

@@ -56,7 +56,7 @@ function PanelContent({
       <PanelPrimitive.Popup
         data-slot="panel-content"
         className={cn(
-          "fixed inset-y-2 right-2 z-[95] flex w-[calc(100%-1rem)] flex-col overflow-hidden rounded-3xl border border-border bg-card text-sm text-foreground shadow-2xl outline-none transition-transform duration-300 ease-in-out sm:max-w-md",
+          "fixed inset-y-2 right-2 z-[95] flex w-[calc(100%-1rem)] flex-col overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla text-sm text-foreground shadow-2xl outline-none transition-transform duration-300 ease-in-out sm:max-w-md",
           "data-ending-style:translate-x-[120%] data-starting-style:translate-x-[120%]",
           "  ",
           className

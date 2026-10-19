@@ -1,8 +1,19 @@
 import * as React from "react"
 import { cn } from "@/shared/utils/cn"
 
+export type EstadoCampo = "default" | "error" | "success"
+
+// docs/diseno-web.md §4.2: borde 1.8, radio 12, alto 44. Los estados viven aquí para que input, select y textarea coincidan.
+export const claseCampo = "border-[1.8px] bg-transparent text-foreground outline-none transition-all duration-200 placeholder:text-muted-foreground read-only:bg-muted read-only:font-bold disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground disabled:border-input"
+
+export const claseEstadoCampo: Record<EstadoCampo, string> = {
+  default: "border-input hover:border-border-hover focus-visible:border-brand-strong focus-visible:ring-[3.5px] focus-visible:ring-brand-strong/18",
+  error: "border-destructive text-destructive-text hover:border-destructive focus-visible:border-destructive focus-visible:ring-[3.5px] focus-visible:ring-destructive/18",
+  success: "border-success focus-visible:border-success focus-visible:ring-[3.5px] focus-visible:ring-success/18",
+}
+
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  state?: "default" | "error" | "success"
+  state?: EstadoCampo
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -11,41 +22,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         ref={ref}
+        aria-invalid={state === "error" || undefined}
         className={cn(
-          // Altura base uniforme h-14 (56px) para calzar exactamente con el Select
-          "flex h-14 w-full rounded-2xl px-4 text-sm text-foreground  transition-all outline-none",
-
-          // Fondo base tenue cuando está vacío, y blanco limpio cuando TIENE CONTENIDO o foco
-          "bg-muted ",
-          "not-placeholder-shown:bg-card ",
-
-          // Borde base pronunciado en reposo
-          "border border-border ",
-
-          // Estado default: Sin efecto en hover; al interactuar (focus) fondo blanco y ring suave
-          state === "default" && [
-            "focus:bg-card ",
-            "focus:border-border  focus:ring-2 focus:ring-ring/25 dark:focus:ring-white/10"
-          ],
-
-          // Estado error: borde y fondo tintado constante
-          state === "error" && [
-            "border-destructive bg-destructive/12  text-destructive-text ",
-            "focus:border-destructive focus:ring-2 focus:ring-destructive/25"
-          ],
-
-          // Estado success: borde y fondo tintado constante
-          state === "success" && [
-            "border-success bg-success/12  text-tono-exito-fg ",
-            "focus:border-success focus:ring-2 focus:ring-success/25"
-          ],
-
-          // ESTADO DESHABILITADO: Armónico y sutil
-          "disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-muted/70  disabled:border-border  disabled:text-muted-foreground ",
-
-          "placeholder:text-muted-foreground ",
+          "flex h-11 w-full rounded-xl px-3.5 text-[13px] font-medium",
+          claseCampo,
+          claseEstadoCampo[state],
           "file:border-0 file:bg-transparent file:text-sm file:font-medium",
-
           className
         )}
         {...props}

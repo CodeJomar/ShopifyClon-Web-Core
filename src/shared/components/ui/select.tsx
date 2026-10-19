@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/shared/utils/cn"
+import { claseCampo, claseEstadoCampo } from "@/shared/components/ui/input"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
+import type { EstadoCampo } from "@/shared/components/ui/input"
 
 const Select = SelectPrimitive.Root
 const SelectGroup = SelectPrimitive.Group
@@ -29,7 +31,7 @@ function SelectTrigger({
 }: SelectPrimitive.Trigger.Props & {
   size?: "sm" | "default"
   leftIcon?: React.ReactNode
-  state?: "default" | "error" | "success"
+  state?: EstadoCampo
 }) {
   return (
     <SelectPrimitive.Trigger
@@ -37,30 +39,13 @@ function SelectTrigger({
       data-size={size}
       disabled={disabled}
       className={cn(
-        // Altura h-14 (56px) exacta al input
-        "peer relative flex h-14 w-full items-center rounded-2xl text-sm text-foreground  transition-all outline-none cursor-pointer",
-
-        // Fondo y bordes sincronizados
-        "bg-muted  not-data-[placeholder]:bg-card ",
-        "border border-border ",
-
-        "pt-5 pb-1 text-left",
-        leftIcon ? "pl-11" : "pl-4",
+        // Campo de 44 px: mismo borde, radio y estados que Input (docs/diseno-web.md §4.2)
+        "peer relative flex h-11 w-full items-center rounded-xl px-3.5 text-left text-[13px] font-medium cursor-pointer",
+        claseCampo,
+        claseEstadoCampo[state],
+        "data-popup-open:border-brand-strong data-popup-open:ring-[3.5px] data-popup-open:ring-brand-strong/18",
+        leftIcon ? "pl-11" : "",
         "pr-11",
-
-        // Foco / Popup abierto
-        state === "default" && [
-          "focus:bg-card ",
-          "focus:border-border  focus:ring-2 focus:ring-ring/25 dark:focus:ring-white/10",
-          "data-popup-open:border-border  data-popup-open:ring-2 data-popup-open:ring-ring/25 dark:data-popup-open:ring-white/10"
-        ],
-
-        // Estados semánticos
-        state === "error" && "border-destructive bg-destructive/12  text-destructive-text ",
-        state === "success" && "border-success bg-success/12  text-tono-exito-fg ",
-
-        // Deshabilitado idéntico al Input
-        "disabled:cursor-not-allowed disabled:opacity-60 disabled:bg-muted/70  disabled:border-border  disabled:text-muted-foreground ",
 
         "*:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 *:data-[slot=select-value]:line-clamp-1",
         className
