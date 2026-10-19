@@ -44,8 +44,8 @@ El proyecto vive en **dos repositorios de GitHub**, cada uno con su propio `.git
 
 | Repositorio | Qué contiene | Despliega a Railway |
 |---|---|---|
-| `CofflyFlow-Api-Core` | API NestJS, `database/` (esquema y migraciones SQL) y `docker/` (docker-compose local) | Sí, servicio **API** |
-| `CofflyFlow-Web-Core` | Web Next.js | Sí, servicio **Web** |
+| Repositorio del backend (nombre por confirmar, Q-W-001) | API Spring, `database/` (esquema y migraciones SQL) y `docker/` (docker-compose local) | Sí, servicio **API** |
+| `ShopifyClon-Web-Core` | Web Next.js (OTemu) | Sí, servicio **Web** |
 
 Los cambios que cruzan repositorios (por ejemplo, una migración SQL + la web que la usa) se hacen en este orden: primero la migración (en `database/` de la API, aplicada en la base), luego la API y por último la web.
 
@@ -55,8 +55,8 @@ Dos servicios en el mismo proyecto de Railway. Cada uno se conecta a **su** repo
 
 | Servicio | Repositorio | Health check |
 |---|---|---|
-| API | `CofflyFlow-Api-Core` | `/health/ready` |
-| Web | `CofflyFlow-Web-Core` | `/` |
+| API | Repositorio del backend | Por definir: la API Spring no tiene endpoint de salud (Q-W-001) |
+| Web | `ShopifyClon-Web-Core` | `/` |
 
 1. En cada servicio: Settings → Source → *Branch connected to production* = `prod`; activa **Wait for CI** para que no despliegue si los checks fallan.
 2. Variables y pasos de cada servicio (en Railway, nunca en el repo): `.github/DEPLOY.md` de cada repositorio.

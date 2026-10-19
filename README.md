@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OTemu (web)
 
-## Getting Started
+Interfaz web de OTemu, la plataforma para crear tu tienda en línea y vender por redes. Next.js 16 (App Router) que consume solo la API Spring del backend (`/api/v1`); no toca la base de datos ni decide reglas de negocio.
 
-First, run the development server:
+## Requisitos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 22 y npm.
+- La API Spring corriendo en `http://localhost:8080` para las pantallas que la usan.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Cómo levantarlo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Copia `.env.example` a `.env` (no subas `.env` al repositorio).
+2. `npm ci`
+3. `npm run dev` y abre http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+| Comando | Uso |
+|---|---|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run lint` | ESLint |
+| `npx tsc --noEmit` | Comprobación de tipos |
+| `npm run build` | Build de producción (standalone) |
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Documentación de arquitectura y de tareas: `../docs/arquitectura-frontend.md` y `../docs/orquestacion-frontend/`.

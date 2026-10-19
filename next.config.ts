@@ -10,7 +10,7 @@ const esProduccion = process.env.NODE_ENV === "production";
  * Política de contenido: solo se carga lo que sirve el propio sitio. 'unsafe-inline' en scripts y estilos lo exige Next.js
  * (hidratación y estilos en línea); el resto es estricto: sin plugins, sin marcos de otros sitios, formularios y base solo
  * del mismo origen. Las imágenes permiten https porque pueden venir de direcciones externas.
- * En desarrollo no se aplica (el recargado en caliente usa eval y WebSocket local).
+ * En desarrollo no se aplica (el recargado en caliente usa eval y una conexión local).
  */
 const politicaContenido = [
   "default-src 'self'",
