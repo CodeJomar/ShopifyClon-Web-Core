@@ -1,5 +1,0 @@
-export * from "./estilos"
-export * from "./perfil-cabecera"
-export * from "./datos-perfil-form"
-export * from "./password-form"
-export * from "./accesos-card"

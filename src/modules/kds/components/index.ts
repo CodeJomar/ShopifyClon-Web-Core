@@ -1,7 +1,0 @@
-export * from "./estilos"
-export * from "./config-estados"
-export * from "./filtro-estados"
-export * from "./comanda-card"
-export * from "./item-fila"
-export * from "./detalle-comanda-modal"
-export * from "./kds-skeleton"
