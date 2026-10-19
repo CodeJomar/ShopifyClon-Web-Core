@@ -15,6 +15,7 @@ import { SelectContent, SelectItem } from "@/shared/components/ui/select";
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio";
 import { BarraPaginacion } from "@/shared/components/composed/barra-paginacion";
 import type { TonoInsignia } from "@/shared/components/ui/badge";
+import { useMounted } from "@/shared/hooks/use-mounted";
 import { OverlaysDemo } from "./overlays-demo";
 import { ComposedDemo } from "./composed-demo";
 import { ErroresDemo } from "./errores-demo";
@@ -62,6 +63,8 @@ function Rotulo({ children }: { children: React.ReactNode }) {
 
 export default function PlaygroundPage() {
   const { resolvedTheme, setTheme } = useTheme();
+  const montado = useMounted();
+  const oscuro = montado && resolvedTheme === "dark";
   const [pagina, setPagina] = React.useState(1);
 
   return (
@@ -77,11 +80,11 @@ export default function PlaygroundPage() {
           <Button
             variant="neutral"
             size="sm"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(oscuro ? "light" : "dark")}
             aria-label="Cambiar entre tema claro y oscuro"
           >
-            {resolvedTheme === "dark" ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
-            {resolvedTheme === "dark" ? "Tema claro" : "Tema oscuro"}
+            {oscuro ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+            {oscuro ? "Tema claro" : "Tema oscuro"}
           </Button>
         </header>
 

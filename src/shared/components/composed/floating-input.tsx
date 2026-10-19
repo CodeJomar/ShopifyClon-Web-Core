@@ -10,7 +10,7 @@ import { cn } from "@/shared/utils/cn"
  * input, select y textarea.
  */
 export const claseEtiqueta = cn(
-  "pointer-events-none absolute z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
+  "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
   "peer-focus:top-0 peer-focus:bg-card peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
   "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:bg-card peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
   "peer-disabled:bg-transparent peer-disabled:text-muted-foreground"
