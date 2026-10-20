@@ -23,7 +23,7 @@ function DropdownMenuContent({
         <DropdownPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "z-50 min-w-44 overflow-hidden rounded-xl border border-slate-100 bg-white p-1.5 text-slate-700 shadow-lg ring-1 ring-black/5",
+            "z-50 min-w-44 overflow-hidden rounded-xl border border-border bg-card p-1.5 text-foreground shadow-lg ring-1 ring-black/5",
             "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
             className
           )}
@@ -42,7 +42,7 @@ function DropdownMenuItem({ className, ...props }: DropdownPrimitive.Item.Props)
       data-slot="dropdown-menu-item"
       className={cn(
         "relative flex cursor-pointer select-none items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition-colors",
-        "focus:bg-slate-100 focus:text-slate-900 data-disabled:pointer-events-none data-disabled:opacity-50",
+        "focus:bg-muted focus:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         className
       )}
       {...props}

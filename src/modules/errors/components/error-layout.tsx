@@ -29,14 +29,14 @@ export function ErrorLayout({ codigo, titulo, descripcion, ilustracion, rutaInic
   return (
     <div
       className={cn(
-        "relative flex w-full items-center justify-center overflow-hidden bg-[#FAF8F7] text-slate-950 transition-colors dark:bg-stone-950 dark:text-white",
+        "relative flex w-full items-center justify-center overflow-hidden bg-brand-strong/12 text-foreground transition-colors  dark:text-white",
         embebido ? "h-full min-h-0 rounded-2xl p-4 md:p-8" : "min-h-screen p-6 md:p-12 lg:p-16"
       )}
     >
       {/* Iluminación cálida muy sutil */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-amber-500/[0.04] blur-[140px] dark:bg-amber-600/[0.06]" />
-        <div className="absolute bottom-1/4 right-1/4 h-[500px] w-[500px] rounded-full bg-[#4C0107]/[0.03] blur-[140px] dark:bg-[#4C0107]/[0.12]" />
+        <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-warning/4 blur-[140px] dark:bg-warning/6" />
+        <div className="absolute bottom-1/4 right-1/4 h-[500px] w-[500px] rounded-full bg-primary/3 blur-[140px] dark:bg-primary/12" />
       </div>
 
       <main
@@ -58,20 +58,20 @@ export function ErrorLayout({ codigo, titulo, descripcion, ilustracion, rutaInic
 
         <div className="col-span-12 flex flex-col items-start justify-center text-left md:col-span-6 md:pl-4 lg:pl-8">
           <div className="mb-6 flex flex-col items-start">
-            <span className="text-sm font-semibold text-slate-800 md:text-base dark:text-stone-200">Error {codigo}</span>
-            <div className="mt-2 h-[2px] w-8 bg-slate-900 dark:bg-white" />
+            <span className="text-sm font-semibold text-foreground md:text-base ">Error {codigo}</span>
+            <div className="mt-2 h-[2px] w-8 bg-foreground dark:bg-card" />
           </div>
 
           <h1
             className={cn(
-              "mb-5 font-bold leading-[1.08] tracking-tight text-slate-950 dark:text-white",
+              "mb-5 font-bold leading-[1.08] tracking-tight text-foreground dark:text-white",
               embebido ? "text-3xl sm:text-4xl lg:text-5xl" : "text-4xl sm:text-5xl lg:text-6xl xl:text-[4.2rem]"
             )}
           >
             {titulo}
           </h1>
 
-          <p className="mb-8 max-w-md text-base font-normal leading-relaxed text-slate-700 sm:text-lg dark:text-stone-300">{descripcion}</p>
+          <p className="mb-8 max-w-md text-base font-normal leading-relaxed text-foreground sm:text-lg ">{descripcion}</p>
 
           <div className="flex flex-wrap items-center gap-3">
             <Button size="lg" onClick={() => router.push(rutaInicio)}>

@@ -43,7 +43,7 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
             <button
               type="button"
               onClick={() => router.push("/forgot-password")}
-              className="cursor-pointer font-semibold text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+              className="cursor-pointer font-semibold text-destructive-text underline underline-offset-2 hover:text-destructive-text  "
             >
               cambia tu contraseña
             </button>
@@ -68,13 +68,13 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
     <div className="flex flex-col gap-8 w-full">
       {/* Identidad OTemu */}
       <div className="flex flex-col items-center text-center gap-2">
-        <div className="flex size-16 items-center justify-center rounded-full bg-[#4C0107] text-white shadow-sm">
+        <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white shadow-sm">
           <Store size={30} strokeWidth={2.2} />
         </div>
-        <h1 className="font-display text-2xl font-bold text-slate-900 tracking-tight">
+        <h1 className="font-extrabold text-2xl font-bold text-foreground tracking-tight">
           OTemu
         </h1>
-        <p className="text-xs text-slate-500 font-medium">
+        <p className="text-xs text-muted-foreground font-medium">
           Acceso de Personal
         </p>
       </div>
@@ -91,7 +91,7 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
             autoComplete="email"
             {...register("email")}
           />
-          {errors.email && <p className="px-2 text-[11px] text-red-600">{errors.email.message}</p>}
+          {errors.email && <p className="px-2 text-[11px] text-destructive-text">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-1">
@@ -105,7 +105,7 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
                 onClick={() => setShowPassword((prev) => !prev)}
                 tabIndex={-1}
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                className="flex items-center justify-center text-slate-400 hover:text-slate-600 outline-none cursor-pointer"
+                className="flex items-center justify-center text-muted-foreground hover:text-muted-foreground outline-none cursor-pointer"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -115,11 +115,11 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
             autoComplete="current-password"
             {...register("password")}
           />
-          {errors.password && <p className="px-2 text-[11px] text-red-600">{errors.password.message}</p>}
+          {errors.password && <p className="px-2 text-[11px] text-destructive-text">{errors.password.message}</p>}
           <div className="flex justify-end pt-1">
             <Link
               href="/forgot-password"
-              className="text-[11px] font-medium text-slate-500 hover:text-[#4C0107] transition-colors cursor-pointer"
+              className="text-[11px] font-medium text-muted-foreground hover:text-brand-text transition-colors cursor-pointer"
             >
               ¿Olvidaste tu contraseña?
             </Link>
@@ -129,7 +129,7 @@ export function LoginView({ siguiente, motivo }: LoginViewProps) {
         <Button
           type="submit"
           variant="default"
-          size="md"
+          size="default"
           disabled={isSubmitting || bloqueado}
           className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
         >

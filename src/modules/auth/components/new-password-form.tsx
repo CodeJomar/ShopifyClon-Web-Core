@@ -38,7 +38,7 @@ export function NewPasswordForm({ description, submitLabel, onSubmit }: NewPassw
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
-      <p className="text-xs text-slate-600 dark:text-stone-400 text-center leading-relaxed">{description}</p>
+      <p className="text-xs text-muted-foreground  text-center leading-relaxed">{description}</p>
 
       <div className="space-y-1">
         <FloatingInput
@@ -51,7 +51,7 @@ export function NewPasswordForm({ description, submitLabel, onSubmit }: NewPassw
               onClick={() => setShowPassword((prev) => !prev)}
               tabIndex={-1}
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-              className="flex items-center justify-center text-slate-400 hover:text-slate-600 outline-none cursor-pointer"
+              className="flex items-center justify-center text-muted-foreground hover:text-muted-foreground outline-none cursor-pointer"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -62,9 +62,9 @@ export function NewPasswordForm({ description, submitLabel, onSubmit }: NewPassw
           {...register("password")}
         />
         {errors.password ? (
-          <p className="px-2 text-[11px] text-red-600">{errors.password.message}</p>
+          <p className="px-2 text-[11px] text-destructive-text">{errors.password.message}</p>
         ) : (
-          <p className="px-2 text-[11px] text-slate-400">Mínimo 8 caracteres, con letras, números y un símbolo.</p>
+          <p className="px-2 text-[11px] text-muted-foreground">Mínimo 8 caracteres, con letras, números y un símbolo.</p>
         )}
       </div>
 
@@ -79,7 +79,7 @@ export function NewPasswordForm({ description, submitLabel, onSubmit }: NewPassw
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               tabIndex={-1}
               aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-              className="flex items-center justify-center text-slate-400 hover:text-slate-600 outline-none cursor-pointer"
+              className="flex items-center justify-center text-muted-foreground hover:text-muted-foreground outline-none cursor-pointer"
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
@@ -89,13 +89,13 @@ export function NewPasswordForm({ description, submitLabel, onSubmit }: NewPassw
           autoComplete="new-password"
           {...register("confirmPassword")}
         />
-        {errors.confirmPassword && <p className="px-2 text-[11px] text-red-600">{errors.confirmPassword.message}</p>}
+        {errors.confirmPassword && <p className="px-2 text-[11px] text-destructive-text">{errors.confirmPassword.message}</p>}
       </div>
 
       <Button
         type="submit"
         variant="default"
-        size="md"
+        size="default"
         disabled={isSubmitting}
         className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
       >

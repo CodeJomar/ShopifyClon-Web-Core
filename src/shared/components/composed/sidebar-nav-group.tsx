@@ -36,13 +36,13 @@ export function SidebarNavGroup({
       <CollapsibleTrigger
         type="button"
         className={cn(
-          "flex h-11 w-full items-center justify-between gap-3 rounded-full px-5 text-sm font-medium text-slate-700 dark:text-stone-400 transition-colors outline-none select-none cursor-pointer",
-          "hover:bg-[#EDE5E6]/70 hover:text-[#4C0107] dark:hover:bg-stone-800 dark:hover:text-white",
-          isOpen && "text-[#4C0107] dark:text-white font-semibold"
+          "flex h-11 w-full items-center justify-between gap-3 rounded-full px-5 text-sm font-medium text-foreground  transition-colors outline-none select-none cursor-pointer",
+          "hover:bg-brand-strong/12 hover:text-brand-text  dark:hover:text-white",
+          isOpen && "text-brand-text dark:text-white font-semibold"
         )}
       >
         <div className="flex items-center gap-3 overflow-hidden">
-          <span className={cn("shrink-0 size-5 flex items-center justify-center", isOpen ? "text-[#4C0107] dark:text-white" : "text-slate-500 dark:text-stone-400")}>
+          <span className={cn("shrink-0 size-5 flex items-center justify-center", isOpen ? "text-brand-text dark:text-white" : "text-muted-foreground ")}>
             {icon}
           </span>
           <span className="truncate">{title}</span>
@@ -50,8 +50,8 @@ export function SidebarNavGroup({
 
         <ChevronDown
           className={cn(
-            "size-4 text-slate-400 shrink-0 transition-transform duration-200",
-            isOpen && "rotate-180 text-[#4C0107] dark:text-white"
+            "size-4 text-muted-foreground shrink-0 transition-transform duration-200",
+            isOpen && "rotate-180 text-brand-text dark:text-white"
           )}
         />
       </CollapsibleTrigger>

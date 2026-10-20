@@ -12,7 +12,7 @@ export function ErroresDemo() {
   const [codigo, setCodigo] = React.useState<CodigoError>(404)
 
   return (
-    <div className="flex flex-col gap-4 rounded-3xl border bg-white p-6 shadow-sm">
+    <div className="flex flex-col gap-4 rounded-3xl border bg-card p-6 shadow-sm">
       <div className="flex flex-wrap gap-2">
         {CODIGOS.map((c) => (
           <Button key={c} type="button" size="sm" variant={c === codigo ? "default" : "outline"} onClick={() => setCodigo(c)}>

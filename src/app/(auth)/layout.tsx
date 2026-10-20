@@ -1,5 +1,5 @@
 import * as React from "react"
-import Image from "next/image"
+import { Store } from "lucide-react"
 
 export default function AuthLayout({
   children,
@@ -7,23 +7,23 @@ export default function AuthLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen w-full bg-white grid grid-cols-12 overflow-hidden">
-      {/* Sección Izquierda: 8 Columnas (Imagen de ambientación) */}
-      <div className="hidden lg:relative lg:col-span-8 lg:block h-full bg-slate-900 z-10 shadow-[10px_0_30px_-5px_#4C010780]">
-        <Image
-          src="/images/login.webp"
-          alt="Imagen de inicio de sesión"
-          fill
-          priority
-          sizes="66vw"
-          // El encuadre apunta al barista y la máquina de espresso (zona media-derecha de la ilustración vertical)
-          className="object-cover object-[50%_62%]"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-black/25 via-transparent to-transparent" />
-      </div>
+    <div className="grid min-h-screen w-full grid-cols-12 overflow-hidden bg-background">
+      {/* Sección izquierda: 8 columnas. Panel de marca con tokens (sin fotos, W-002). */}
+      <aside className="relative hidden h-full overflow-hidden bg-primary/14 lg:col-span-8 lg:flex lg:flex-col lg:justify-end lg:p-16">
+        <div className="absolute -left-24 -top-24 size-96 rounded-full bg-primary/25 blur-3xl" aria-hidden="true" />
+        <div className="relative max-w-lg">
+          <div className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-isla">
+            <Store className="size-7" aria-hidden="true" />
+          </div>
+          <p className="text-4xl font-extrabold tracking-tight text-foreground">OTemu</p>
+          <p className="mt-3 text-lg font-medium text-muted-foreground">
+            Crea tu tienda en minutos y véndela por redes.
+          </p>
+        </div>
+      </aside>
 
-      {/* Sección Derecha: 4 Columnas (Formulario) */}
-      <div className="col-span-12 lg:col-span-4 flex items-center justify-center p-8 sm:p-12">
+      {/* Sección derecha: 4 columnas (formulario) */}
+      <div className="col-span-12 flex items-center justify-center p-8 sm:p-12 lg:col-span-4">
         <div className="w-full max-w-sm">
           {children}
         </div>

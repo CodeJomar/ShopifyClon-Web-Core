@@ -30,7 +30,7 @@ export function SesionActivaModal({ open, enviando, onContinuar, onCancelar, onN
     <AlertDialog open={open} onOpenChange={() => undefined}>
       <AlertDialogContent size="sm">
         <AlertDialogHeader>
-          <AlertDialogMedia className="bg-amber-50 text-amber-600 ring-amber-50/60 dark:bg-amber-950/40 dark:text-amber-400 dark:ring-amber-950/30">
+          <AlertDialogMedia className="bg-warning/12 text-warning-text ring-warning/25   ">
             <ShieldAlert strokeWidth={1.75} />
           </AlertDialogMedia>
           <AlertDialogTitle>Esta cuenta ya tiene una sesión activa</AlertDialogTitle>
@@ -50,7 +50,7 @@ export function SesionActivaModal({ open, enviando, onContinuar, onCancelar, onN
           type="button"
           onClick={onNoSoyYo}
           disabled={enviando}
-          className="mt-1 w-full cursor-pointer text-center text-xs font-medium text-slate-500 underline-offset-2 hover:text-[#4C0107] hover:underline disabled:opacity-50 dark:text-stone-400"
+          className="mt-1 w-full cursor-pointer text-center text-xs font-medium text-muted-foreground underline-offset-2 hover:text-brand-text hover:underline disabled:opacity-50 "
         >
           ¿No eres tú? Cambiar contraseña
         </button>

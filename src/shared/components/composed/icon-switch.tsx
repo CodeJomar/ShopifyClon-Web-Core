@@ -13,12 +13,12 @@ const IconSwitch = React.forwardRef<React.ElementRef<typeof Switch>, IconSwitchP
     return (
       <div
         className={cn(
-          "inline-flex items-center gap-3 rounded-full bg-slate-50/80 px-3 py-2 border shadow-sm",
+          "inline-flex items-center gap-3 rounded-full bg-muted/80 px-3 py-2 border shadow-sm",
           containerClassName
         )}
       >
         {leftIcon && (
-          <div className="text-slate-600 flex items-center justify-center">
+          <div className="text-muted-foreground flex items-center justify-center">
             {leftIcon}
           </div>
         )}
@@ -26,7 +26,7 @@ const IconSwitch = React.forwardRef<React.ElementRef<typeof Switch>, IconSwitchP
         <Switch ref={ref} className={className} {...props} />
 
         {rightIcon && (
-          <div className="text-slate-600 flex items-center justify-center">
+          <div className="text-muted-foreground flex items-center justify-center">
             {rightIcon}
           </div>
         )}

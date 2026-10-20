@@ -74,7 +74,7 @@ export function WorkspaceHeader({
             type="button"
             onClick={onToggleCollapse}
             aria-label="Abrir o cerrar menú lateral"
-            className="flex size-9 items-center justify-center rounded-xl text-slate-700 dark:text-slate-300 hover:text-[#4C0107] dark:hover:text-[#EDE5E6] hover:bg-[#EDE5E6]/60 dark:hover:bg-stone-800 transition-colors outline-none cursor-pointer shrink-0"
+            className="flex size-9 items-center justify-center rounded-xl text-foreground  hover:text-brand-text  hover:bg-brand-strong/12  transition-colors outline-none cursor-pointer shrink-0"
           >
             {isCollapsed ? (
               <PanelLeftOpen className="size-5" />
@@ -101,21 +101,21 @@ export function WorkspaceHeader({
         {/* Zona Derecha: Theme Switch y Logout */}
         <div className="flex items-center gap-3 shrink-0">
           {etiquetaCuenta && (
-            <span className="hidden h-9 items-center rounded-full bg-[#4C0107] px-3.5 text-xs font-semibold text-white md:inline-flex">
+            <span className="hidden h-9 items-center rounded-full bg-primary px-3.5 text-xs font-semibold text-white md:inline-flex">
               {etiquetaCuenta}
             </span>
           )}
 
 
           {/* Switch activo conectado al ThemeProvider */}
-          <div className="flex h-9 items-center gap-2 px-3 rounded-full bg-[#EDE5E6]/40 dark:bg-stone-800">
-            <Moon className={cn("size-3.5 transition-colors", isDarkMode ? "text-slate-100" : "text-slate-400")} />
+          <div className="flex h-9 items-center gap-2 px-3 rounded-full bg-brand-strong/12 ">
+            <Moon className={cn("size-3.5 transition-colors", isDarkMode ? "text-muted-foreground" : "text-muted-foreground")} />
             <Switch
               checked={isDarkMode}
               onCheckedChange={toggleTheme}
               aria-label="Cambiar tema"
             />
-            <Sun className={cn("size-3.5 transition-colors", !isDarkMode ? "text-slate-900" : "text-slate-400")} />
+            <Sun className={cn("size-3.5 transition-colors", !isDarkMode ? "text-foreground" : "text-muted-foreground")} />
           </div>
 
           <Button
@@ -124,7 +124,7 @@ export function WorkspaceHeader({
             size="sm"
             onClick={handleLogout}
             rightIcon={<LogOut className="size-4 ml-1" />}
-            className="h-9 px-4 rounded-full text-xs font-semibold tracking-wider uppercase cursor-pointer gap-2 shrink-0 dark:border-stone-700 dark:text-stone-200 dark:hover:bg-stone-800"
+            className="h-9 px-4 rounded-full text-xs font-semibold tracking-wider uppercase cursor-pointer gap-2 shrink-0   "
           >
             <span className="hidden xl:inline">CERRAR SESIÓN</span>
           </Button>
@@ -133,7 +133,7 @@ export function WorkspaceHeader({
       </div>
 
       {/* Divisor semántico compatible con dark mode */}
-      <Separator className="h-[1px] min-h-[1px] w-full bg-[#EDE5E6] dark:bg-stone-800 shrink-0 block my-3" />
+      <Separator className="h-[1px] min-h-[1px] w-full bg-brand-strong/12  shrink-0 block my-3" />
     </div>
   )
 }

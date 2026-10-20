@@ -149,7 +149,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   if (!usuario) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-[#EDE5E6]/40" role="status" aria-label="Verificando sesión">
+      <div className="flex h-screen w-full items-center justify-center bg-brand-strong/12" role="status" aria-label="Verificando sesión">
         <Spinner />
       </div>
     )

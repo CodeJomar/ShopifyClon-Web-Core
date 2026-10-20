@@ -40,7 +40,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
             <X className="size-3.5" />
           </button>
         ) : atajo ? (
-          <kbd className="pointer-events-none hidden rounded-md border border-slate-200 bg-white px-1.5 text-[11px] font-semibold text-slate-500 sm:block dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300">
+          <kbd className="pointer-events-none hidden rounded-md border border-border bg-card px-1.5 text-[11px] font-semibold text-muted-foreground sm:block   ">
             {atajo}
           </kbd>
         ) : undefined

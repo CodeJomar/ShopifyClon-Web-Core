@@ -4,7 +4,7 @@ import * as React from "react"
 import { Dialog as PanelPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/shared/utils/cn"
 
 /**
  * Panel lateral flotante para formularios (crear, editar, ver detalle).
@@ -56,9 +56,9 @@ function PanelContent({
       <PanelPrimitive.Popup
         data-slot="panel-content"
         className={cn(
-          "fixed inset-y-2 right-2 z-[95] flex w-[calc(100%-1rem)] flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white text-sm text-slate-900 shadow-2xl outline-none transition-transform duration-300 ease-in-out sm:max-w-md",
+          "fixed inset-y-2 right-2 z-[95] flex w-[calc(100%-1rem)] flex-col overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla text-sm text-foreground shadow-2xl outline-none transition-transform duration-300 ease-in-out sm:max-w-md",
           "data-ending-style:translate-x-[120%] data-starting-style:translate-x-[120%]",
-          "dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100",
+          "  ",
           className
         )}
         {...props}
@@ -68,7 +68,7 @@ function PanelContent({
           <PanelPrimitive.Close
             data-slot="panel-close"
             aria-label="Cerrar panel"
-            className="absolute top-4 right-4 flex size-9 cursor-pointer items-center justify-center rounded-xl text-slate-500 outline-none transition-colors hover:bg-[#EDE5E6]/60 hover:text-[#4C0107] focus-visible:ring-2 focus-visible:ring-[#4C0107]/30 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-100"
+            className="absolute top-4 right-4 flex size-9 cursor-pointer items-center justify-center rounded-xl text-muted-foreground outline-none transition-colors hover:bg-brand-strong/12 hover:text-brand-text focus-visible:ring-2 focus-visible:ring-ring   "
           >
             <XIcon className="size-5" />
           </PanelPrimitive.Close>
@@ -82,7 +82,7 @@ function PanelHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="panel-header"
-      className={cn("flex flex-col gap-1 border-b border-[#EDE5E6] px-6 py-5 pr-16 dark:border-stone-800", className)}
+      className={cn("flex flex-col gap-1 border-b border-brand-strong px-6 py-5 pr-16 ", className)}
       {...props}
     />
   )
@@ -100,7 +100,7 @@ function PanelFooter({ className, ...props }: React.ComponentProps<"div">) {
       className={cn(
         // Estándar de acciones: abajo; dos botones centrados y del mismo tamaño, uno solo pegado a la derecha.
         // La acción principal va en el color del negocio y «Cancelar/Volver» en la variante neutral.
-        "mt-auto flex flex-col-reverse gap-3 border-t border-[#EDE5E6] px-6 py-4 dark:border-stone-800 [&>*]:w-full sm:flex-row sm:justify-end sm:has-[>:nth-child(2)]:justify-center sm:[&>*]:w-44",
+        "mt-auto flex flex-col-reverse gap-3 border-t border-brand-strong px-6 py-4  [&>*]:w-full sm:flex-row sm:justify-end sm:has-[>:nth-child(2)]:justify-center sm:[&>*]:w-44",
         className
       )}
       {...props}
@@ -112,7 +112,7 @@ function PanelTitle({ className, ...props }: PanelPrimitive.Title.Props) {
   return (
     <PanelPrimitive.Title
       data-slot="panel-title"
-      className={cn("font-display text-lg font-semibold text-slate-900 dark:text-stone-100", className)}
+      className={cn("font-extrabold text-lg font-semibold text-foreground ", className)}
       {...props}
     />
   )
@@ -122,7 +122,7 @@ function PanelDescription({ className, ...props }: PanelPrimitive.Description.Pr
   return (
     <PanelPrimitive.Description
       data-slot="panel-description"
-      className={cn("text-xs leading-relaxed text-slate-600 dark:text-stone-400", className)}
+      className={cn("text-xs leading-relaxed text-muted-foreground ", className)}
       {...props}
     />
   )

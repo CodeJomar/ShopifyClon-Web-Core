@@ -35,20 +35,20 @@ export function OverlaysDemo() {
   }
 
   return (
-    <div className="flex flex-col gap-6 p-6 bg-white rounded-3xl shadow-sm border">
+    <div className="flex flex-col gap-6 p-6 bg-card rounded-3xl shadow-sm border">
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Toast — resultado de una acción</p>
+        <p className="text-sm font-semibold text-foreground">Toast — resultado de una acción</p>
         <div className="flex flex-wrap gap-3">
-          <Button variant="success-outline" size="sm" onClick={() => toast.add({ type: "success", title: "Producto guardado", description: "Los cambios ya están guardados." })}>
+          <Button variant="outline" size="sm" onClick={() => toast.add({ type: "success", title: "Producto guardado", description: "Los cambios ya están guardados." })}>
             Éxito
           </Button>
           <Button variant="danger-outline" size="sm" onClick={() => toast.add({ type: "error", title: "No se pudo guardar", description: "Revisa tu conexión e inténtalo de nuevo." })}>
             Error
           </Button>
-          <Button variant="warning-outline" size="sm" onClick={() => toast.add({ type: "warning", title: "Stock bajo", description: "Quedan 3 unidades de Croissant." })}>
+          <Button variant="outline" size="sm" onClick={() => toast.add({ type: "warning", title: "Stock bajo", description: "Quedan 3 unidades de Croissant." })}>
             Advertencia
           </Button>
-          <Button variant="info-outline" size="sm" onClick={() => toast.add({ type: "info", title: "Nueva notificación" })}>
+          <Button variant="outline" size="sm" onClick={() => toast.add({ type: "info", title: "Nueva notificación" })}>
             Info
           </Button>
           <Button
@@ -81,7 +81,7 @@ export function OverlaysDemo() {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Confirm — decisión del usuario (AlertDialog)</p>
+        <p className="text-sm font-semibold text-foreground">Confirm — decisión del usuario (AlertDialog)</p>
         <div className="flex flex-wrap gap-3">
           <Button variant="default" size="sm" onClick={() => probarConfirm("default")}>
             Confirmación normal
@@ -89,14 +89,14 @@ export function OverlaysDemo() {
           <Button variant="danger" size="sm" onClick={() => probarConfirm("destructive")}>
             Confirmación destructiva
           </Button>
-          <Button variant="warning" size="sm" onClick={() => probarConfirm("personalizado")}>
+          <Button variant="default" size="sm" onClick={() => probarConfirm("personalizado")}>
             Confirmación personalizada
           </Button>
         </div>
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-700">Panel — formularios (crear, editar, ver detalle)</p>
+        <p className="text-sm font-semibold text-foreground">Panel — formularios (crear, editar, ver detalle)</p>
         <Button variant="ghost" size="sm" onClick={() => setPanelAbierto(true)}>
           Abrir panel lateral
         </Button>
@@ -109,12 +109,12 @@ export function OverlaysDemo() {
         description="Recibirá un correo para activar su cuenta y definir su contraseña."
         footer={
           <>
-            <Button variant="neutral" size="md" onClick={() => setPanelAbierto(false)}>
+            <Button variant="neutral" size="default" onClick={() => setPanelAbierto(false)}>
               Cancelar
             </Button>
             <Button
               variant="default"
-              size="md"
+              size="default"
               onClick={() => {
                 setPanelAbierto(false)
                 toast.add({ type: "success", title: "Empleado creado" })

@@ -31,7 +31,7 @@ export function useAvisosSesion(): (avisos: AvisoSesionDto[] | undefined) => voi
               <button
                 type="button"
                 onClick={() => router.push("/perfil")}
-                className="cursor-pointer font-semibold text-red-600 underline underline-offset-2 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                className="cursor-pointer font-semibold text-destructive-text underline underline-offset-2 hover:text-destructive-text  "
               >
                 cambia tu contraseña en tu perfil
               </button>

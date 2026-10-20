@@ -28,7 +28,7 @@ function TabsList({
       data-slot="tabs-list"
       className={cn(
         // Altura reducida a h-11 para un perfil más estilizado y propio de un selector
-        "inline-flex h-11 w-fit items-center justify-center rounded-full bg-white dark:bg-stone-800/80 p-0 text-slate-500 dark:text-stone-400 border dark:border-stone-700/50 shadow-sm",
+        "inline-flex h-11 w-fit items-center justify-center rounded-full bg-card  p-0 text-muted-foreground  border  shadow-sm",
         className
       )}
       {...props}
@@ -56,13 +56,13 @@ function TabsTrigger({
       className={cn(
         // CAMBIO CLAVE: Añadimos 'w-full' para que el tab ocupe toda la celda del grid equitativo
         "group/trigger inline-flex h-full items-center justify-center gap-2 rounded-full px-8 py-2 text-base font-semibold transition-all outline-none whitespace-nowrap cursor-pointer",
-        "focus-visible:ring-2 focus-visible:ring-[#4C0107]/40 focus-visible:ring-offset-0",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0",
         "disabled:pointer-events-none disabled:opacity-50",
 
-        "hover:text-[#4C0107] hover:bg-[#EDE5E6] dark:hover:bg-stone-800 dark:hover:text-white",
+        "hover:text-brand-text hover:bg-brand-strong/12  dark:hover:text-white",
 
-        "data-active:bg-[#4C0107] data-active:text-white data-active:shadow-md dark:data-active:bg-white dark:data-active:text-black",
-        "data-active:hover:bg-[#4C0107]/90 data-active:hover:text-white dark:data-active:hover:bg-slate-200 dark:data-active:hover:text-black",
+        "data-active:bg-primary data-active:text-white data-active:shadow-md dark:data-active:bg-card dark:data-active:text-black",
+        "data-active:hover:bg-primary data-active:hover:text-white  dark:data-active:hover:text-black",
 
         className
       )}

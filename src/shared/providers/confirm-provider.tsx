@@ -33,7 +33,7 @@ export interface ConfirmOptions {
   cancelText?: string
   /** Sobrescribe el ícono del preset (cualquier ícono de lucide-react). */
   icon?: LucideIcon
-  /** Clases para recolorear el círculo del ícono, p. ej. "bg-amber-50 text-amber-600 ring-amber-50/60". */
+  /** Clases para recolorear el círculo del ícono, p. ej. "bg-warning/12 text-warning-text ring-warning/25". */
   iconClassName?: string
   /** Sobrescribe la variante del botón de confirmar. */
   confirmVariant?: ButtonVariant
@@ -64,29 +64,29 @@ const PRESETS: Record<ConfirmTone, Preset> = {
   },
   destructive: {
     icon: TriangleAlert,
-    iconClassName: "bg-red-50 text-red-600 ring-red-50/60 dark:bg-red-950/40 dark:text-red-400 dark:ring-red-950/30",
-    confirmVariant: "danger-strong",
+    iconClassName: "bg-destructive/12 text-destructive-text ring-destructive/25   ",
+    confirmVariant: "danger",
     title: "¿Estás seguro?",
     description: "Esta acción no se puede deshacer.",
   },
   warning: {
     icon: TriangleAlert,
-    iconClassName: "bg-amber-50 text-amber-600 ring-amber-50/60 dark:bg-amber-950/40 dark:text-amber-400 dark:ring-amber-950/30",
-    confirmVariant: "warning",
+    iconClassName: "bg-warning/12 text-warning-text ring-warning/25   ",
+    confirmVariant: "default",
     title: "Atención",
     description: "Revisa la información antes de continuar.",
   },
   success: {
     icon: CircleCheck,
-    iconClassName: "bg-green-50 text-green-600 ring-green-50/60 dark:bg-green-950/40 dark:text-green-400 dark:ring-green-950/30",
-    confirmVariant: "success",
+    iconClassName: "bg-success/12 text-tono-exito-fg ring-success/25   ",
+    confirmVariant: "default",
     title: "¿Deseas confirmar?",
     description: "Confirma para completar esta acción.",
   },
   info: {
     icon: Info,
-    iconClassName: "bg-cyan-50 text-cyan-600 ring-cyan-50/60 dark:bg-cyan-950/40 dark:text-cyan-400 dark:ring-cyan-950/30",
-    confirmVariant: "info",
+    iconClassName: "bg-info/12 text-info-text ring-info/25   ",
+    confirmVariant: "default",
     title: "¿Deseas continuar?",
     description: "Confirma para realizar esta acción.",
   },
