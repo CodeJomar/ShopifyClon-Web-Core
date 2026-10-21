@@ -25,7 +25,10 @@ interface SesionCheckout {
   direcciones: DireccionDto[]
 }
 
-/** Checkout de la vitrina: datos y envío, confirmación del total de la API y creación idempotente de la orden. */
+/**
+ * Checkout de la vitrina. Con envío, la tarifa elegida se cotiza en el carrito (la API calcula el envío y el total);
+ * ese total es el `total_esperado`. La web no suma ni calcula montos.
+ */
 export function CheckoutView({ subdominio }: { subdominio: string }) {
   const [carrito, setCarrito] = React.useState<Carrito | null>(null)
   const [tarifas, setTarifas] = React.useState<TarifaEnvioVitrina[]>([])
@@ -34,11 +37,29 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const [datos, setDatos] = React.useState<DatosCheckoutValues | null>(null)
   const [aviso, setAviso] = React.useState<string | null>(null)
-  // Total que devolvió la API al rechazar con CHK-004 (incluye el envío, que el carrito no incluye). Null hasta entonces.
-  const [totalApi, setTotalApi] = React.useState<number | null>(null)
   const [enviando, setEnviando] = React.useState(false)
+  // Cotización del carrito con la tarifa elegida (costo de envío y total con envío de la API).
+  const [cotizacion, setCotizacion] = React.useState<Carrito | null>(null)
+  const [cotizando, setCotizando] = React.useState(false)
+  const [errorCotizacion, setErrorCotizacion] = React.useState<ErrorApi | null>(null)
   const { obtener, reiniciar } = useClaveIdempotencia()
   const router = useRouter()
+
+  const cotizar = React.useCallback(
+    async (tarifaId: string) => {
+      setCotizando(true)
+      setErrorCotizacion(null)
+      const res = await obtenerCarritoAction(subdominio, tarifaId)
+      setCotizando(false)
+      if (res.ok) {
+        setCotizacion(res.datos)
+      } else {
+        setCotizacion(null)
+        setErrorCotizacion(res.error)
+      }
+    },
+    [subdominio],
+  )
 
   React.useEffect(() => {
     let cancelado = false
@@ -49,25 +70,31 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
         if (t.ok) setTarifas(t.datos)
         setSesion(s)
         setCargando(false)
+        // Con envío, se cotiza de entrada la primera tarifa activa.
+        if (c.ok && c.datos.requiere_envio && t.ok && t.datos.length > 0) void cotizar(t.datos[0].id)
       },
     )
     return () => {
       cancelado = true
     }
-  }, [subdominio])
+  }, [subdominio, cotizar])
 
   const recargarCarrito = async () => {
     const res = await obtenerCarritoAction(subdominio)
     if (res.ok) setCarrito(res.datos)
   }
 
+  const requiereEnvio = carrito?.requiere_envio ?? false
+  // Total que se envía como `total_esperado`: el de la cotización vigente si hay envío; el del carrito si no.
+  const totalVigente = requiereEnvio ? cotizacion?.total_estimado : carrito?.total_estimado
+
   const confirmar = async () => {
-    if (!datos || !carrito) return
+    if (!datos || !carrito || totalVigente === undefined) return
     setError(null)
     setAviso(null)
     setEnviando(true)
-    const totalEsperado = totalApi ?? Number(carrito.total_estimado)
-    // Misma clave mientras el contenido no cambie (doble clic o reintento); nueva si cambió el carrito, el total o los datos.
+    const totalEsperado = Number(totalVigente)
+    // Misma clave mientras el contenido no cambie (doble clic o reintento); nueva si cambian el total, las líneas o los datos.
     const clave = obtener(JSON.stringify({ total: totalEsperado, lineas: carrito.items.map((l) => [l.variante_id, l.cantidad]), datos }))
     const res = await crearOrdenAction(subdominio, clave, construirPayload(datos, carrito, totalEsperado))
     setEnviando(false)
@@ -79,17 +106,11 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
       return
     }
     if (res.error.codigo === "CHK-004") {
-      // El total cambió: la API devuelve el total recalculado en `detalles`. Se muestra ese total y se pide confirmar de nuevo.
-      const recalculado = Number(res.error.detalles?.total_recalculado)
+      // Cambió un precio entre la cotización y la confirmación: se recotiza y se pide confirmar de nuevo (no es el camino normal).
       reiniciar()
       await recargarCarrito()
-      if (Number.isFinite(recalculado)) {
-        setTotalApi(recalculado)
-        setAviso("El total cambió. Revisa el nuevo total y confirma de nuevo.")
-      } else {
-        setTotalApi(null)
-        setAviso("El total cambió. Revisa el carrito y confirma de nuevo.")
-      }
+      if (carrito.requiere_envio && datos.tarifa_envio_id) await cotizar(datos.tarifa_envio_id)
+      setAviso("El total cambió. Revisa el nuevo total y confirma de nuevo.")
       return
     }
     setError(res.error)
@@ -110,7 +131,6 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
     )
   }
 
-  const requiereEnvio = carrito.requiere_envio
   const sinTarifas = requiereEnvio && tarifas.length === 0
 
   return (
@@ -148,7 +168,11 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
           moneda={carrito.moneda}
           tarifas={tarifas}
           sesion={sesion}
-          deshabilitado={sinTarifas}
+          cotizacion={cotizacion}
+          cotizando={cotizando}
+          errorCotizacion={errorCotizacion}
+          deshabilitado={sinTarifas || (requiereEnvio && (cotizando || !cotizacion))}
+          onTarifaCambia={(id) => void cotizar(id)}
           onSiguiente={(valores) => {
             setDatos(valores)
             setAviso(null)
@@ -157,8 +181,7 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
       ) : (
         <ResumenConfirmacion
           carrito={carrito}
-          totalMostrado={totalApi ?? carrito.total_estimado}
-          incluyeEnvio={totalApi !== null}
+          cotizacion={requiereEnvio ? cotizacion : null}
           datos={datos}
           tarifa={tarifas.find((t) => t.id === datos.tarifa_envio_id) ?? null}
           enviando={enviando}
@@ -170,20 +193,28 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
   )
 }
 
-/** Paso 1: datos del comprador y, si hace falta, dirección y tarifa. Con sesión se prellena y se pueden usar direcciones guardadas. */
+/** Paso 1: datos del comprador y, si hace falta, dirección y tarifa. Elegir tarifa cotiza el envío en el carrito. */
 function FormularioDatos({
   requiereEnvio,
   moneda,
   tarifas,
   sesion,
+  cotizacion,
+  cotizando,
+  errorCotizacion,
   deshabilitado,
+  onTarifaCambia,
   onSiguiente,
 }: {
   requiereEnvio: boolean
   moneda: string
   tarifas: TarifaEnvioVitrina[]
   sesion: SesionCheckout | null
+  cotizacion: Carrito | null
+  cotizando: boolean
+  errorCotizacion: ErrorApi | null
   deshabilitado: boolean
+  onTarifaCambia: (tarifaId: string) => void
   onSiguiente: (valores: DatosCheckoutValues) => void
 }) {
   const principal = sesion?.direcciones.find((d) => d.es_principal) ?? sesion?.direcciones[0]
@@ -268,7 +299,10 @@ function FormularioDatos({
 
             <label className="block space-y-1.5 text-[13px]">
               <span className="font-bold">Tarifa de envío</span>
-              <select className="h-11 w-full rounded-xl border border-border bg-card px-3 text-[13px]" {...form.register("tarifa_envio_id")}>
+              <select
+                className="h-11 w-full rounded-xl border border-border bg-card px-3 text-[13px]"
+                {...form.register("tarifa_envio_id", { onChange: (e) => onTarifaCambia(e.target.value) })}
+              >
                 {tarifas.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.nombre} · {formatearDinero(t.precio, moneda)}
@@ -276,6 +310,13 @@ function FormularioDatos({
                 ))}
               </select>
               {mensaje("tarifa_envio_id") && <span className="text-[12px] text-destructive-text">{mensaje("tarifa_envio_id")}</span>}
+              {cotizando && <span className="text-[12px] text-muted-foreground">Calculando el envío…</span>}
+              {!cotizando && cotizacion && (
+                <span className="text-[12px] text-muted-foreground">
+                  Envío: {formatearDinero(cotizacion.costo_envio ?? 0, moneda)} · Total con envío: {formatearDinero(cotizacion.total_estimado, moneda)}
+                </span>
+              )}
+              {!cotizando && errorCotizacion && <span className="text-[12px] text-destructive-text">{errorCotizacion.message}</span>}
             </label>
           </CardContent>
         </Card>
@@ -288,11 +329,10 @@ function FormularioDatos({
   )
 }
 
-/** Paso 2: resumen y confirmación. Todos los montos son los que devolvió la API en el carrito; la web no suma nada. */
+/** Paso 2: resumen y confirmación. Con envío, los montos son los de la cotización de la API; la web no suma nada. */
 function ResumenConfirmacion({
   carrito,
-  totalMostrado,
-  incluyeEnvio,
+  cotizacion,
   datos,
   tarifa,
   enviando,
@@ -300,9 +340,7 @@ function ResumenConfirmacion({
   onConfirmar,
 }: {
   carrito: Carrito
-  /** Total a mostrar: el del carrito, o el que devolvió la API al recalcular (con envío). */
-  totalMostrado: number | string
-  incluyeEnvio: boolean
+  cotizacion: Carrito | null
   datos: DatosCheckoutValues
   tarifa: TarifaEnvioVitrina | null
   enviando: boolean
@@ -310,6 +348,8 @@ function ResumenConfirmacion({
   onConfirmar: () => void
 }) {
   const moneda = carrito.moneda
+  const vista = cotizacion ?? carrito
+  const conEnvio = cotizacion !== null
   return (
     <div className="space-y-6">
       <Card>
@@ -330,27 +370,27 @@ function ResumenConfirmacion({
           <dl className="space-y-2 text-[13px]">
             <div className="flex justify-between">
               <dt>Subtotal</dt>
-              <dd>{formatearDinero(carrito.subtotal, moneda)}</dd>
+              <dd>{formatearDinero(vista.subtotal, moneda)}</dd>
             </div>
-            {(carrito.cupon != null || Number(carrito.descuento_total) > 0) && (
+            {(vista.cupon != null || Number(vista.descuento_total) > 0) && (
               <div className="flex justify-between">
-                <dt>Descuento{carrito.cupon ? ` (${carrito.cupon.codigo})` : ""}</dt>
-                <dd>−{formatearDinero(carrito.descuento_total, moneda)}</dd>
+                <dt>Descuento{vista.cupon ? ` (${vista.cupon.codigo})` : ""}</dt>
+                <dd>−{formatearDinero(vista.descuento_total, moneda)}</dd>
+              </div>
+            )}
+            {conEnvio && (
+              <div className="flex justify-between">
+                <dt>Envío{tarifa ? ` (${tarifa.nombre})` : ""}</dt>
+                <dd>{formatearDinero(vista.costo_envio ?? 0, moneda)}</dd>
               </div>
             )}
             <div className="flex justify-between">
               <dt>Impuestos</dt>
-              <dd>{formatearDinero(carrito.impuestos_total, moneda)}</dd>
+              <dd>{formatearDinero(vista.impuestos_total, moneda)}</dd>
             </div>
-            {carrito.requiere_envio && (
-              <div className="flex justify-between">
-                <dt>Envío{tarifa ? ` (${tarifa.nombre})` : ""}</dt>
-                <dd>Se calcula al confirmar</dd>
-              </div>
-            )}
             <div className="flex justify-between border-t border-border pt-2 text-[15px] font-extrabold">
-              <dt>{incluyeEnvio ? "Total con envío" : "Total"}</dt>
-              <dd>{formatearDinero(totalMostrado, moneda)}</dd>
+              <dt>Total</dt>
+              <dd>{formatearDinero(vista.total_estimado, moneda)}</dd>
             </div>
           </dl>
           <p className="text-[12px] text-muted-foreground">
@@ -372,7 +412,7 @@ function ResumenConfirmacion({
   )
 }
 
-/** Construye el cuerpo de la API a partir del formulario y del carrito. Sin cálculos: solo copia lo que la API devolvió. */
+/** Construye el cuerpo de la API a partir del formulario y del carrito. Sin cálculos: el total viene de la API. */
 function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsperado: number): CheckoutRequest {
   const direccion: DireccionCheckout | undefined = carrito.requiere_envio
     ? {
@@ -396,5 +436,3 @@ function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsp
     total_esperado: totalEsperado,
   }
 }
-
-
