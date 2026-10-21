@@ -73,8 +73,8 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
   if (token) cabeceras.set("Authorization", `Bearer ${token}`)
   if (tienda) cabeceras.set("X-Tienda-Id", tienda)
   // Carrito de la vitrina: el token sale de la cookie de esa tienda (nunca del navegador).
-  const subCarrito = subdominioDeCarrito(ruta)
-  const tokenCarrito = subCarrito ? leerTokenCarrito(request, subCarrito) : undefined
+  const infoCarrito = infoRutaCarrito(ruta)
+  const tokenCarrito = infoCarrito ? leerTokenCarrito(request, infoCarrito.subdominio) : undefined
   if (tokenCarrito) cabeceras.set("X-Carrito-Token", tokenCarrito)
   cabeceras.set("X-Correlacion-Id", idCorrelacion)
   // IP real del visitante para el limitador de la API (A-002). Solo se confía si llega con el secreto compartido.
@@ -116,7 +116,7 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
     if (valor) respuesta.headers.set(nombre, valor)
   }
 
-  if (subCarrito) actualizarCookieCarrito(respuesta, subCarrito, respuestaApi.status, bytes)
+  if (infoCarrito) actualizarCookieCarrito(respuesta, infoCarrito, respuestaApi.status, bytes)
 
   const rutaTexto = ruta.join("/")
   const esLogin = rutaTexto === RUTA_LOGIN && request.method === "POST"
@@ -142,10 +142,15 @@ function mismoOrigen(request: NextRequest): boolean {
   }
 }
 
-/** Subdominio de una ruta `vitrina/{sub}/carrito…`, o null si la ruta no es del carrito. */
-function subdominioDeCarrito(ruta: string[]): string | null {
-  if (ruta.length < 3 || ruta[0] !== "vitrina" || ruta[2] !== "carrito") return null
-  return esSubdominioValido(ruta[1]) ? ruta[1] : null
+/**
+ * Ruta de la vitrina que usa el token del carrito: `vitrina/{sub}/carrito…` o `vitrina/{sub}/checkout` (W-016).
+ * Devuelve null si la ruta no es de ninguna de las dos.
+ */
+function infoRutaCarrito(ruta: string[]): { subdominio: string; checkout: boolean } | null {
+  if (ruta.length < 3 || ruta[0] !== "vitrina" || !esSubdominioValido(ruta[1])) return null
+  if (ruta[2] === "carrito") return { subdominio: ruta[1], checkout: false }
+  if (ruta[2] === "checkout" && ruta.length === 3) return { subdominio: ruta[1], checkout: true }
+  return null
 }
 
 function cuerpoJson(bytes: ArrayBuffer): Record<string, unknown> | null {
@@ -157,8 +162,23 @@ function cuerpoJson(bytes: ArrayBuffer): Record<string, unknown> | null {
   }
 }
 
-// Carrito convertido (CAR-008, 409) o carrito no encontrado (404 con código CAR-…): la cookie ya no sirve.
-function actualizarCookieCarrito(respuesta: NextResponse, subdominio: string, estado: number, bytes: ArrayBuffer) {
+// Cookie del carrito: se fija con el token al crearlo; se borra cuando ya no sirve (convertido, no encontrado)
+// y después de un checkout exitoso (el carrito pasa a CONVERTIDO, CAR-008). El checkout nunca fija la cookie.
+function actualizarCookieCarrito(
+  respuesta: NextResponse,
+  info: { subdominio: string; checkout: boolean },
+  estado: number,
+  bytes: ArrayBuffer,
+) {
+  const { subdominio } = info
+  if (info.checkout) {
+    if (estado >= 200 && estado < 300) return borrarCarrito(respuesta, subdominio)
+    const codigoCheckout = cuerpoJson(bytes)?.codigo
+    if (codigoCheckout === "CAR-008" || (estado === 404 && codigoCheckout === "CAR-404")) {
+      borrarCarrito(respuesta, subdominio)
+    }
+    return
+  }
   if (estado >= 200 && estado < 300) {
     const datos = cuerpoJson(bytes)?.datos as { token?: unknown } | undefined
     if (typeof datos?.token === "string") fijarCarrito(respuesta, subdominio, datos.token)
