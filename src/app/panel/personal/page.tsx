@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { PersonalView } from "@/modules/personal"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Personal" />
+  return <PersonalView />
 }

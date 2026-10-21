@@ -1,6 +1,13 @@
 import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
-import type { MiTiendaDto, PlanDto, TiendaActivaDto, TiendaCreadaDto } from "@/dtos/tienda"
+import type {
+  ActualizarTiendaRequest,
+  CambioEstadoTiendaRequest,
+  MiTiendaDto,
+  PlanDto,
+  TiendaActivaDto,
+  TiendaCreadaDto,
+} from "@/dtos/tienda"
 
 // Llamadas a la API real (tiendas-y-personal.md). Todo pasa por /api: el JWT y la tienda activa viven en cookies httpOnly.
 
@@ -22,3 +29,15 @@ export const fijarTiendaAction = (tiendaId: string) =>
 
 /** Tienda activa según la cookie; sin tienda → SEG-001 (404). */
 export const tiendaActivaAction = () => resultado(peticionApi<TiendaActivaDto>({ method: "GET", url: "/panel/tienda" }))
+
+/** Actualiza la configuración de la tienda activa (permiso TIENDA_CONFIGURAR). */
+export const actualizarTiendaAction = (datos: ActualizarTiendaRequest) =>
+  resultado(peticionApi<TiendaActivaDto>({ method: "PUT", url: "/panel/tienda", data: datos }))
+
+/** Activa la tienda (solo PROPIETARIO). */
+export const activarTiendaAction = (datos?: CambioEstadoTiendaRequest) =>
+  resultado(peticionApi<TiendaActivaDto>({ method: "POST", url: "/panel/tienda/activar", data: datos ?? {} }))
+
+/** Desactiva la tienda (solo PROPIETARIO). */
+export const desactivarTiendaAction = (datos?: CambioEstadoTiendaRequest) =>
+  resultado(peticionApi<TiendaActivaDto>({ method: "POST", url: "/panel/tienda/desactivar", data: datos ?? {} }))

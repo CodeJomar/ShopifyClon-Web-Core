@@ -36,17 +36,36 @@ export interface TiendaCreadaDto {
   operativa: boolean
 }
 
-/** `datos` de GET /panel/tienda (TiendaConfiguracionResponse, verificado en la API real en W-007). */
+/** `datos` de GET /panel/tienda (TiendaConfiguracionResponse, verificado en la API real). */
 export interface TiendaActivaDto {
   id: string
   nombre: string
   subdominio: string
+  dominio_personalizado?: string | null
   moneda: string
   correo_contacto: string
+  tasa_impuesto: number
+  precios_incluyen_impuesto: boolean
   zona_horaria: string
   esta_activa: boolean
   /** false = suscripción no activa: las escrituras responden SUS-017. */
   operativa: boolean
   suscripcion: { estado: string; codigo_plan: string; fin_periodo_actual: string }
   fecha_creacion: string
+}
+
+export type TiendaConfiguracionDto = TiendaActivaDto
+
+export interface ActualizarTiendaRequest {
+  nombre: string
+  correo_contacto: string
+  dominio_personalizado?: string | null
+  moneda: string
+  tasa_impuesto: number
+  precios_incluyen_impuesto: boolean
+  zona_horaria: string
+}
+
+export interface CambioEstadoTiendaRequest {
+  motivo?: string
 }

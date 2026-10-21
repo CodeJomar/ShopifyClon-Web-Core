@@ -22,3 +22,64 @@ export const crearTiendaSchema = z.object({
 })
 
 export type CrearTiendaValues = z.infer<typeof crearTiendaSchema>
+
+/** Configuración de la tienda (W-012, TIE-006). */
+export const configuracionTiendaSchema = z
+  .object({
+    nombre: z
+      .string()
+      .trim()
+      .min(1, "El nombre de la tienda es obligatorio.")
+      .max(100, "El nombre no puede superar los 100 caracteres."),
+    correo_contacto: z
+      .string()
+      .trim()
+      .min(1, "El correo de contacto es obligatorio.")
+      .email("Ingresa un correo electrónico válido.")
+      .max(255, "El correo no puede superar los 255 caracteres."),
+    dominio_personalizado: z
+      .string()
+      .trim()
+      .max(150, "El dominio no puede superar los 150 caracteres.")
+      .optional(),
+    moneda: z
+      .string()
+      .trim()
+      .regex(/^[A-Z]{3}$/, "La moneda debe ser un código ISO de 3 letras mayúsculas (ej. PEN, USD)."),
+    tasa_impuesto_porcentaje: z.string().trim().min(1, "La tasa de impuesto es obligatoria."),
+    precios_incluyen_impuesto: z.boolean(),
+    zona_horaria: z
+      .string()
+      .trim()
+      .min(1, "La zona horaria es obligatoria.")
+      .max(50, "La zona horaria no puede superar los 50 caracteres."),
+  })
+  .superRefine((val, ctx) => {
+    const num = Number(val.tasa_impuesto_porcentaje)
+    if (Number.isNaN(num) || num < 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["tasa_impuesto_porcentaje"],
+        message: "La tasa de impuesto no puede ser negativa.",
+      })
+    } else if (num > 50) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["tasa_impuesto_porcentaje"],
+        message: "La tasa de impuesto no puede superar el 50 %.",
+      })
+    }
+  })
+
+export type ConfiguracionTiendaValues = z.infer<typeof configuracionTiendaSchema>
+
+/** Activar / desactivar tienda (TIE-008). */
+export const estadoTiendaSchema = z.object({
+  motivo: z
+    .string()
+    .trim()
+    .max(255, "El motivo no puede superar los 255 caracteres.")
+    .optional(),
+})
+
+export type EstadoTiendaValues = z.infer<typeof estadoTiendaSchema>
