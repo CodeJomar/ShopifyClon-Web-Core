@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { SuscripcionView } from "@/modules/suscripcion"
 
-export default function Page() {
-  return <MarcadorSeccion titulo="Suscripción" />
+export default function PaginaSuscripcion() {
+  return <SuscripcionView />
 }

@@ -23,6 +23,8 @@ export interface PanelContextValue {
   puede: Puede
   /** Permisos del rol, para depurar y para los textos de la pantalla. */
   permisos: readonly string[]
+  /** Vuelve a consultar la tienda activa para actualizar su estado (p. ej. tras activar, desactivar o pagar). */
+  recargar: () => Promise<void>
 }
 
 const PanelContext = React.createContext<PanelContextValue | null>(null)
@@ -40,6 +42,13 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
   const [apellidos, setApellidos] = React.useState("")
   const [cargando, setCargando] = React.useState(true)
   const [error, setError] = React.useState<ErrorApi | null>(null)
+
+  const recargar = React.useCallback(async () => {
+    const activa = await tiendaActivaAction()
+    if (activa.ok) {
+      setTienda(activa.datos)
+    }
+  }, [])
 
   React.useEffect(() => {
     let cancelado = false
@@ -70,9 +79,9 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       setTienda(activa.datos)
       if (mis.ok) setRol(mis.datos.find((t) => t.tienda_id === activa.datos.id)?.rol)
       if (perfil.ok) {
-            setNombres(perfil.datos.nombres)
-            setApellidos(perfil.datos.apellidos)
-          }
+        setNombres(perfil.datos.nombres)
+        setApellidos(perfil.datos.apellidos)
+      }
       setCargando(false)
     })()
     return () => {
@@ -90,8 +99,9 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       error,
       puede: puedeConRol(rol),
       permisos: permisosDeRol(rol),
+      recargar,
     }),
-    [tienda, rol, nombres, apellidos, cargando, error],
+    [tienda, rol, nombres, apellidos, cargando, error, recargar],
   )
 
   return <PanelContext.Provider value={valor}>{children}</PanelContext.Provider>
