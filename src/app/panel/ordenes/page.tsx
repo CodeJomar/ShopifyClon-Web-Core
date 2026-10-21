@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { OrdenesView } from "@/modules/ordenes"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Órdenes" />
+  return <OrdenesView />
 }
