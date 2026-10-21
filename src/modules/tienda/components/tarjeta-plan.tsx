@@ -34,10 +34,11 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
       onKeyDown={onTecla}
       data-seleccionada={seleccionada || undefined}
       className={cn(
-        "relative cursor-pointer gap-3 p-5 transition-[border-color,box-shadow,transform] duration-200 outline-none",
+        // Borde de 1.8 px siempre: al seleccionar cambia solo el color y el anillo (sin saltos de tamaño).
+        "relative cursor-pointer gap-3 border-[1.8px] border-island-border p-5 transition-[border-color,box-shadow,transform] duration-200 outline-none",
         "hover:-translate-y-px hover:border-border-hover",
         "focus-visible:ring-[3.5px] focus-visible:ring-primary/18",
-        seleccionada && "border-[1.8px] border-primary ring-[3.5px] ring-primary/18",
+        seleccionada && "border-primary ring-[3.5px] ring-primary/18",
       )}
     >
       <div className="flex items-start justify-between gap-3">
@@ -65,7 +66,7 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
         ) : (
           <li>Hasta {plan.limite_productos.toLocaleString("es-PE")} productos</li>
         )}
-        <li>Hasta {plan.limite_personal} personas en el equipo</li>
+        {plan.limite_personal == null ? <li>Personas ilimitadas en el equipo</li> : <li>Hasta {plan.limite_personal} personas en el equipo</li>}
         <li>Comisión de {(plan.porcentaje_comision * 100).toLocaleString("es-PE", { maximumFractionDigits: 2 })} % por venta</li>
       </ul>
     </Card>
