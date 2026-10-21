@@ -1,14 +1,6 @@
-import { DireccionesView } from "@/modules/cuenta"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Mis direcciones | OTemu",
-  description: "Direcciones de envío de tu cuenta.",
-}
-
-export default function DireccionesPage() {
-  return (
-    <div className="max-w-4xl">
-      <DireccionesView />
-    </div>
-  )
+// La cuenta es una sola pantalla: esta ruta antigua lleva a su sección.
+export default function Page() {
+  redirect("/cuenta#direcciones")
 }

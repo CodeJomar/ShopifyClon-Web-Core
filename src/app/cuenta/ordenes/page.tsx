@@ -1,14 +1,6 @@
-import { OrdenesView } from "@/modules/cuenta"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Mis compras | OTemu",
-  description: "Compras que hiciste en OTemu.",
-}
-
-export default function OrdenesPage() {
-  return (
-    <div className="max-w-4xl">
-      <OrdenesView />
-    </div>
-  )
+// La cuenta es una sola pantalla: esta ruta antigua lleva a su sección.
+export default function Page() {
+  redirect("/cuenta#compras")
 }

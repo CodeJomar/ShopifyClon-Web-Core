@@ -52,7 +52,7 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
           return
         }
         if (activa.error.codigo === "SEG-001" || activa.error.estado === 404) {
-          router.replace("/cuenta/tiendas")
+          router.replace("/cuenta#tiendas")
           return
         }
         setError(activa.error)

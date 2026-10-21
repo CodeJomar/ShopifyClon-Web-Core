@@ -21,26 +21,14 @@ export const HOME_HREF = "/panel"
 /** Perfil de la cuenta (no está en el menú lateral: se abre desde el menú del usuario). */
 export const PERFIL_HREF = "/cuenta"
 
-/** Pestañas de "Mi cuenta": cada una es una ruta (el enlace se comparte y el botón atrás funciona). */
-export interface PestanaCuenta {
-  id: string
-  label: string
-  href: string
-  /** Rutas anidadas que la mantienen activa (detalle de una compra, crear tienda…). */
-  prefijos?: string[]
+/** Sección de "Mi cuenta" para las migas de pan (la cuenta es una sola pantalla; el detalle de una compra y crear tienda son rutas anidadas). */
+export function seccionCuentaDe(pathname: string): string {
+  if (pathname.startsWith("/cuenta/ordenes")) return "Mis compras"
+  if (pathname.startsWith("/cuenta/tiendas")) return "Mis tiendas"
+  if (pathname.startsWith("/cuenta/direcciones")) return "Direcciones"
+  return "Perfil"
 }
 
-export const PESTANAS_CUENTA: PestanaCuenta[] = [
-  { id: "perfil", label: "Perfil", href: "/cuenta" },
-  { id: "direcciones", label: "Direcciones", href: "/cuenta/direcciones" },
-  { id: "compras", label: "Mis compras", href: "/cuenta/ordenes", prefijos: ["/cuenta/ordenes/"] },
-  { id: "tiendas", label: "Mis tiendas", href: "/cuenta/tiendas", prefijos: ["/cuenta/tiendas/"] },
-]
-
-/** Pestaña de la cuenta que corresponde a una URL. */
-export function pestanaCuentaDe(pathname: string): PestanaCuenta | undefined {
-  return PESTANAS_CUENTA.find((p) => pathname === p.href || p.prefijos?.some((x) => pathname.startsWith(x)))
-}
 
 /**
  * Mapa único de navegación del panel. De aquí salen el menú lateral, las migas de pan y la protección de cada ruta.
@@ -116,7 +104,7 @@ export function permisoDeRuta(pathname: string): Permiso | undefined {
 
 /** Migas de pan [sección, pantalla] de una URL. */
 export function migasDe(pathname: string): [string, string] {
-  if (pathname === PERFIL_HREF || pathname.startsWith(`${PERFIL_HREF}/`)) return ["Mi cuenta", pestanaCuentaDe(pathname)?.label ?? "Perfil"]
+  if (pathname === PERFIL_HREF || pathname.startsWith(`${PERFIL_HREF}/`)) return ["Mi cuenta", seccionCuentaDe(pathname)]
   const ruta = rutaDe(pathname)
   if (!ruta) return ["Panel", "Dashboard"]
   return ruta.item.migas ?? [ruta.grupo?.label ?? ruta.item.label, ruta.item.label]

@@ -114,7 +114,7 @@ export function WorkspaceHeader({
               </DropdownMenuItem>
             )}
             {tieneTienda && (
-              <DropdownMenuItem render={<Link href="/cuenta/tiendas" />} className={claseItem}>
+              <DropdownMenuItem render={<Link href="/cuenta#tiendas" />} className={claseItem}>
                 <span className={claseIcono}><ArrowLeftRight aria-hidden="true" className="size-4" /></span>
                 Cambiar de tienda
               </DropdownMenuItem>
