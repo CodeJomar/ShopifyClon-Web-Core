@@ -2,23 +2,11 @@
 
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { usePathname } from "next/navigation"
 
+// Las rutas de auth respetan el tema claro u oscuro del usuario (W-004): no hay tema forzado.
 export function ThemeProvider({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
-  const pathname = usePathname()
-
-  // Forzamos el tema a "light" si estamos en la página de login o registro
-  const isAuthPage = pathname?.includes("/login") || pathname?.includes("/forgot-password")
-
-  return (
-    <NextThemesProvider
-      {...props}
-      forcedTheme={isAuthPage ? "light" : undefined}
-    >
-      {children}
-    </NextThemesProvider>
-  )
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
 }
