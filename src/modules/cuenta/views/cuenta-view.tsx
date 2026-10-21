@@ -12,7 +12,6 @@ import { Button } from "@/shared/components/ui/button"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
 import { cerrarSesionAction } from "@/modules/auth"
-import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { PerfilForm } from "../components/perfil-form"
 import { ContrasenaForm } from "../components/contrasena-form"
 import { perfilCuentaAction } from "../actions/cuenta.actions"
@@ -34,7 +33,6 @@ export function CuentaView() {
   const [perfil, setPerfil] = React.useState<PerfilCuentaDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const router = useRouter()
-  const { tienda } = usePanel()
   const [cerrando, setCerrando] = React.useState(false)
   const { theme, setTheme } = useTheme()
   const montado = useMounted()
@@ -111,32 +109,6 @@ export function CuentaView() {
                   <Sun aria-hidden="true" className={oscuro ? "size-3.5 text-muted-foreground" : "size-3.5 text-foreground"} />
                 </div>
               </div>
-            </section>
-
-            <div className="h-px bg-border/60" />
-
-            <section className="space-y-3" aria-labelledby="cuenta-tienda">
-              <h2 id="cuenta-tienda" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tienda activa</h2>
-              {tienda ? (
-                <div className="rounded-xl border border-border/60 bg-muted/40 p-3.5">
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
-                      <Store className="size-5" />
-                    </span>
-                    <div className="min-w-0">
-                      <p className="truncate text-[14px] font-extrabold text-foreground">{tienda.nombre}</p>
-                      <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-3 rounded-xl border border-dashed border-border p-3.5">
-                  <p className="text-[13px] text-muted-foreground">Aún no tienes una tienda activa. Elige una de tus tiendas o crea la primera.</p>
-                  <Button variant="soft" size="sm" className="w-full" onClick={() => router.push("/cuenta/tiendas")}>
-                    Elegir tienda
-                  </Button>
-                </div>
-              )}
             </section>
           </div>
 
