@@ -9,7 +9,7 @@ export const claseCampo = "border-[1.8px] bg-transparent text-foreground outline
 export const claseEstadoCampo: Record<EstadoCampo, string> = {
   default: "border-input hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18",
   error: "border-destructive text-destructive-text hover:border-destructive focus-visible:border-destructive focus-visible:ring-[3.5px] focus-visible:ring-destructive/18",
-  success: "border-success focus-visible:border-success focus-visible:ring-[3.5px] focus-visible:ring-success/18",
+  success: "border-primary focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18",
 }
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {

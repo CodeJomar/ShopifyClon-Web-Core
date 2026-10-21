@@ -27,7 +27,7 @@ const FloatingTextarea = React.forwardRef<HTMLTextAreaElement, FloatingTextareaP
           placeholder=" "
           className={cn(
             "peer flex min-h-24 w-full resize-none rounded-xl px-3.5 pt-4 pb-2.5 text-[13px] font-medium",
-            "pl-11",
+            "pl-[22px]",
             claseCampo,
             claseEstadoCampo[state]
           )}
@@ -37,12 +37,12 @@ const FloatingTextarea = React.forwardRef<HTMLTextAreaElement, FloatingTextareaP
         <label
           htmlFor={textareaId}
           className={cn(
-            "pointer-events-none absolute left-11 top-[1.1rem] z-10 origin-left px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
+            "pointer-events-none absolute left-5 top-[1.1rem] z-10 origin-left px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
             claseCorteEtiqueta,
             "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-primary",
             "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
             state === "error" && "text-destructive-text peer-focus:text-destructive-text",
-            state === "success" && "text-tono-exito-fg"
+            state === "success" && "text-primary"
           )}
         >
           {label}

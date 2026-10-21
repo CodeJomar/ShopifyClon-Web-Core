@@ -92,11 +92,11 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             type={esContrasena && mostrar ? "text" : type}
             placeholder=" "
             aria-describedby={mensaje ? `${inputId}-ayuda` : undefined}
-            className={cn("peer h-11", "pl-11", hayAccion ? "pr-11" : "")}
+            className={cn("peer h-11", izquierda ? "pl-11" : "pl-[22px]", hayAccion ? "pr-11" : "")}
             {...props}
           />
 
-          <label htmlFor={inputId} className={cn(claseEtiqueta, "left-11", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-tono-exito-fg")}>
+          <label htmlFor={inputId} className={cn(claseEtiqueta, izquierda ? "left-11" : "left-5", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-primary")}>
             {label}
           </label>
 
