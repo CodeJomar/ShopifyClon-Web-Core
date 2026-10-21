@@ -15,6 +15,8 @@ export interface PanelContextValue {
   rol: string | undefined
   /** Nombres de la persona (perfil). */
   nombres: string
+  /** Apellidos de la persona (perfil). */
+  apellidos: string
   cargando: boolean
   error: ErrorApi | null
   /** Oculta lo que el rol no puede hacer. La API vuelve a comprobar cada petición. */
@@ -35,6 +37,7 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
   const [tienda, setTienda] = React.useState<TiendaActivaDto | null>(null)
   const [rol, setRol] = React.useState<string | undefined>(undefined)
   const [nombres, setNombres] = React.useState("")
+  const [apellidos, setApellidos] = React.useState("")
   const [cargando, setCargando] = React.useState(true)
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
@@ -47,7 +50,10 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
         if (!exigirTienda) {
           const perfil = await perfilAction()
           if (cancelado) return
-          if (perfil.ok) setNombres(perfil.datos.nombres)
+          if (perfil.ok) {
+            setNombres(perfil.datos.nombres)
+            setApellidos(perfil.datos.apellidos)
+          }
           setCargando(false)
           return
         }
@@ -63,7 +69,10 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       if (cancelado) return
       setTienda(activa.datos)
       if (mis.ok) setRol(mis.datos.find((t) => t.tienda_id === activa.datos.id)?.rol)
-      if (perfil.ok) setNombres(perfil.datos.nombres)
+      if (perfil.ok) {
+            setNombres(perfil.datos.nombres)
+            setApellidos(perfil.datos.apellidos)
+          }
       setCargando(false)
     })()
     return () => {
@@ -76,12 +85,13 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       tienda,
       rol,
       nombres,
+      apellidos,
       cargando,
       error,
       puede: puedeConRol(rol),
       permisos: permisosDeRol(rol),
     }),
-    [tienda, rol, nombres, cargando, error],
+    [tienda, rol, nombres, apellidos, cargando, error],
   )
 
   return <PanelContext.Provider value={valor}>{children}</PanelContext.Provider>

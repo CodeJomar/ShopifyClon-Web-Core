@@ -24,6 +24,13 @@ const ETIQUETA_ROL: Record<string, string> = {
   [ROL.GESTOR_PEDIDOS]: "Gestor de pedidos",
 }
 
+/** "Jomar Luis" → "Jomar L.": el primer nombre (o apellido) completo y la inicial del siguiente. */
+function abreviar(texto: string): string {
+  const [primero, segundo] = texto.trim().split(/s+/)
+  if (!primero) return ""
+  return segundo ? `${primero} ${segundo[0].toUpperCase()}.` : primero
+}
+
 /**
  * Armazón compartido por el panel y la cuenta: barra lateral (marca = tienda activa) y encabezado con el menú del
  * usuario, más el aviso de suscripción (SUS-017). Con `exigirTienda={false}` (la cuenta) se muestra aunque no haya
@@ -33,11 +40,12 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const router = useRouter()
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar, isDrawerOpen, setIsDrawerOpen, isMobile } = useWorkspaceLayout()
-  const { tienda, rol, nombres, puede, cargando, error } = usePanel()
+  const { tienda, rol, nombres, apellidos, puede, cargando, error } = usePanel()
 
   const items = React.useMemo(() => (tienda ? filtrarNavegacion(NAVEGACION, puede) : NAVEGACION_SIN_TIENDA), [tienda, puede])
   const etiquetaRol = rol ? (ETIQUETA_ROL[rol] ?? rol) : ""
-  const iniciales = (nombres.trim()[0] ?? "U").toUpperCase()
+  const iniciales = ((nombres.trim()[0] ?? "") + (apellidos.trim()[0] ?? "") || "U").toUpperCase()
+  const nombreCorto = [abreviar(nombres), abreviar(apellidos)].filter(Boolean).join(" ")
   const permiso = permisoDeRuta(pathname)
   const permitida = !permiso || puede(permiso)
 
@@ -80,7 +88,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
           onLogout={cerrarSesion}
-          userName={nombres || "Usuario"}
+          userName={nombreCorto || "Usuario"}
           userRole={etiquetaRol}
           userInitials={iniciales}
           puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
