@@ -15,10 +15,8 @@ export const subdominioSchema = z
 export const crearTiendaSchema = z.object({
   nombre: z.string().trim().min(1, "Escribe el nombre de tu tienda.").max(100, "Máximo 100 caracteres."),
   subdominio: subdominioSchema,
-  correo_contacto: z
-    .string()
-    .trim()
-    .refine((valor) => valor === "" || z.string().email().safeParse(valor).success, "Ingresa un correo válido."),
+  // TODO(Q-W-006): el contrato lo marca opcional, pero la API responde VAL-001 si falta: se pide siempre (viene del perfil).
+  correo_contacto: z.string().trim().min(1, "Escribe un correo de contacto.").email("Ingresa un correo válido."),
   moneda: z.enum(["PEN", "USD"]),
   codigo_plan: z.string().min(1, "Elige un plan."),
 })

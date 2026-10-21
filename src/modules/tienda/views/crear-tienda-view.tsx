@@ -95,7 +95,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
 
   const crear = form.handleSubmit(async (valores) => {
     setError(null)
-    const res = await crearTiendaAction({ ...valores, correo_contacto: valores.correo_contacto || undefined })
+    const res = await crearTiendaAction(valores)
     if (!res.ok) {
       const e = res.error
       if (e.codigo === "TIE-001") form.setError("subdominio", { message: e.message })
