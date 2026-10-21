@@ -4,7 +4,7 @@ import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Link as LinkIcon, Mail, Store } from "lucide-react"
+import { Banknote, Link as LinkIcon, Mail, Store } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
@@ -210,6 +210,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
               />
               <FloatingSelect
                 label="Moneda"
+                leftIcon={<Banknote className="size-4" aria-hidden="true" />}
                 value={moneda}
                 onValueChange={(valor) => form.setValue("moneda", valor as "PEN" | "USD")}
               >
