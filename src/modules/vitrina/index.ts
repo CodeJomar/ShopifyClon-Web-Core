@@ -1,0 +1,6 @@
+export * from "./actions/vitrina.actions"
+export * from "./components/tarjeta-producto"
+export * from "./components/filtros-catalogo"
+export * from "./components/paginacion-catalogo"
+export * from "./components/detalle-producto-interactivo"
+export * from "./components/buscador-header"
