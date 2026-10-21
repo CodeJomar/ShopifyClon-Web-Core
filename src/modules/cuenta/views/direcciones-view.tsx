@@ -157,14 +157,15 @@ export function DireccionesView() {
         title={panel.editando ? "Editar dirección" : "Agregar dirección"}
         description="Los datos se usan para entregar tus compras."
         footer={
-          <div className="flex w-full gap-3">
-            <Button type="button" variant="neutral" className="flex-1" onClick={() => setPanel({ abierto: false })}>
+          // Los botones van directo al pie: PanelFooter da el ancho estándar a cada hijo.
+          <>
+            <Button type="button" variant="neutral" onClick={() => setPanel({ abierto: false })}>
               Cancelar
             </Button>
-            <Button type="submit" form={FORMULARIO_DIRECCION_ID} className="flex-1">
+            <Button type="submit" form={FORMULARIO_DIRECCION_ID}>
               Guardar
             </Button>
-          </div>
+          </>
         }
       >
         <DireccionForm
