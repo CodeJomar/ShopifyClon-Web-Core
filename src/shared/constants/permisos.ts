@@ -1,50 +1,65 @@
 /**
- * Permisos del sistema. Espejo de los nombres que define la API Spring (la API es la autoridad):
- * la API entrega en /auth/me una lista "MODULO:ACCION" (el propietario recibe "*") y la interfaz solo la usa para
- * mostrar u ocultar. Nada de esto autoriza: la API vuelve a comprobar cada petición.
+ * Permisos del panel y matriz rol × permiso (docs/negocio/01-actores-roles-permisos.md, D-006).
  *
- * Los roles son datos que el propietario configura, así que la interfaz NUNCA decide por nombre de rol:
- * pregunta siempre por permisos.
+ * La interfaz solo OCULTA lo que el rol no puede hacer. La autoridad es la API: cada petición vuelve a comprobar el
+ * permiso y un 403 siempre se maneja. Por eso la matriz vive aquí como ayuda de navegación, no como seguridad.
+ *
+ * Los roles son el código de `PersonalTienda` (PROPIETARIO, ADMINISTRADOR, GESTOR_CATALOGO, GESTOR_PEDIDOS).
+ * El administrador de plataforma no es un rol de tienda: lo decide `EsAdministradorPlataforma`, no este archivo.
  */
-// TODO(W-007): lista de módulos de la API Spring (Q-W-001: vacía hasta que el panel defina sus permisos).
-export const MODULO = {} as const
 
-export const ACCION = {
-  LEER: "LEER",
-  CREAR: "CREAR",
-  EDITAR: "EDITAR",
-  ELIMINAR: "ELIMINAR",
-  COBRAR: "COBRAR",
-  DESPACHAR: "DESPACHAR",
-  ARQUEAR: "ARQUEAR",
-  DISPONIBILIDAD: "DISPONIBILIDAD",
-  AJUSTAR: "AJUSTAR",
-  DESCONTAR: "DESCONTAR",
-  ANULAR: "ANULAR",
-  DEVOLVER: "DEVOLVER",
-  CAMBIAR_ESTADO: "CAMBIAR_ESTADO",
+export const ROL = {
+  PROPIETARIO: "PROPIETARIO",
+  ADMINISTRADOR: "ADMINISTRADOR",
+  GESTOR_CATALOGO: "GESTOR_CATALOGO",
+  GESTOR_PEDIDOS: "GESTOR_PEDIDOS",
 } as const
 
-export type Modulo = (typeof MODULO)[keyof typeof MODULO]
-export type Accion = (typeof ACCION)[keyof typeof ACCION]
+export const PERMISO = {
+  TIENDA_CONFIGURAR: "TIENDA_CONFIGURAR",
+  SUSCRIPCION_GESTIONAR: "SUSCRIPCION_GESTIONAR",
+  PERSONAL_GESTIONAR: "PERSONAL_GESTIONAR",
+  CATALOGO_GESTIONAR: "CATALOGO_GESTIONAR",
+  INVENTARIO_AJUSTAR: "INVENTARIO_AJUSTAR",
+  CUPONES_GESTIONAR: "CUPONES_GESTIONAR",
+  ENVIOS_CONFIGURAR: "ENVIOS_CONFIGURAR",
+  ORDENES_VER: "ORDENES_VER",
+  ORDENES_GESTIONAR: "ORDENES_GESTIONAR",
+  ORDENES_CANCELAR: "ORDENES_CANCELAR",
+  REEMBOLSOS_EMITIR: "REEMBOLSOS_EMITIR",
+  METRICAS_VER: "METRICAS_VER",
+} as const
 
-/** Lo que hay que poder hacer para ver una pantalla o usar un botón. */
-export interface Requisito {
-  modulo: Modulo
-  accion: Accion
+export type Rol = (typeof ROL)[keyof typeof ROL]
+export type Permiso = (typeof PERMISO)[keyof typeof PERMISO]
+
+/** Matriz fija (D-006). Una fila por rol; cada lista son los permisos que ese rol tiene. */
+const MATRIZ: Record<Rol, readonly Permiso[]> = {
+  PROPIETARIO: Object.values(PERMISO),
+  ADMINISTRADOR: [
+    PERMISO.TIENDA_CONFIGURAR,
+    PERMISO.PERSONAL_GESTIONAR,
+    PERMISO.CATALOGO_GESTIONAR,
+    PERMISO.INVENTARIO_AJUSTAR,
+    PERMISO.CUPONES_GESTIONAR,
+    PERMISO.ENVIOS_CONFIGURAR,
+    PERMISO.ORDENES_VER,
+    PERMISO.ORDENES_GESTIONAR,
+    PERMISO.ORDENES_CANCELAR,
+    PERMISO.REEMBOLSOS_EMITIR,
+    PERMISO.METRICAS_VER,
+  ],
+  GESTOR_CATALOGO: [PERMISO.CATALOGO_GESTIONAR, PERMISO.INVENTARIO_AJUSTAR],
+  GESTOR_PEDIDOS: [PERMISO.ORDENES_VER, PERMISO.ORDENES_GESTIONAR, PERMISO.ORDENES_CANCELAR],
 }
 
-/** Comodín que la API entrega a la cuenta propietaria. */
-export const PERMISO_TOTAL = "*"
-
-export const clavePermiso = ({ modulo, accion }: Requisito) => `${modulo}:${accion}`
-
-/** ¿La lista de permisos de la sesión cubre este requisito? Función pura: sirve en servidor, cliente y login. */
-export function tienePermiso(permisos: readonly string[], requisito: Requisito): boolean {
-  return permisos.includes(PERMISO_TOTAL) || permisos.includes(clavePermiso(requisito))
+/** Permisos de un rol. Un rol desconocido o ausente no tiene ninguno (la interfaz no se abre por defecto). */
+export function permisosDeRol(rol: string | undefined): readonly Permiso[] {
+  if (!rol || !(rol in MATRIZ)) return []
+  return MATRIZ[rol as Rol]
 }
 
-/** Verifica un requisito contra una sesión; es la firma que reciben los helpers de navegación. */
-export type Puede = (requisito: Requisito) => boolean
+/** Firma que reciben los helpers de navegación: ¿este usuario puede hacer esto? */
+export type Puede = (permiso: Permiso) => boolean
 
-export const puedeCon = (permisos: readonly string[]): Puede => (requisito) => tienePermiso(permisos, requisito)
+export const puedeConRol = (rol: string | undefined): Puede => (permiso) => permisosDeRol(rol).includes(permiso)

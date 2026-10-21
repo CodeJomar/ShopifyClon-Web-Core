@@ -1,10 +1,10 @@
-import { PanelView } from "@/modules/tienda"
+import { InicioView } from "@/modules/metricas/views/inicio-view"
 
 export const metadata = {
-  title: "Panel | OTemu",
-  description: "Panel de tu tienda.",
+  title: "Inicio | OTemu",
+  description: "Métricas de tu tienda.",
 }
 
 export default function PanelPage() {
-  return <PanelView />
+  return <InicioView />
 }
