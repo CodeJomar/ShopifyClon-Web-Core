@@ -2,16 +2,14 @@
 
 import * as React from "react";
 import { useTheme } from "next-themes";
-import { Eye, Lock, Mail, ArrowRight, RotateCcw, Check, Info, Inbox, Moon, Sun, Store, TriangleAlert, Package } from "lucide-react";
+import { Eye, ArrowRight, RotateCcw, Check, Info, Inbox, Moon, Sun, Store, TriangleAlert, Package } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert";
 import { toast } from "@/shared/components/ui/toast";
-import { FloatingInput } from "@/shared/components/composed/floating-input";
-import { FloatingSelect } from "@/shared/components/composed/floating-select";
-import { FloatingTextarea } from "@/shared/components/composed/floating-textarea";
-import { SelectContent, SelectItem } from "@/shared/components/ui/select";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/shared/components/ui/sheet";
+import { CamposDemo } from "./campos-demo";
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio";
 import { BarraPaginacion } from "@/shared/components/composed/barra-paginacion";
 import type { TonoInsignia } from "@/shared/components/ui/badge";
@@ -24,6 +22,19 @@ import { ErroresDemo } from "./errores-demo";
 const VARIANTES_BOTON = [
   "default", "outline", "soft", "ghost", "link", "neutral", "warning", "danger", "danger-outline",
 ] as const;
+
+// Solo del playground: replica el hover de cada variante para compararlo con la plantilla sin mover el mouse.
+const HOVER_FORZADO: Record<(typeof VARIANTES_BOTON)[number], string> = {
+  default: "brightness-105 -translate-y-px",
+  outline: "bg-primary/10",
+  soft: "bg-primary/22",
+  ghost: "bg-primary/12 text-brand-text",
+  link: "after:scale-x-100",
+  neutral: "bg-muted",
+  warning: "brightness-105 -translate-y-px",
+  danger: "brightness-105",
+  "danger-outline": "bg-destructive/9",
+};
 
 const TONOS: { tono: TonoInsignia; texto: string }[] = [
   { tono: "neutro", texto: "Por preparar" },
@@ -66,6 +77,7 @@ export default function PlaygroundPage() {
   const montado = useMounted();
   const oscuro = montado && resolvedTheme === "dark";
   const [pagina, setPagina] = React.useState(1);
+  const [sheetAbierto, setSheetAbierto] = React.useState(false);
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-8">
@@ -101,6 +113,16 @@ export default function PlaygroundPage() {
             </div>
           </div>
           <div className="space-y-3">
+            <Rotulo>Hover forzado (comparar con la plantilla)</Rotulo>
+            <div id="botones-hover" className="flex flex-wrap gap-3">
+              {VARIANTES_BOTON.map((variante) => (
+                <Button key={variante} variant={variante} className={HOVER_FORZADO[variante]} data-hover-forzado>
+                  {variante}
+                </Button>
+              ))}
+            </div>
+          </div>
+          <div className="space-y-3">
             <Rotulo>Tamaños</Rotulo>
             <div className="flex flex-wrap items-center gap-3">
               <Button size="sm">Pequeño</Button>
@@ -122,28 +144,25 @@ export default function PlaygroundPage() {
         </Seccion>
 
         <Seccion id="campos" titulo="2. Campos outlined cut (§4.2)">
-          <div className="grid gap-6 sm:grid-cols-2">
-            <FloatingInput label="Correo electrónico" autoFocus leftIcon={<Mail className="size-4" />} ayuda="Usaremos este correo para avisarte de tus pedidos." />
-            <FloatingInput label="Nombre de la tienda" defaultValue="Tienda Aurora" />
-            <FloatingInput label="Contraseña" state="error" type="password" defaultValue="12345" mensajeError="Debe tener 8 caracteres o más." leftIcon={<Lock className="size-4" />} />
-            <FloatingInput label="Número de orden" disabled defaultValue="ORD-2026-0042" />
-            <FloatingInput label="Enlace de tu tienda" readOnly copiable defaultValue="otemu.com/tienda/aurora-tienda" />
-            <FloatingSelect label="Categoría" defaultValue="ropa">
-              <SelectContent>
-                <SelectItem value="ropa">Ropa</SelectItem>
-                <SelectItem value="hogar">Hogar</SelectItem>
-              </SelectContent>
-            </FloatingSelect>
-            <FloatingSelect label="Estado" state="success" defaultValue="activo">
-              <SelectContent>
-                <SelectItem value="activo">Activo</SelectItem>
-                <SelectItem value="borrador">Borrador</SelectItem>
-              </SelectContent>
-            </FloatingSelect>
-            <div className="sm:col-span-2">
-              <FloatingTextarea label="Descripción del producto" defaultValue="Taza de cerámica hecha a mano." />
-            </div>
+          <div className="space-y-3">
+            <Rotulo>En una isla</Rotulo>
+            <CamposDemo />
           </div>
+          <div className="space-y-3">
+            <Rotulo>Dentro de un Sheet (la etiqueta no deja rectángulo)</Rotulo>
+            <Button variant="soft" onClick={() => setSheetAbierto(true)}>Abrir Sheet con campos</Button>
+          </div>
+          <Sheet open={sheetAbierto} onOpenChange={setSheetAbierto}>
+            <SheetContent className="overflow-y-auto">
+              <SheetHeader>
+                <SheetTitle>Campos en un Sheet</SheetTitle>
+                <SheetDescription>Mismo conjunto de campos sobre el fondo del Sheet.</SheetDescription>
+              </SheetHeader>
+              <div className="px-4 pb-4">
+                <CamposDemo enColumna />
+              </div>
+            </SheetContent>
+          </Sheet>
         </Seccion>
 
         <Seccion id="insignias" titulo="3. Insignias de estado (§4.3)">
