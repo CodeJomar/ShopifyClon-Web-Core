@@ -9,7 +9,6 @@ import { Card } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Switch } from "@/shared/components/ui/switch"
 import { Button } from "@/shared/components/ui/button"
-import { Badge } from "@/shared/components/ui/badge"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
 import { cerrarSesionAction } from "@/modules/auth"
@@ -114,6 +113,34 @@ export function CuentaView() {
               </div>
             </section>
 
+            <div className="h-px bg-border/60" />
+
+            <section className="space-y-3" aria-labelledby="cuenta-tienda">
+              <h2 id="cuenta-tienda" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tienda activa</h2>
+              {tienda ? (
+                <div className="space-y-3 rounded-xl border border-border/60 bg-muted/40 p-3.5">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                      <Store className="size-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-[14px] font-extrabold text-foreground">{tienda.nombre}</p>
+                      <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
+                    </div>
+                  </div>
+                  <Button variant="soft" size="sm" className="w-full" onClick={() => router.push("/panel")}>
+                    Abrir panel
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3 rounded-xl border border-dashed border-border p-3.5">
+                  <p className="text-[13px] text-muted-foreground">Aún no tienes una tienda activa. Elige una de tus tiendas o crea la primera.</p>
+                  <Button variant="soft" size="sm" className="w-full" onClick={() => router.push("/cuenta/tiendas")}>
+                    Elegir tienda
+                  </Button>
+                </div>
+              )}
+            </section>
           </div>
 
           {/* Columna derecha: información del perfil */}
@@ -132,37 +159,6 @@ export function CuentaView() {
                 />
               }
             />
-
-            {/* Tienda activa */}
-            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-tienda">
-              <h3 id="cuenta-tienda" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tienda activa</h3>
-              {tienda ? (
-                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/60 bg-muted/40 p-4">
-                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
-                    <Store className="size-5" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-[14px] font-extrabold text-foreground">{tienda.nombre}</p>
-                    <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
-                  </div>
-                  {tienda.operativa ? (
-                    <Badge variant="estado" tono="marca">Activa</Badge>
-                  ) : (
-                    <Badge variant="estado" tono="aviso">Requiere atención</Badge>
-                  )}
-                  <Button variant="soft" size="sm" onClick={() => router.push("/panel")}>
-                    Abrir panel
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border p-4">
-                  <p className="text-[13px] text-muted-foreground">Aún no tienes una tienda activa. Elige una de tus tiendas o crea la primera.</p>
-                  <Button variant="soft" size="sm" onClick={() => router.push("/cuenta/tiendas")}>
-                    Elegir tienda
-                  </Button>
-                </div>
-              )}
-            </section>
 
             {/* Tarjetas hacia las otras pantallas de la cuenta, debajo de los datos */}
             <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-mas">
