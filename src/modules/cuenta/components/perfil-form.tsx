@@ -14,7 +14,7 @@ import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
 /** Edita nombres, apellidos y teléfono. El correo no se edita (se muestra abajo, de solo lectura). */
-export function PerfilForm({ perfil, onGuardado }: { perfil: PerfilCuentaDto; onGuardado: (perfil: PerfilCuentaDto) => void }) {
+export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuentaDto; /** Campo del correo (solo lectura), que se muestra en el grupo Contacto. */ correo: React.ReactNode; onGuardado: (perfil: PerfilCuentaDto) => void }) {
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const form = useForm<PerfilValues>({
     resolver: zodResolver(perfilSchema),
@@ -37,13 +37,25 @@ export function PerfilForm({ perfil, onGuardado }: { perfil: PerfilCuentaDto; on
   const estado = (campo: keyof PerfilValues) => (form.formState.errors[campo] ? "error" : "default") as "error" | "default"
 
   return (
-    <form onSubmit={guardar} noValidate className="space-y-5">
+    <form onSubmit={guardar} noValidate className="@container space-y-7">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos guardar tu perfil</AlertTitle>
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Información del perfil</h2>
+          <p className="mt-1 text-[13px] text-muted-foreground">Así te verán las tiendas donde compras.</p>
+        </div>
+        <Button type="submit" loading={form.formState.isSubmitting}>
+          Guardar cambios
+        </Button>
+      </div>
+      <section className="space-y-4" aria-labelledby="perfil-datos">
+        <h3 id="perfil-datos" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Datos personales</h3>
+        <div className="grid items-start gap-5 @lg:grid-cols-2">
       <FloatingInput
         label="Nombres"
         leftIcon={<User className="size-4" aria-hidden="true" />}
@@ -60,6 +72,12 @@ export function PerfilForm({ perfil, onGuardado }: { perfil: PerfilCuentaDto; on
         mensajeError={form.formState.errors.apellidos?.message}
         {...form.register("apellidos")}
       />
+        </div>
+      </section>
+      <section className="space-y-4" aria-labelledby="perfil-contacto">
+        <h3 id="perfil-contacto" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Contacto</h3>
+        <div className="grid items-start gap-5 @lg:grid-cols-2">
+      {correo}
       <FloatingInput
         label="Teléfono (opcional)"
         leftIcon={<Phone className="size-4" aria-hidden="true" />}
@@ -69,9 +87,8 @@ export function PerfilForm({ perfil, onGuardado }: { perfil: PerfilCuentaDto; on
         mensajeError={form.formState.errors.telefono?.message}
         {...form.register("telefono")}
       />
-      <Button type="submit" loading={form.formState.isSubmitting}>
-        Guardar cambios
-      </Button>
+        </div>
+      </section>
     </form>
   )
 }

@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { TriangleAlert } from "lucide-react"
-import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { AppSidebar } from "@/shared/components/layout/app-sidebar"
 import { WorkspaceHeader } from "@/shared/components/layout/workspace-header"
@@ -12,8 +11,8 @@ import { Button } from "@/shared/components/ui/button"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { Sheet, SheetContent, SheetTitle } from "@/shared/components/ui/sheet"
 import { Card, CardContent } from "@/shared/components/ui/card"
-import { NAVEGACION, filtrarNavegacion, permisoDeRuta } from "@/shared/constants/navegacion"
-import { ROL } from "@/shared/constants/permisos"
+import { NAVEGACION, NAVEGACION_SIN_TIENDA, filtrarNavegacion, permisoDeRuta } from "@/shared/constants/navegacion"
+import { PERMISO, ROL } from "@/shared/constants/permisos"
 import { cerrarSesionAction } from "@/modules/auth"
 import { cn } from "@/shared/utils/cn"
 import { usePanel } from "../hooks/use-panel"
@@ -25,19 +24,28 @@ const ETIQUETA_ROL: Record<string, string> = {
   [ROL.GESTOR_PEDIDOS]: "Gestor de pedidos",
 }
 
+/** "Jomar Luis" → "Jomar L.": el primer nombre (o apellido) completo y la inicial del siguiente. */
+function abreviar(texto: string): string {
+  const [primero, segundo] = texto.trim().split(/\s+/)
+  if (!primero) return ""
+  return segundo ? `${primero} ${segundo[0].toUpperCase()}.` : primero
+}
+
 /**
- * Armazón del panel: barra lateral y encabezado de la plantilla (sin reestructurar), con las secciones del rol,
- * el nombre de la tienda activa y el aviso de suscripción (SUS-017).
+ * Armazón compartido por el panel y la cuenta: barra lateral (marca = tienda activa) y encabezado con el menú del
+ * usuario, más el aviso de suscripción (SUS-017). Con `exigirTienda={false}` (la cuenta) se muestra aunque no haya
+ * tienda activa, con la barra reducida a "Crear mi tienda".
  */
-export function PanelShell({ children }: { children: React.ReactNode }) {
+export function PanelShell({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar, isDrawerOpen, setIsDrawerOpen, isMobile } = useWorkspaceLayout()
-  const { tienda, rol, nombres, puede, cargando, error } = usePanel()
+  const { tienda, rol, nombres, apellidos, puede, cargando, error } = usePanel()
 
-  const items = React.useMemo(() => filtrarNavegacion(NAVEGACION, puede), [puede])
+  const items = React.useMemo(() => (tienda ? filtrarNavegacion(NAVEGACION, puede) : NAVEGACION_SIN_TIENDA), [tienda, puede])
   const etiquetaRol = rol ? (ETIQUETA_ROL[rol] ?? rol) : ""
-  const iniciales = (nombres.trim()[0] ?? "U").toUpperCase()
+  const iniciales = ((nombres.trim()[0] ?? "") + (apellidos.trim()[0] ?? "") || "U").toUpperCase()
+  const nombreCorto = [abreviar(nombres), abreviar(apellidos)].filter(Boolean).join(" ")
   const permiso = permisoDeRuta(pathname)
   const permitida = !permiso || puede(permiso)
 
@@ -50,17 +58,18 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     <AppSidebar
       items={items}
       isCollapsed={isCollapsed && !isMobile}
-      userName={nombres || "Usuario"}
-      userRole={etiquetaRol}
-      userInitials={iniciales}
+      nombreMarca={tienda?.nombre ?? "OTemu"}
+      tieneTienda={Boolean(tienda)}
     />
   )
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       {!isMobile && (
         <aside className={cn("sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
+          {/* Divisor vertical: arranca a la altura del divisor del encabezado (76 px), queda centrado entre el menú (12 px) y el main (24 px) y deja aire abajo */}
+          <div aria-hidden="true" className="absolute -right-1 top-[76px] bottom-10 w-px bg-brand-strong/12" />
         </aside>
       )}
       {isMobile && (
@@ -72,27 +81,25 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         </Sheet>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-6">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        {/* Encabezado fijo: solo se desplaza el contenido de abajo */}
+        <div className="shrink-0 px-4 sm:px-6">
         <WorkspaceHeader
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
           onLogout={cerrarSesion}
-          etiquetaCuenta={etiquetaRol}
+          userName={nombreCorto || "Usuario"}
+          userRole={etiquetaRol}
+          userInitials={iniciales}
+          puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
+          tieneTienda={Boolean(tienda)}
         />
+        </div>
 
-        {tienda && (
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[13px] text-muted-foreground">
-              Tienda: <span className="font-bold text-foreground">{tienda.nombre}</span>
-            </p>
-            <Link href="/cuenta/tiendas" className="text-[12.5px] font-bold text-brand-text hover:underline">
-              Cambiar de tienda
-            </Link>
-          </div>
-        )}
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
 
         {tienda && !tienda.operativa && (
-          <Alert variant="warning" className="mt-4">
+          <Alert variant="warning" className="mt-1 sm:mt-3">
             <TriangleAlert aria-hidden="true" />
             <AlertTitle>Tu suscripción no está activa</AlertTitle>
             <AlertDescription>
@@ -106,10 +113,10 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           </Alert>
         )}
 
-        <main className="mt-5 flex-1">
+        <main className={cn("flex flex-1 flex-col", tienda && !tienda.operativa ? "mt-4 sm:mt-6" : "mt-1 sm:mt-3")}>
           {cargando && (
             <p className="text-[13px] text-muted-foreground" aria-live="polite">
-              Cargando tu tienda…
+              {exigirTienda ? "Cargando tu tienda…" : "Cargando…"}
             </p>
           )}
           {error && (
@@ -119,7 +126,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               </CardContent>
             </Card>
           )}
-          {!cargando && !error && tienda && (permitida ? children : (
+          {!cargando && !error && (tienda || !exigirTienda) && (permitida ? children : (
             <Card>
               <CardContent>
                 <EstadoVacio titulo="No tienes acceso a esta sección" descripcion="Tu rol no incluye este permiso. Pide a la propietaria o al propietario que te lo asigne." />
@@ -127,6 +134,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
             </Card>
           ))}
         </main>
+        </div>
       </div>
     </div>
   )

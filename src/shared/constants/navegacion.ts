@@ -5,10 +5,13 @@ import {
   CreditCard,
   FolderTree,
   Package,
+  Plus,
   ReceiptText,
   Settings,
   Ticket,
+  Store,
   Truck,
+  User,
   Users,
 } from "lucide-react"
 
@@ -17,8 +20,17 @@ import { PERMISO, type Permiso, type Puede } from "./permisos"
 /** Inicio del panel: tras iniciar sesión en una tienda y al elegir "Abrir" en el selector. */
 export const HOME_HREF = "/panel"
 
-/** Perfil de la cuenta (no está en el menú: se abre desde el pie del menú). */
+/** Perfil de la cuenta (no está en el menú lateral: se abre desde el menú del usuario). */
 export const PERFIL_HREF = "/cuenta"
+
+/** Sección de "Mi cuenta" para las migas de pan (la cuenta es una sola pantalla; el detalle de una compra y crear tienda son rutas anidadas). */
+export function seccionCuentaDe(pathname: string): string {
+  if (pathname.startsWith("/cuenta/ordenes")) return "Mis compras"
+  if (pathname.startsWith("/cuenta/tiendas")) return "Mis tiendas"
+  if (pathname.startsWith("/cuenta/direcciones")) return "Direcciones"
+  return "Perfil"
+}
+
 
 /**
  * Mapa único de navegación del panel. De aquí salen el menú lateral, las migas de pan y la protección de cada ruta.
@@ -43,12 +55,12 @@ export interface NavItem {
 /** Entradas del panel en el orden del menú (docs/orquestacion-frontend/tareas/W-007). */
 export const NAVEGACION: NavItem[] = [
   {
-    id: "inicio",
-    label: "Inicio",
+    id: "dashboard",
+    label: "Dashboard",
     icon: ChartNoAxesColumn,
     href: "/panel",
     permiso: PERMISO.METRICAS_VER,
-    migas: ["Panel", "Inicio"],
+    migas: ["Panel", "Dashboard"],
   },
   { id: "productos", label: "Productos", icon: Package, href: "/panel/productos", permiso: PERMISO.CATALOGO_GESTIONAR, migas: ["Catálogo", "Productos"] },
   { id: "categorias", label: "Categorías", icon: FolderTree, href: "/panel/categorias", permiso: PERMISO.CATALOGO_GESTIONAR, migas: ["Catálogo", "Categorías"] },
@@ -57,8 +69,15 @@ export const NAVEGACION: NavItem[] = [
   { id: "cupones", label: "Cupones", icon: Ticket, href: "/panel/cupones", permiso: PERMISO.CUPONES_GESTIONAR, migas: ["Ventas", "Cupones"] },
   { id: "envios", label: "Envíos", icon: Truck, href: "/panel/envios", permiso: PERMISO.ENVIOS_CONFIGURAR, migas: ["Ventas", "Envíos"] },
   { id: "personal", label: "Personal", icon: Users, href: "/panel/personal", permiso: PERMISO.PERSONAL_GESTIONAR, migas: ["Tienda", "Personal"] },
-  { id: "configuracion", label: "Configuración", icon: Settings, href: "/panel/configuracion", permiso: PERMISO.TIENDA_CONFIGURAR, migas: ["Tienda", "Configuración"] },
+  { id: "configuracion", label: "Configuración", icon: Settings, href: "/panel/configuracion", permiso: PERMISO.TIENDA_CONFIGURAR, migas: ["Tienda", "Configuración"], oculto: true }, // vive en el menú del usuario (QW-011)
   { id: "suscripcion", label: "Suscripción", icon: CreditCard, href: "/panel/suscripcion", permiso: PERMISO.SUSCRIPCION_GESTIONAR, migas: ["Tienda", "Suscripción"] },
+]
+
+/** Menú lateral cuando la persona aún no tiene tienda activa: su cuenta, elegir una de sus tiendas o crear una. */
+export const NAVEGACION_SIN_TIENDA: NavItem[] = [
+  { id: "mi-cuenta", label: "Mi cuenta", icon: User, href: "/cuenta" },
+  { id: "mis-tiendas", label: "Mis tiendas", icon: Store, href: "/cuenta/tiendas" },
+  { id: "crear-tienda", label: "Crear mi tienda", icon: Plus, href: "/cuenta/tiendas/nueva" },
 ]
 
 /** Una pantalla encontrada en el mapa, junto con el grupo al que pertenece (si lo tiene). */
@@ -89,9 +108,9 @@ export function permisoDeRuta(pathname: string): Permiso | undefined {
 
 /** Migas de pan [sección, pantalla] de una URL. */
 export function migasDe(pathname: string): [string, string] {
-  if (pathname === PERFIL_HREF) return ["Cuenta", "Mi cuenta"]
+  if (pathname === PERFIL_HREF || pathname.startsWith(`${PERFIL_HREF}/`)) return ["Mi cuenta", seccionCuentaDe(pathname)]
   const ruta = rutaDe(pathname)
-  if (!ruta) return ["Panel", "Inicio"]
+  if (!ruta) return ["Panel", "Dashboard"]
   return ruta.item.migas ?? [ruta.grupo?.label ?? ruta.item.label, ruta.item.label]
 }
 

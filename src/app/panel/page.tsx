@@ -1,7 +1,7 @@
 import { InicioView } from "@/modules/metricas/views/inicio-view"
 
 export const metadata = {
-  title: "Inicio | OTemu",
+  title: "Dashboard | OTemu",
   description: "Métricas de tu tienda.",
 }
 

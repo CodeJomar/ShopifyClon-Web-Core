@@ -15,6 +15,8 @@ export interface PanelContextValue {
   rol: string | undefined
   /** Nombres de la persona (perfil). */
   nombres: string
+  /** Apellidos de la persona (perfil). */
+  apellidos: string
   cargando: boolean
   error: ErrorApi | null
   /** Oculta lo que el rol no puede hacer. La API vuelve a comprobar cada petición. */
@@ -27,13 +29,15 @@ const PanelContext = React.createContext<PanelContextValue | null>(null)
 
 /**
  * Carga lo que el panel necesita en cada pantalla: la tienda activa, el rol en ella y el perfil.
- * Sin tienda activa (SEG-001 / 404) manda a elegir una (`/cuenta/tiendas`).
+ * Con `exigirTienda` (el panel), sin tienda activa (SEG-001 / 404) manda a elegir una (`/cuenta/tiendas`).
+ * Sin `exigirTienda` (la cuenta) la falta de tienda activa es normal: no redirige y solo carga el perfil.
  */
-export function PanelProvider({ children }: { children: React.ReactNode }) {
+export function PanelProvider({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
   const [tienda, setTienda] = React.useState<TiendaActivaDto | null>(null)
   const [rol, setRol] = React.useState<string | undefined>(undefined)
   const [nombres, setNombres] = React.useState("")
+  const [apellidos, setApellidos] = React.useState("")
   const [cargando, setCargando] = React.useState(true)
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
@@ -43,6 +47,16 @@ export function PanelProvider({ children }: { children: React.ReactNode }) {
       const activa = await tiendaActivaAction()
       if (cancelado) return
       if (!activa.ok) {
+        if (!exigirTienda) {
+          const perfil = await perfilAction()
+          if (cancelado) return
+          if (perfil.ok) {
+            setNombres(perfil.datos.nombres)
+            setApellidos(perfil.datos.apellidos)
+          }
+          setCargando(false)
+          return
+        }
         if (activa.error.codigo === "SEG-001" || activa.error.estado === 404) {
           router.replace("/cuenta/tiendas")
           return
@@ -55,25 +69,29 @@ export function PanelProvider({ children }: { children: React.ReactNode }) {
       if (cancelado) return
       setTienda(activa.datos)
       if (mis.ok) setRol(mis.datos.find((t) => t.tienda_id === activa.datos.id)?.rol)
-      if (perfil.ok) setNombres(perfil.datos.nombres)
+      if (perfil.ok) {
+            setNombres(perfil.datos.nombres)
+            setApellidos(perfil.datos.apellidos)
+          }
       setCargando(false)
     })()
     return () => {
       cancelado = true
     }
-  }, [router])
+  }, [router, exigirTienda])
 
   const valor = React.useMemo<PanelContextValue>(
     () => ({
       tienda,
       rol,
       nombres,
+      apellidos,
       cargando,
       error,
       puede: puedeConRol(rol),
       permisos: permisosDeRol(rol),
     }),
-    [tienda, rol, nombres, cargando, error],
+    [tienda, rol, nombres, apellidos, cargando, error],
   )
 
   return <PanelContext.Provider value={valor}>{children}</PanelContext.Provider>

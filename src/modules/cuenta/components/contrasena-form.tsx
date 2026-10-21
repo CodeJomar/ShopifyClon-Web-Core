@@ -53,7 +53,7 @@ export function ContrasenaForm() {
       )}
       <CampoContrasena
         label="Contraseña actual"
-        autoComplete="current-password"
+        autoComplete="new-password" // el navegador no debe rellenar la contraseña guardada
         state={estado("contrasena_actual")}
         mensajeError={form.formState.errors.contrasena_actual?.message}
         {...form.register("contrasena_actual")}
