@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { CategoriasView } from "@/modules/catalogo"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Categorías" />
+  return <CategoriasView />
 }
