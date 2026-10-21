@@ -118,7 +118,7 @@ export function CuentaView() {
             <section className="space-y-3" aria-labelledby="cuenta-tienda">
               <h2 id="cuenta-tienda" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tienda activa</h2>
               {tienda ? (
-                <div className="space-y-3 rounded-xl border border-border/60 bg-muted/40 p-3.5">
+                <div className="rounded-xl border border-border/60 bg-muted/40 p-3.5">
                   <div className="flex items-center gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
                       <Store className="size-5" />
@@ -128,9 +128,6 @@ export function CuentaView() {
                       <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
                     </div>
                   </div>
-                  <Button variant="soft" size="sm" className="w-full" onClick={() => router.push("/panel")}>
-                    Abrir panel
-                  </Button>
                 </div>
               ) : (
                 <div className="space-y-3 rounded-xl border border-dashed border-border p-3.5">
