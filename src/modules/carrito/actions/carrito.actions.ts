@@ -11,8 +11,18 @@ const base = (subdominio: string) => `/vitrina/${encodeURIComponent(subdominio)}
 export const crearCarritoAction = (subdominio: string) =>
   resultado(peticionApi<Carrito>({ method: "POST", url: base(subdominio) }))
 
-export const obtenerCarritoAction = (subdominio: string) =>
-  resultado(peticionApi<Carrito>({ method: "GET", url: base(subdominio) }))
+/**
+ * Carrito, o su cotización con la tarifa de envío elegida (`tarifaEnvioId`): la API devuelve `costo_envio` y el
+ * `total_estimado` con envío, idéntico al que calcula el checkout (A-003).
+ */
+export const obtenerCarritoAction = (subdominio: string, tarifaEnvioId?: string) =>
+  resultado(
+    peticionApi<Carrito>({
+      method: "GET",
+      url: base(subdominio),
+      params: tarifaEnvioId ? { tarifa_envio_id: tarifaEnvioId } : undefined,
+    }),
+  )
 
 export const agregarItemAction = (subdominio: string, varianteId: string, cantidad: number) =>
   resultado(peticionApi<Carrito>({ method: "POST", url: `${base(subdominio)}/items`, data: { variante_id: varianteId, cantidad } }))
