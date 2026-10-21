@@ -1,24 +1,18 @@
-import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios"
-import type { BaseResponse } from "@/dtos/core/baseResponse.dto"
-import type { ConstructorLike } from "@/dtos/core/helpers"
-import { env } from "@/env"
+import axios, { isAxiosError, type AxiosRequestConfig } from "axios"
+import type { RespuestaApi } from "@/dtos/core/respuesta-api.dto"
 import { conexion, esFalloDeConexion } from "@/lib/connection"
-import { MOTIVO_SESION_REEMPLAZADA, marcarSesionReemplazada, sesionReemplazada } from "./sesion-reemplazada"
+import { ErrorApi, errorDeConexion } from "./error-api"
 
-/**
- * Cliente tipado hacia la API Spring.
- * - La sesión viaja en cookies HttpOnly emitidas por la API (`withCredentials`); el frontend nunca ve ni guarda tokens.
- * - Solo se envían credenciales al origen de la API configurado.
- */
+/** Mismo origen: el proxy de la web (src/app/api/[...ruta]) reenvía a la API Spring. El navegador nunca ve el JWT. */
+export const RUTA_API = "/api"
+
 export const api = axios.create({
-  baseURL: env.NEXT_PUBLIC_API_URL,
-  withCredentials: true,
+  baseURL: RUTA_API,
   timeout: 15_000,
   headers: { "Content-Type": "application/json" },
 })
 
-// Informa al estado de conexión si la API contesta o no: cualquier respuesta de la API (aunque sea un error de negocio)
-// prueba que está viva; sin respuesta o con 502/503/504 se muestra el aviso de conexión.
+// Cualquier respuesta de la API (aunque sea un error de negocio) prueba que está viva; sin respuesta se muestra el aviso.
 api.interceptors.response.use(
   (respuesta) => {
     conexion.marcarApiOperativa()
@@ -26,82 +20,41 @@ api.interceptors.response.use(
   },
   (error: unknown) => {
     if (esFalloDeConexion(error)) conexion.marcarApiCaida()
-    else if (axios.isAxiosError(error) && error.response) conexion.marcarApiOperativa()
+    else if (isAxiosError(error) && error.response) conexion.marcarApiOperativa()
     throw error
   },
 )
 
-// Rutas de autenticación que no deben intentar renovar la sesión ante un 401.
-const RUTAS_SIN_RENOVACION = ["/auth/login", "/auth/refresh", "/auth/logout", "/auth/activar", "/auth/recuperar", "/auth/verificar-otp", "/auth/restablecer-password"]
+const esRutaAuth = (url: string | undefined) => (url ?? "").startsWith("auth/")
 
-let renovacionEnCurso: Promise<boolean> | null = null
-let motivoRenovacion: string | undefined
-
-const motivoDe = (error: unknown): string | undefined =>
-  axios.isAxiosError(error) ? (error.response?.data as { motivo?: string } | undefined)?.motivo : undefined
-
-function renovarSesion(): Promise<boolean> {
-  renovacionEnCurso ??= api
-    .post("/auth/refresh", {})
-    .then(() => {
-      motivoRenovacion = undefined
-      return true
+function aErrorApi(error: unknown): ErrorApi {
+  if (isAxiosError(error) && error.response) {
+    const cuerpo = error.response.data as Partial<RespuestaApi> | undefined
+    return new ErrorApi({
+      estado: error.response.status,
+      codigo: cuerpo?.codigo ?? `GEN-${error.response.status}`,
+      mensaje: cuerpo?.mensaje ?? "Ocurrió un error inesperado.",
+      validaciones: cuerpo?.validaciones,
+      detalles: cuerpo?.detalles,
+      idCorrelacion: cuerpo?.id_correlacion,
     })
-    .catch((error: unknown) => {
-      motivoRenovacion = motivoDe(error)
-      return false
-    })
-    .finally(() => {
-      renovacionEnCurso = null
-    })
-  return renovacionEnCurso
+  }
+  return errorDeConexion()
 }
 
-// Si el access token venció (401), se renueva una vez con el refresh token (cookie) y se reintenta.
-api.interceptors.response.use(undefined, async (error: unknown) => {
-  if (!axios.isAxiosError(error) || error.response?.status !== 401 || !error.config) throw error
-
-  const config = error.config as InternalAxiosRequestConfig & { _reintentado?: boolean }
-  const url = config.url ?? ""
-  if (config._reintentado || RUTAS_SIN_RENOVACION.some((ruta) => url.startsWith(ruta))) throw error
-
-  // La cuenta se abrió en otro lugar: no se intenta renovar; el workspace cierra la sesión y avisa en el login.
-  if (motivoDe(error) === MOTIVO_SESION_REEMPLAZADA) {
-    marcarSesionReemplazada()
-    throw error
-  }
-
-  config._reintentado = true
-  if (await renovarSesion()) return api.request(config)
-
-  if (motivoRenovacion === MOTIVO_SESION_REEMPLAZADA) {
-    marcarSesionReemplazada()
-    throw error
-  }
-
-  // La sesión ya no se puede renovar (vencida o revocada): se vuelve al login.
-  if (typeof window !== "undefined" && !sesionReemplazada() && !window.location.pathname.startsWith("/login")) {
-    window.location.replace(`/login?siguiente=${encodeURIComponent(window.location.pathname)}`)
-  }
-  throw error
-})
-
 /**
- * Ejecuta una petición y la envuelve en el DTO de respuesta estándar (OneQuery, CheckStatus, ...).
- * Nunca lanza: los errores HTTP y de red quedan en `mensajes` y `httpStatusCode`.
+ * Ejecuta una petición contra /api y devuelve `datos` ya desempaquetados de `RespuestaApi`.
+ * Lanza `ErrorApi`. Un 401 fuera de `auth/*` lleva al login conservando la pantalla de destino.
  */
-export async function apiRequest<R extends BaseResponse>(
-  ResponseType: ConstructorLike<R>,
-  config: AxiosRequestConfig,
-): Promise<R> {
+export async function peticionApi<T>(config: AxiosRequestConfig): Promise<T> {
   try {
-    const res = await api.request(config)
-    const response = new ResponseType(res.data)
-    response.httpStatusCode = res.status
-    return response
+    const { data } = await api.request<RespuestaApi<T>>(config)
+    return data.datos as T
   } catch (error) {
-    const response = new ResponseType(undefined)
-    if (axios.isAxiosError(error)) return response.setAxiosError(error) as R
-    return response.setUnknownError(error) as R
+    const errorApi = aErrorApi(error)
+    if (errorApi.estado === 401 && !esRutaAuth(config.url) && typeof window !== "undefined") {
+      window.location.replace(`/login?siguiente=${encodeURIComponent(window.location.pathname)}`)
+    }
+    throw errorApi
   }
 }
