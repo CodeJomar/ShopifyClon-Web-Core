@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { ConfiguracionView } from "@/modules/tienda"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Configuración" />
+  return <ConfiguracionView />
 }
