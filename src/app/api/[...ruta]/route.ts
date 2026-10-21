@@ -11,6 +11,13 @@ export const dynamic = "force-dynamic"
 const TIMEOUT_MS = 15_000
 const RUTA_LOGIN = "auth/login"
 const CABECERAS_PERMITIDAS = ["content-type", "accept", "idempotency-key", "x-carrito-token"] as const
+// Cabeceras de la API que el navegador necesita además del cuerpo.
+const CABECERAS_RESPUESTA = ["retry-after"] as const
+// 6 MB: cubre la subida de imágenes de 5 MB (A-001) con margen para el multipart.
+const MAX_CUERPO_BYTES = 6 * 1024 * 1024
+const METODOS_LECTURA = new Set(["GET", "HEAD"])
+// Id de correlación aceptado del cliente: corto y sin caracteres raros (va a los logs de la API).
+const CORRELACION_VALIDA = /^[A-Za-z0-9-]{8,64}$/
 
 type Contexto = { params: Promise<{ ruta: string[] }> }
 
@@ -18,14 +25,24 @@ const segmentoValido = (s: string) => s !== "" && s !== "." && s !== ".." && !/[
 
 function urlDestino(ruta: string[], search: string): URL | null {
   const base = (process.env.API_INTERNAL_URL ?? "http://localhost:8080").replace(/\/$/, "")
-  const url = new URL(`/api/v1/${ruta.join("/")}`, base)
+  const url = new URL(`/api/v1/${ruta.map(encodeURIComponent).join("/")}`, base)
   url.search = search
   return url
 }
 
 async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextResponse> {
   const { ruta } = await ctx.params
-  const idCorrelacion = request.headers.get("x-correlacion-id") ?? randomUUID()
+  const recibido = request.headers.get("x-correlacion-id")
+  const idCorrelacion = recibido && CORRELACION_VALIDA.test(recibido) ? recibido : randomUUID()
+
+  // Defensa CSRF además de SameSite=Lax: una escritura con Origin de otro sitio no se reenvía.
+  if (!METODOS_LECTURA.has(request.method) && !mismoOrigen(request)) {
+    return respuestaError(403, "WEB-002", "Solicitud no permitida", { idCorrelacion })
+  }
+  const largo = Number(request.headers.get("content-length") ?? 0)
+  if (largo > MAX_CUERPO_BYTES) {
+    return respuestaError(413, "WEB-003", "El archivo o los datos enviados son demasiado grandes", { idCorrelacion })
+  }
 
   if (ruta.length === 0 || !ruta.every(segmentoValido)) {
     return respuestaError(400, "GEN-400", "La ruta solicitada no es válida", { idCorrelacion })
@@ -43,9 +60,18 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
   if (token) cabeceras.set("Authorization", `Bearer ${token}`)
   if (tienda) cabeceras.set("X-Tienda-Id", tienda)
   cabeceras.set("X-Correlacion-Id", idCorrelacion)
+  // IP real del visitante para el limitador de la API (A-002). Solo se confía si llega con el secreto compartido.
+  const ipCliente = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+  const secretoProxy = process.env.API_PROXY_SECRETO
+  if (ipCliente && secretoProxy) {
+    cabeceras.set("X-Forwarded-For", ipCliente)
+    cabeceras.set("X-Proxy-Secreto", secretoProxy)
+  }
 
-  const esLectura = request.method === "GET" || request.method === "HEAD"
-  const cuerpo = esLectura ? undefined : await request.arrayBuffer()
+  const cuerpo = METODOS_LECTURA.has(request.method) ? undefined : await request.arrayBuffer()
+  if (cuerpo && cuerpo.byteLength > MAX_CUERPO_BYTES) {
+    return respuestaError(413, "WEB-003", "El archivo o los datos enviados son demasiado grandes", { idCorrelacion })
+  }
 
   let respuestaApi: Response
   try {
@@ -68,6 +94,10 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
     status: respuestaApi.status,
     headers: { "Content-Type": tipo, "X-Correlacion-Id": idCorrelacion },
   })
+  for (const nombre of CABECERAS_RESPUESTA) {
+    const valor = respuestaApi.headers.get(nombre)
+    if (valor) respuesta.headers.set(nombre, valor)
+  }
 
   const rutaTexto = ruta.join("/")
   const esLogin = rutaTexto === RUTA_LOGIN && request.method === "POST"
@@ -79,6 +109,18 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
     borrarSesion(respuesta)
   }
   return respuesta
+}
+
+/** El Origin (si el navegador lo envía) debe ser el de la propia web. Sin Origin (curl, servidor) se permite. */
+function mismoOrigen(request: NextRequest): boolean {
+  const origen = request.headers.get("origin")
+  if (!origen) return true
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host")
+  try {
+    return new URL(origen).host === host
+  } catch {
+    return false
+  }
 }
 
 // En el login la API devuelve el token en el cuerpo: se guarda en cookie y se quita antes de responder.

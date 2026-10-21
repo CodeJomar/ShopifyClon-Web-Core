@@ -25,7 +25,8 @@ api.interceptors.response.use(
   },
 )
 
-const esRutaAuth = (url: string | undefined) => (url ?? "").startsWith("auth/")
+// Las acciones pasan la ruta con o sin "/" inicial ("/auth/login"): se normaliza antes de comparar.
+const esRutaAuth = (url: string | undefined) => (url ?? "").replace(/^\/+/, "").startsWith("auth/")
 
 function aErrorApi(error: unknown): ErrorApi {
   if (isAxiosError(error) && error.response) {
