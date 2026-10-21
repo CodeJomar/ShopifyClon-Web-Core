@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { TriangleAlert } from "lucide-react"
-import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { AppSidebar } from "@/shared/components/layout/app-sidebar"
 import { WorkspaceHeader } from "@/shared/components/layout/workspace-header"
@@ -12,8 +11,8 @@ import { Button } from "@/shared/components/ui/button"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { Sheet, SheetContent, SheetTitle } from "@/shared/components/ui/sheet"
 import { Card, CardContent } from "@/shared/components/ui/card"
-import { NAVEGACION, filtrarNavegacion, permisoDeRuta } from "@/shared/constants/navegacion"
-import { ROL } from "@/shared/constants/permisos"
+import { NAVEGACION, NAVEGACION_SIN_TIENDA, filtrarNavegacion, permisoDeRuta } from "@/shared/constants/navegacion"
+import { PERMISO, ROL } from "@/shared/constants/permisos"
 import { cerrarSesionAction } from "@/modules/auth"
 import { cn } from "@/shared/utils/cn"
 import { usePanel } from "../hooks/use-panel"
@@ -26,16 +25,17 @@ const ETIQUETA_ROL: Record<string, string> = {
 }
 
 /**
- * Armazón del panel: barra lateral y encabezado de la plantilla (sin reestructurar), con las secciones del rol,
- * el nombre de la tienda activa y el aviso de suscripción (SUS-017).
+ * Armazón compartido por el panel y la cuenta: barra lateral (marca = tienda activa) y encabezado con el menú del
+ * usuario, más el aviso de suscripción (SUS-017). Con `exigirTienda={false}` (la cuenta) se muestra aunque no haya
+ * tienda activa, con la barra reducida a "Crear mi tienda".
  */
-export function PanelShell({ children }: { children: React.ReactNode }) {
+export function PanelShell({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar, isDrawerOpen, setIsDrawerOpen, isMobile } = useWorkspaceLayout()
   const { tienda, rol, nombres, puede, cargando, error } = usePanel()
 
-  const items = React.useMemo(() => filtrarNavegacion(NAVEGACION, puede), [puede])
+  const items = React.useMemo(() => (tienda ? filtrarNavegacion(NAVEGACION, puede) : NAVEGACION_SIN_TIENDA), [tienda, puede])
   const etiquetaRol = rol ? (ETIQUETA_ROL[rol] ?? rol) : ""
   const iniciales = (nombres.trim()[0] ?? "U").toUpperCase()
   const permiso = permisoDeRuta(pathname)
@@ -50,9 +50,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
     <AppSidebar
       items={items}
       isCollapsed={isCollapsed && !isMobile}
-      userName={nombres || "Usuario"}
-      userRole={etiquetaRol}
-      userInitials={iniciales}
+      nombreMarca={tienda?.nombre ?? "OTemu"}
+      tieneTienda={Boolean(tienda)}
     />
   )
 
@@ -77,19 +76,11 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
           onLogout={cerrarSesion}
-          etiquetaCuenta={etiquetaRol}
+          userName={nombres || "Usuario"}
+          userRole={etiquetaRol}
+          userInitials={iniciales}
+          puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
         />
-
-        {tienda && (
-          <div className="mt-2 flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[13px] text-muted-foreground">
-              Tienda: <span className="font-bold text-foreground">{tienda.nombre}</span>
-            </p>
-            <Link href="/cuenta/tiendas" className="text-[12.5px] font-bold text-brand-text hover:underline">
-              Cambiar de tienda
-            </Link>
-          </div>
-        )}
 
         {tienda && !tienda.operativa && (
           <Alert variant="warning" className="mt-4">
@@ -109,7 +100,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         <main className="mt-5 flex-1">
           {cargando && (
             <p className="text-[13px] text-muted-foreground" aria-live="polite">
-              Cargando tu tienda…
+              {exigirTienda ? "Cargando tu tienda…" : "Cargando…"}
             </p>
           )}
           {error && (
@@ -119,7 +110,7 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
               </CardContent>
             </Card>
           )}
-          {!cargando && !error && tienda && (permitida ? children : (
+          {!cargando && !error && (tienda || !exigirTienda) && (permitida ? children : (
             <Card>
               <CardContent>
                 <EstadoVacio titulo="No tienes acceso a esta sección" descripcion="Tu rol no incluye este permiso. Pide a la propietaria o al propietario que te lo asigne." />

@@ -47,7 +47,7 @@ export function OrdenesView() {
         <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
           ← Mi cuenta
         </Link>
-        <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis órdenes</h1>
+        <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis compras</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Las compras que hiciste en cualquier tienda.</p>
       </div>
 

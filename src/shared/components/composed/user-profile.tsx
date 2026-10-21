@@ -1,4 +1,5 @@
 import * as React from "react"
+import { ChevronDown } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/shared/components/ui/avatar"
 import { cn } from "@/shared/utils/cn"
 
@@ -7,6 +8,10 @@ export interface UserProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   role: string;
   initials?: string;
   imageUrl?: string;
+  /** Muestra un `ChevronDown` que indica que es un desplegable; rota si el contenedor tiene `group` y `data-popup-open`. */
+  chevron?: boolean;
+  /** Menos de 640 px: solo avatar (y chevron). */
+  compacto?: boolean;
 }
 
 export function UserProfile({
@@ -14,6 +19,8 @@ export function UserProfile({
   role,
   initials,
   imageUrl,
+  chevron = false,
+  compacto = false,
   className,
   ...props
 }: UserProfileProps) {
@@ -27,20 +34,27 @@ export function UserProfile({
   const displayInitials = initials || getInitials(name);
 
   return (
-    <div className={cn("flex items-center gap-4", className)} {...props}>
-      <Avatar>
-        <AvatarImage src={imageUrl} alt={name} />
+    <div className={cn("flex items-center", compacto ? "gap-2" : "gap-3", className)} {...props}>
+      <Avatar className={compacto ? "size-9" : undefined}>
+        <AvatarImage src={imageUrl} alt="" />
         <AvatarFallback>{displayInitials}</AvatarFallback>
       </Avatar>
 
-      <div className="flex flex-col">
-        <span className="font-extrabold text-[17px] font-semibold leading-tight text-foreground ">
+      <div className={cn("min-w-0 flex-col text-left", compacto ? "hidden sm:flex" : "flex")}>
+        <span className={cn("truncate font-extrabold leading-tight text-foreground", compacto ? "text-[13.5px]" : "text-[17px] font-semibold")}>
           {name}
         </span>
-        <span className="text-[13px] font-normal text-muted-foreground ">
+        <span className={cn("truncate font-normal text-muted-foreground", compacto ? "text-[12px]" : "text-[13px]")}>
           {role}
         </span>
       </div>
+
+      {chevron && (
+        <ChevronDown
+          aria-hidden="true"
+          className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-data-popup-open:rotate-180"
+        />
+      )}
     </div>
   )
 }

@@ -1,24 +1,25 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
-import { Mail, MapPin, Receipt, Store } from "lucide-react"
-import { Button } from "@/shared/components/ui/button"
+import { Mail, Moon, Sun } from "lucide-react"
+import { useTheme } from "next-themes"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
+import { Switch } from "@/shared/components/ui/switch"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
-import { cerrarSesionAction } from "@/modules/auth"
+import { useMounted } from "@/shared/hooks/use-mounted"
 import { PerfilForm } from "../components/perfil-form"
-import { ContrasenaForm } from "../components/contrasena-form"
 import { perfilCuentaAction } from "../actions/cuenta.actions"
 import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
+/** Pestaña Perfil: datos personales y preferencias (tema claro/oscuro). El título y las pestañas las pone el layout. */
 export function CuentaView() {
-  const router = useRouter()
   const [perfil, setPerfil] = React.useState<PerfilCuentaDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
-  const [cerrando, setCerrando] = React.useState(false)
+  const { theme, setTheme } = useTheme()
+  const montado = useMounted()
+  const oscuro = montado && theme === "dark"
 
   React.useEffect(() => {
     let cancelado = false
@@ -32,21 +33,8 @@ export function CuentaView() {
     }
   }, [])
 
-  const cerrarSesion = async () => {
-    setCerrando(true)
-    await cerrarSesionAction()
-    router.replace("/login")
-  }
-
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">
-          {perfil ? `Hola, ${perfil.nombres}` : "Mi cuenta"}
-        </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">Tus datos, tu seguridad y tus compras.</p>
-      </div>
-
+    <div className="max-w-[720px] space-y-6">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -61,62 +49,40 @@ export function CuentaView() {
       )}
 
       {perfil && (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Mi perfil</CardTitle>
-              <CardDescription>Así te verán las tiendas donde compras.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <FloatingInput
-                label="Correo electrónico"
-                leftIcon={<Mail className="size-4" aria-hidden="true" />}
-                value={perfil.correo_electronico}
-                readOnly
-                copiable
-                ayuda="El correo no se puede cambiar."
-              />
-              <PerfilForm perfil={perfil} onGuardado={setPerfil} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Seguridad</CardTitle>
-              <CardDescription>Cambia tu contraseña cuando lo necesites.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ContrasenaForm />
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Datos personales</CardTitle>
+            <CardDescription>Así te verán las tiendas donde compras.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <FloatingInput
+              label="Correo electrónico"
+              leftIcon={<Mail className="size-4" aria-hidden="true" />}
+              value={perfil.correo_electronico}
+              readOnly
+              copiable
+              ayuda="El correo no se puede cambiar."
+            />
+            <PerfilForm perfil={perfil} onGuardado={setPerfil} />
+          </CardContent>
+        </Card>
       )}
 
       <Card>
         <CardHeader>
-          <CardTitle>Accesos</CardTitle>
+          <CardTitle>Preferencias</CardTitle>
+          <CardDescription>Cómo quieres ver OTemu en este dispositivo.</CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-3 sm:grid-cols-3">
-          <Button variant="neutral" className="justify-start" onClick={() => router.push("/cuenta/direcciones")}>
-            <MapPin aria-hidden="true" />
-            Mis direcciones
-          </Button>
-          <Button variant="neutral" className="justify-start" onClick={() => router.push("/cuenta/ordenes")}>
-            <Receipt aria-hidden="true" />
-            Mis órdenes
-          </Button>
-          <Button variant="neutral" className="justify-start" onClick={() => router.push("/cuenta/tiendas")}>
-            <Store aria-hidden="true" />
-            Mis tiendas
-          </Button>
+        <CardContent>
+          <div className="flex items-center justify-between gap-4">
+            <label htmlFor="tema-oscuro" className="flex items-center gap-2 text-[13.5px] font-bold text-foreground">
+              {oscuro ? <Moon aria-hidden="true" className="size-4 text-muted-foreground" /> : <Sun aria-hidden="true" className="size-4 text-muted-foreground" />}
+              Tema oscuro
+            </label>
+            <Switch id="tema-oscuro" checked={oscuro} onCheckedChange={(marcado) => setTheme(marcado ? "dark" : "light")} />
+          </div>
         </CardContent>
       </Card>
-
-      <div className="flex justify-end">
-        <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando}>
-          Cerrar sesión
-        </Button>
-      </div>
     </div>
   )
 }

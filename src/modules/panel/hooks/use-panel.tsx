@@ -27,9 +27,10 @@ const PanelContext = React.createContext<PanelContextValue | null>(null)
 
 /**
  * Carga lo que el panel necesita en cada pantalla: la tienda activa, el rol en ella y el perfil.
- * Sin tienda activa (SEG-001 / 404) manda a elegir una (`/cuenta/tiendas`).
+ * Con `exigirTienda` (el panel), sin tienda activa (SEG-001 / 404) manda a elegir una (`/cuenta/tiendas`).
+ * Sin `exigirTienda` (la cuenta) la falta de tienda activa es normal: no redirige y solo carga el perfil.
  */
-export function PanelProvider({ children }: { children: React.ReactNode }) {
+export function PanelProvider({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
   const [tienda, setTienda] = React.useState<TiendaActivaDto | null>(null)
   const [rol, setRol] = React.useState<string | undefined>(undefined)
@@ -43,6 +44,13 @@ export function PanelProvider({ children }: { children: React.ReactNode }) {
       const activa = await tiendaActivaAction()
       if (cancelado) return
       if (!activa.ok) {
+        if (!exigirTienda) {
+          const perfil = await perfilAction()
+          if (cancelado) return
+          if (perfil.ok) setNombres(perfil.datos.nombres)
+          setCargando(false)
+          return
+        }
         if (activa.error.codigo === "SEG-001" || activa.error.estado === 404) {
           router.replace("/cuenta/tiendas")
           return
@@ -61,7 +69,7 @@ export function PanelProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelado = true
     }
-  }, [router])
+  }, [router, exigirTienda])
 
   const valor = React.useMemo<PanelContextValue>(
     () => ({

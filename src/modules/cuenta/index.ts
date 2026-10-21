@@ -1,4 +1,6 @@
 export { CuentaView } from "./views/cuenta-view"
+export { SeguridadView } from "./views/seguridad-view"
 export { DireccionesView } from "./views/direcciones-view"
 export { OrdenesView } from "./views/ordenes-view"
 export { OrdenDetalleView } from "./views/orden-detalle-view"
+export { CuentaEncabezado } from "./components/cuenta-encabezado"

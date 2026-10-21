@@ -3,15 +3,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { useTheme } from "next-themes"
-import {
-  PanelLeftClose,
-  PanelLeftOpen,
-  Moon,
-  Sun,
-  LogOut
-} from "lucide-react"
+import { usePathname } from "next/navigation"
+import { PanelLeftClose, PanelLeftOpen, LogOut, Settings, User } from "lucide-react"
 
 import {
   Breadcrumb,
@@ -21,48 +14,37 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/components/ui/breadcrumb"
-import { Switch } from "@/shared/components/ui/switch"
-import { Button } from "@/shared/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
 import { Separator } from "@/shared/components/ui/separator"
-import { cn } from "@/shared/utils/cn"
-import { useMounted } from "@/shared/hooks/use-mounted"
-import { HOME_HREF, migasDe, rutaDe } from "@/shared/constants/navegacion"
+import { UserProfile } from "@/shared/components/composed/user-profile"
+import { HOME_HREF, PERFIL_HREF, migasDe, rutaDe } from "@/shared/constants/navegacion"
 
 interface WorkspaceHeaderProps {
   isCollapsed: boolean
   onToggleCollapse: () => void
-  /** Cierra la sesión; si no se provee, solo navega al login. */
-  onLogout?: () => void
-  /** Tipo de cuenta de la sesión ("Dueño" o "Empleado"); solo informativo. */
-  etiquetaCuenta?: string
+  /** Cierra la sesión y lleva a /login. */
+  onLogout: () => void
+  /** Persona autenticada (menú del usuario, a la derecha). */
+  userName: string
+  userRole?: string
+  userInitials?: string
+  /** Muestra "Configuración" en el menú del usuario (rol con TIENDA_CONFIGURAR y tienda activa). */
+  puedeConfigurar?: boolean
 }
 
 export function WorkspaceHeader({
   isCollapsed,
   onToggleCollapse,
   onLogout,
-  etiquetaCuenta,
+  userName,
+  userRole = "",
+  userInitials,
+  puedeConfigurar = false,
 }: WorkspaceHeaderProps) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  // Integración real de modo claro / oscuro
-  const { theme, setTheme } = useTheme()
-  const mounted = useMounted()
-
-  const isDarkMode = mounted && theme === "dark"
-
-  const toggleTheme = (checked: boolean) => {
-    setTheme(checked ? "dark" : "light")
-  }
 
   const [seccion, pantalla] = migasDe(pathname)
-  const href = rutaDe(pathname)?.item.href ?? HOME_HREF
-
-  const handleLogout = () => {
-    if (onLogout) return onLogout()
-    router.push("/login")
-  }
+  const href = rutaDe(pathname)?.item.href ?? (pathname.startsWith(PERFIL_HREF) ? PERFIL_HREF : HOME_HREF)
 
   return (
     <div className="w-full flex flex-col shrink-0 select-none">
@@ -98,37 +80,35 @@ export function WorkspaceHeader({
           </Breadcrumb>
         </div>
 
-        {/* Zona Derecha: Theme Switch y Logout */}
-        <div className="flex items-center gap-3 shrink-0">
-          {etiquetaCuenta && (
-            <span className="hidden h-9 items-center rounded-full bg-primary px-3.5 text-xs font-semibold text-white md:inline-flex">
-              {etiquetaCuenta}
-            </span>
-          )}
-
-
-          {/* Switch activo conectado al ThemeProvider */}
-          <div className="flex h-9 items-center gap-2 px-3 rounded-full bg-brand-strong/12 ">
-            <Moon className={cn("size-3.5 transition-colors", isDarkMode ? "text-muted-foreground" : "text-muted-foreground")} />
-            <Switch
-              checked={isDarkMode}
-              onCheckedChange={toggleTheme}
-              aria-label="Cambiar tema"
-            />
-            <Sun className={cn("size-3.5 transition-colors", !isDarkMode ? "text-foreground" : "text-muted-foreground")} />
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            rightIcon={<LogOut className="size-4 ml-1" />}
-            className="h-9 px-4 rounded-full text-xs font-semibold tracking-wider uppercase cursor-pointer gap-2 shrink-0   "
+        {/* Zona Derecha: menú del usuario */}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            aria-label="Menú de la cuenta"
+            className="group flex h-11 shrink-0 cursor-pointer items-center rounded-full px-1.5 py-1 outline-none transition-colors hover:bg-primary/12 focus-visible:ring-[3px] focus-visible:ring-ring/25 data-popup-open:bg-primary/12 sm:px-2.5"
           >
-            <span className="hidden xl:inline">CERRAR SESIÓN</span>
-          </Button>
-        </div>
+            <UserProfile name={userName} role={userRole} initials={userInitials} compacto chevron />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="min-w-52">
+            <DropdownMenuItem render={<Link href={PERFIL_HREF} />}>
+              <User aria-hidden="true" className="size-4" />
+              Ver perfil
+            </DropdownMenuItem>
+            {puedeConfigurar && (
+              <DropdownMenuItem render={<Link href="/panel/configuracion" />}>
+                <Settings aria-hidden="true" className="size-4" />
+                Configuración
+              </DropdownMenuItem>
+            )}
+            <div role="separator" className="my-1.5 h-px bg-border" />
+            <DropdownMenuItem
+              onClick={onLogout}
+              className="text-destructive-text focus:bg-destructive/9 focus:text-destructive-text"
+            >
+              <LogOut aria-hidden="true" className="size-4" />
+              Cerrar sesión
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
       </div>
 

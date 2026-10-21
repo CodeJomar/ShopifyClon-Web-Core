@@ -8,7 +8,6 @@ import { Store } from "lucide-react"
 import { HOME_HREF, PERFIL_HREF, type NavItem } from "@/shared/constants/navegacion"
 import { SidebarNavItem } from "@/shared/components/composed/sidebar-nav-item"
 import { SidebarNavGroup } from "@/shared/components/composed/sidebar-nav-group"
-import { UserProfile } from "@/shared/components/composed/user-profile"
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
 import { Separator } from "@/shared/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
@@ -19,41 +18,36 @@ interface AppSidebarProps {
   items: NavItem[]
   isCollapsed?: boolean
   className?: string
-  /** Usuario autenticado (lo provee el layout del workspace). */
-  userName?: string
-  userRole?: string
-  userInitials?: string
+  /** Nombre de la tienda activa; sin tienda, "OTemu". */
+  nombreMarca?: string
+  /** Con tienda activa se muestra el enlace "Cambiar de tienda" y la marca lleva al panel. */
+  tieneTienda?: boolean
 }
 
-export function AppSidebar({
-  items,
-  isCollapsed = false,
-  className,
-  userName = "Usuario",
-  userRole = "",
-  userInitials = "US",
-}: AppSidebarProps) {
+export function AppSidebar({ items, isCollapsed = false, className, nombreMarca = "OTemu", tieneTienda = false }: AppSidebarProps) {
   const pathname = usePathname()
+  // Sin tienda activa /panel redirige a elegir tienda: la marca lleva a la cuenta para no rebotar.
+  const homeHref = tieneTienda ? HOME_HREF : PERFIL_HREF
 
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col justify-between overflow-hidden",
+        "flex h-full w-full flex-col overflow-hidden",
         isCollapsed ? "items-center px-0" : "px-1",
         className
       )}
     >
-      {/* Zona Superior: Marca y Navegación */}
       <div className="flex flex-col gap-4 overflow-y-auto no-scrollbar w-full">
 
-        {/* Cabecera / Marca con Avatar y Separador */}
+        {/* Marca = nombre de la tienda activa; es el enlace al home */}
         <div className={cn("w-full flex flex-col gap-3", isCollapsed && "items-center")}>
           {isCollapsed ? (
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Link
-                    href={HOME_HREF}
+                    href={homeHref}
+                    aria-label={nombreMarca}
                     className="flex items-center justify-center pt-1 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
                   >
                     <Avatar className="size-12 shrink-0 border-none">
@@ -64,31 +58,31 @@ export function AppSidebar({
                   </Link>
                 }
               />
-              <TooltipContent side="right">Inicio</TooltipContent>
+              <TooltipContent side="right">{nombreMarca}</TooltipContent>
             </Tooltip>
           ) : (
-            <Link
-              href={HOME_HREF}
-              className="flex items-center gap-3 pt-1 px-2 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
-            >
-              <Avatar className="size-12 shrink-0 border-none">
-                <AvatarFallback className="bg-primary text-white">
-                  <Store className="size-6" />
-                </AvatarFallback>
-              </Avatar>
+            <div className="flex items-center gap-3 pt-1 px-2">
+              <Link href={homeHref} aria-label={nombreMarca} className="shrink-0 rounded-full outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/25">
+                <Avatar className="size-12 border-none">
+                  <AvatarFallback className="bg-primary text-white">
+                    <Store className="size-6" />
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
 
-              <div className="flex flex-col overflow-hidden">
-                <span className="font-extrabold text-base font-bold leading-tight text-foreground  truncate">
-                  OTemu
-                </span>
-                <span className="text-xs text-muted-foreground  truncate">
-                  Tu tienda en línea
-                </span>
+              <div className="flex min-w-0 flex-col">
+                <Link href={homeHref} className="truncate rounded-md text-base font-extrabold leading-tight text-foreground outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/25">
+                  {nombreMarca}
+                </Link>
+                {tieneTienda && (
+                  <Link href="/cuenta/tiendas" className="truncate rounded-md text-xs font-bold text-brand-text outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/25">
+                    Cambiar de tienda
+                  </Link>
+                )}
               </div>
-            </Link>
+            </div>
           )}
 
-          {/* Separador superior del UI Kit */}
           <Separator className="bg-brand-strong/12 " />
         </div>
 
@@ -121,34 +115,6 @@ export function AppSidebar({
         </nav>
       </div>
 
-      {/* Zona Inferior: Separador y Perfil de Usuario */}
-      <div className={cn("w-full flex flex-col gap-4 pt-2 shrink-0", isCollapsed && "items-center")}>
-        <Separator className="bg-brand-strong/12 " />
-
-        {isCollapsed ? (
-          <Tooltip>
-            <TooltipTrigger render={
-              <Link href={PERFIL_HREF} aria-label="Mi perfil" className="outline-none focus:outline-none cursor-pointer">
-                <Avatar className="size-10">
-                  <AvatarFallback>{userInitials}</AvatarFallback>
-                </Avatar>
-              </Link>
-            } />
-            <TooltipContent side="right">{`${userName} (${userRole})`}</TooltipContent>
-          </Tooltip>
-        ) : (
-          <Link
-            href={PERFIL_HREF}
-            aria-label="Mi perfil"
-            className={cn(
-              "w-full rounded-2xl p-2 transition-colors outline-none hover:bg-brand-strong/12 focus-visible:ring-2 focus-visible:ring-ring ",
-              pathname === PERFIL_HREF && "bg-brand-strong/12 "
-            )}
-          >
-            <UserProfile name={userName} role={userRole} initials={userInitials} className="cursor-pointer" />
-          </Link>
-        )}
-      </div>
     </div>
   )
 }
