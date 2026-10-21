@@ -50,7 +50,7 @@ export function useForgotPassword() {
       error: "No se pudo enviar el código",
     })
     setIsLoading(false)
-    return res.isOk()
+    return res.ok
   }
 
   // Paso 1: correo -> código
@@ -81,8 +81,8 @@ export function useForgotPassword() {
     })
     setIsLoading(false)
 
-    if (!res.isOk()) return setOtpCode("")
-    setResetToken(res.data.token_restablecimiento)
+    if (!res.ok) return setOtpCode("")
+    setResetToken(res.datos.token_restablecimiento)
     setStep("password")
   }
 
@@ -99,9 +99,9 @@ export function useForgotPassword() {
       error: "No se pudo restablecer la contraseña",
     })
 
-    if (res.isOk()) {
+    if (res.ok) {
       router.replace("/login")
-    } else if (res.httpStatusCode === 400) {
+    } else if (res.estado === 400) {
       // Token vencido o ya usado: hay que empezar de nuevo.
       setResetToken(null)
       setStep("email")

@@ -54,30 +54,32 @@ export function useLogin(siguiente?: string) {
     const id = toast.add({ type: "loading", title: "Iniciando sesión...", timeout: 0 })
     const res = await loginAction(email, password, reemplazarSesion)
 
-    if (res.isOk()) {
-      toast.update(id, { type: "success", title: `Bienvenido, ${res.data.usuario.nombre ?? "de nuevo"}`, timeout: 5000 })
+    if (res.ok) {
+      toast.update(id, { type: "success", title: `Bienvenido, ${res.datos.usuario.nombre ?? "de nuevo"}`, timeout: 5000 })
       setPendiente(null)
-      router.replace(destinoSeguro(siguiente, res.data.usuario.permisos))
+      router.replace(destinoSeguro(siguiente, res.datos.usuario.permisos))
       return
     }
 
-    if (res.httpStatusCode === 409) {
+    if (res.estado === 409) {
       toast.close(id)
       setPendiente({ email, password })
       return
     }
 
-    const restantes = res.intentosRestantes
+    // TODO(Q-W-003): la API no devuelve intentos restantes en el error; se mostrará cuando el contrato lo incluya.
+    const restantes: number | undefined = undefined
     const aviso =
-      res.httpStatusCode === 401 && restantes !== undefined ? ` Te quedan ${restantes} intento${restantes === 1 ? "" : "s"}.` : ""
+      res.estado === 401 && restantes !== undefined ? ` Te quedan ${restantes} intento${restantes === 1 ? "" : "s"}.` : ""
     toast.update(id, {
       type: "error",
-      title: res.httpStatusCode === 429 ? "Acceso bloqueado temporalmente" : "No se pudo iniciar sesión",
-      description: res.getMessage() + aviso,
+      title: res.estado === 429 ? "Acceso bloqueado temporalmente" : "No se pudo iniciar sesión",
+      description: res.mensaje + aviso,
       timeout: 5000,
     })
     setPendiente(null)
-    if (res.httpStatusCode === 429) setBloqueoSegundos(res.retryAfterSegundos ?? 60)
+    // TODO(Q-W-003): la API no envía Retry-After en el cuerpo; se usa 60 s hasta que el contrato lo incluya.
+    if (res.estado === 429) setBloqueoSegundos(60)
     else form.resetField("password")
   }
 

@@ -60,7 +60,7 @@ export function useInactividad(limiteSegundos: number | undefined, opciones: Opc
       ultimoLatido = Date.now()
       // El latido también trae los avisos pendientes de la cuenta.
       void actividadAction().then((r) => {
-        if (r.isOk() && r.data?.avisos?.length) opcionesRef.current.alAvisar?.(r.data.avisos)
+        if (r.ok && r.datos?.avisos?.length) opcionesRef.current.alAvisar?.(r.datos.avisos)
       })
     }
 

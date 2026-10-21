@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import type { CheckStatus } from '@/dtos/core/checkStatus.dto';
+import type { Resultado } from '@/lib/api/resultado';
 
 type UseEntityDeleteProps<TId = string> = {
-  actionDelete: (id: TId) => Promise<CheckStatus>;
+  actionDelete: (id: TId) => Promise<Resultado<unknown>>;
   onSuccess?: (deletedId: TId) => void;
   onError?: (message: string) => void;
 };
@@ -17,8 +17,8 @@ export function useEntityDelete<TId = string>({ actionDelete, onSuccess, onError
       setIsDeleting(true);
       try {
         const response = await actionDelete(id);
-        if (response.isOk()) onSuccess?.(id);
-        else onError?.(response.getMessage());
+        if (response.ok) onSuccess?.(id);
+        else onError?.(response.mensaje);
         return response;
       } catch {
         const message = 'Error inesperado al eliminar el registro';

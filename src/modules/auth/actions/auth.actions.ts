@@ -1,6 +1,5 @@
-import { apiRequest } from "@/lib/api/client"
-import { CheckStatus } from "@/dtos/core/checkStatus.dto"
-import { OneQuery } from "@/dtos/core/oneQuery.dto"
+import { peticionApi } from "@/lib/api/client"
+import { resultado } from "@/lib/api/resultado"
 import type {
   ActividadDto,
   LoginResponseDto,
@@ -13,45 +12,45 @@ import type {
 
 /** `reemplazarSesion`: el usuario confirmó cerrar la sesión activa de la cuenta para iniciar esta (modal «Continuar»). */
 export const loginAction = (email: string, password: string, reemplazarSesion = false) =>
-  apiRequest<OneQuery<LoginResponseDto>>(OneQuery, {
+  resultado(peticionApi<LoginResponseDto>({
     method: "POST",
     url: "/auth/login",
     data: { email, password, ...(reemplazarSesion ? { reemplazar_sesion: true } : {}) },
-  })
+  }))
 
 /** Latido de actividad real del usuario: mantiene viva la sesión (las consultas automáticas no cuentan). */
 export const actividadAction = () =>
-  apiRequest<CheckStatus<ActividadDto>>(CheckStatus, { method: "POST", url: "/auth/actividad", data: {} })
+  resultado(peticionApi<ActividadDto>({ method: "POST", url: "/auth/actividad", data: {} }))
 
 export const logoutAction = () =>
-  apiRequest<CheckStatus>(CheckStatus, { method: "POST", url: "/auth/logout", data: {} })
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/logout", data: {} }))
 
 export const solicitarRecuperacionAction = (email: string) =>
-  apiRequest<CheckStatus>(CheckStatus, { method: "POST", url: "/auth/recuperar", data: { email } })
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/recuperar", data: { email } }))
 
 export const verificarOtpAction = (email: string, codigo: string) =>
-  apiRequest<OneQuery<TokenRestablecimientoDto>>(OneQuery, {
+  resultado(peticionApi<TokenRestablecimientoDto>({
     method: "POST",
     url: "/auth/verificar-otp",
     data: { email, codigo },
-  })
+  }))
 
 export const restablecerPasswordAction = (token: string, nuevaPassword: string) =>
-  apiRequest<CheckStatus>(CheckStatus, {
+  resultado(peticionApi<void>({
     method: "POST",
     url: "/auth/restablecer-password",
     data: { token, nueva_password: nuevaPassword },
-  })
+  }))
 
 export const validarActivacionAction = (token: string) =>
-  apiRequest<OneQuery<ValidarActivacionDto>>(OneQuery, {
+  resultado(peticionApi<ValidarActivacionDto>({
     method: "POST",
     url: "/auth/activar/validar",
     data: { token },
-  })
+  }))
 
 export const activarCuentaAction = (token: string, password: string) =>
-  apiRequest<CheckStatus>(CheckStatus, { method: "POST", url: "/auth/activar", data: { token, password } })
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/activar", data: { token, password } }))
 
 export const perfilAction = () =>
-  apiRequest<OneQuery<SesionUsuarioDto>>(OneQuery, { method: "GET", url: "/auth/me" })
+  resultado(peticionApi<SesionUsuarioDto>({ method: "GET", url: "/auth/me" }))
