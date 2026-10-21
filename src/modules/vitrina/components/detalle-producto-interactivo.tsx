@@ -3,9 +3,10 @@
 import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Package, ShoppingBag } from "lucide-react"
+import { Package } from "lucide-react"
 
 import type { ImagenVitrina, ProductoDetalleVitrina, VarianteVitrina } from "@/dtos/vitrina"
+import { AgregarAlCarrito } from "@/modules/carrito/components/agregar-al-carrito"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { formatearDinero } from "@/shared/utils/dinero"
@@ -193,23 +194,13 @@ export function DetalleProductoInteractivo({
           </div>
         )}
 
-        {/* Botón de compra (desactivado en W-014; lo conecta W-015) */}
+        {/* Compra: agrega la variante elegida al carrito de la tienda (W-015) */}
         <div className="pt-2">
-          {/* TODO(W-015): Conectar con el carrito de compras */}
-          <Button
-            type="button"
-            variant="default"
-            size="lg"
-            disabled
-            className="w-full gap-2 text-sm font-bold opacity-60"
-            title="Agregar al carrito estará disponible próximamente"
-          >
-            <ShoppingBag className="size-4" aria-hidden="true" />
-            <span>Agregar al carrito</span>
-          </Button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">
-            El carrito de compras se habilitará en la siguiente fase.
-          </p>
+          <AgregarAlCarrito
+            subdominio={subdominio}
+            varianteId={varianteSeleccionada.id}
+            disponible={!!varianteSeleccionada?.disponible}
+          />
         </div>
 
         {/* Descripción */}

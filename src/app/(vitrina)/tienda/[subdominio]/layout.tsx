@@ -1,12 +1,11 @@
 import * as React from "react"
 import Link from "next/link"
-import { ShoppingBag } from "lucide-react"
 
 import type { TiendaVitrina } from "@/dtos/vitrina"
 import { esErrorApi } from "@/lib/api/error-api"
+import { IconoCarrito } from "@/modules/carrito"
 import { obtenerTienda } from "@/modules/vitrina/actions/vitrina.actions"
 import { BuscadorHeader } from "@/modules/vitrina/components/buscador-header"
-import { Button } from "@/shared/components/ui/button"
 
 export default async function VitrinaLayout({
   children,
@@ -54,18 +53,7 @@ export default async function VitrinaLayout({
 
           {/* Acceso al carrito */}
           <div className="flex items-center gap-2">
-            {/* TODO(W-015): Conectar con el carrito de compras */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              disabled
-              className="relative opacity-60 cursor-not-allowed"
-              title="Carrito de compras (próximamente)"
-              aria-label="Carrito de compras"
-            >
-              <ShoppingBag className="size-5" aria-hidden="true" />
-            </Button>
+            <IconoCarrito subdominio={subdominio} />
           </div>
         </div>
 
