@@ -113,7 +113,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           </Alert>
         )}
 
-        <main className="mt-5 flex-1">
+        <main className="mt-5 flex flex-1 flex-col">
           {cargando && (
             <p className="text-[13px] text-muted-foreground" aria-live="polite">
               {exigirTienda ? "Cargando tu tienda…" : "Cargando…"}

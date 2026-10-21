@@ -57,7 +57,7 @@ export function CuentaView() {
   }, [])
 
   return (
-    <div className="max-w-[1560px] space-y-8">
+    <div className="flex w-full max-w-[1560px] flex-1 flex-col gap-6">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -71,9 +71,9 @@ export function CuentaView() {
         </p>
       )}
 
-      <div>
+      <div className="flex flex-1 flex-col">
       {perfil ? (
-        <Card className="gap-0 py-0 lg:grid lg:grid-cols-[380px_1fr]">
+        <Card className="flex-1 gap-0 py-0 lg:grid lg:grid-cols-[380px_1fr]">
           {/* Columna izquierda: identidad, contraseña y apariencia */}
           <div className="flex flex-col gap-6 border-b border-border/60 p-6 sm:p-7 lg:border-b-0 lg:border-r">
             <div className="flex flex-col items-center gap-3 text-center">
