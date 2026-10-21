@@ -16,8 +16,6 @@ import {
 } from "@/shared/components/ui/breadcrumb"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
 import { Separator } from "@/shared/components/ui/separator"
-import { buttonVariants } from "@/shared/components/ui/button"
-import { cn } from "@/shared/utils/cn"
 import { UserProfile } from "@/shared/components/composed/user-profile"
 import { HOME_HREF, PERFIL_HREF, migasDe, rutaDe } from "@/shared/constants/navegacion"
 
@@ -94,9 +92,9 @@ export function WorkspaceHeader({
         <DropdownMenu>
           <DropdownMenuTrigger
             aria-label="Menú de la cuenta"
-            className={cn(buttonVariants({ variant: "soft" }), "group h-12 shrink-0 justify-start gap-0 rounded-xl px-2 sm:w-72 sm:px-2.5 data-popup-open:bg-primary/22")}
+            className="group flex h-11 shrink-0 cursor-pointer items-center rounded-full px-1.5 py-1 outline-none transition-colors hover:bg-primary/12 focus-visible:ring-[3px] focus-visible:ring-ring/25 data-popup-open:bg-primary/12 sm:px-2.5"
           >
-            <UserProfile name={userName} role={userRole} initials={userInitials} compacto chevron className="w-full [&>svg]:ml-auto" />
+            <UserProfile name={userName} role={userRole} initials={userInitials} compacto chevron />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" sideOffset={8} className="w-72 rounded-2xl p-2 shadow-xl">
             <div className="px-2 pb-2.5 pt-1.5">

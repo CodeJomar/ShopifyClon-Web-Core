@@ -56,7 +56,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   )
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen overflow-hidden bg-background">
       {!isMobile && (
         <aside className={cn("sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
@@ -73,7 +73,9 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
         </Sheet>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col px-4 pb-4 sm:px-6 sm:pb-6">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        {/* Encabezado fijo: solo se desplaza el contenido de abajo */}
+        <div className="shrink-0 px-4 sm:px-6">
         <WorkspaceHeader
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
@@ -84,6 +86,9 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
           tieneTienda={Boolean(tienda)}
         />
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
 
         {tienda && !tienda.operativa && (
           <Alert variant="warning" className="mt-4">
@@ -121,6 +126,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
             </Card>
           ))}
         </main>
+        </div>
       </div>
     </div>
   )

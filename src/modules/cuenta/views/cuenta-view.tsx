@@ -50,8 +50,6 @@ export function CuentaView() {
 
   return (
     <div className="max-w-5xl space-y-8">
-      <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Mi cuenta</h1>
-
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -103,12 +101,17 @@ export function CuentaView() {
             <CardDescription>Cómo quieres ver OTemu en este dispositivo.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between gap-4">
-              <label htmlFor="tema-oscuro" className="flex items-center gap-2 text-[13.5px] font-bold text-foreground">
-                {oscuro ? <Moon aria-hidden="true" className="size-4 text-muted-foreground" /> : <Sun aria-hidden="true" className="size-4 text-muted-foreground" />}
-                Tema oscuro
-              </label>
-              <Switch id="tema-oscuro" checked={oscuro} onCheckedChange={(marcado) => setTheme(marcado ? "dark" : "light")} />
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p id="tema-titulo" className="text-[13.5px] font-bold text-foreground">Apariencia</p>
+                <p className="mt-0.5 text-[12.5px] text-muted-foreground">{oscuro ? "Tema oscuro activado." : "Tema claro activado."}</p>
+              </div>
+              {/* El mismo interruptor luna / sol que estaba en el encabezado */}
+              <div className="flex h-9 items-center gap-2 rounded-full bg-brand-strong/12 px-3">
+                <Moon aria-hidden="true" className="size-3.5 text-muted-foreground" />
+                <Switch checked={oscuro} onCheckedChange={(marcado) => setTheme(marcado ? "dark" : "light")} aria-labelledby="tema-titulo" />
+                <Sun aria-hidden="true" className={oscuro ? "size-3.5 text-muted-foreground" : "size-3.5 text-foreground"} />
+              </div>
             </div>
           </CardContent>
         </Card>
