@@ -29,13 +29,18 @@ export function dineroDesdeTexto(texto: string): Dinero | null {
   return desdeCentimos(aCentimos(limpio))
 }
 
-/** Céntimos para mostrar en pantalla: "S/ 12.50". */
-export function formatearCentimos(centimos: number): string {
-  return `S/ ${desdeCentimos(centimos)}`
+/**
+ * Monto para mostrar con la moneda de la tienda (docs/arquitectura-frontend.md regla 6). La API envía el importe como
+ * texto ("12.50") o número; la moneda llega de la tienda (p. ej. "PEN"). Sin moneda válida se muestra solo el número.
+ */
+export function formatearDinero(monto: Dinero | number | null | undefined, moneda: string = "PEN"): string {
+  const valor = typeof monto === "number" ? monto : aCentimos(monto ?? "0") / 100
+  try {
+    return new Intl.NumberFormat("es-PE", { style: "currency", currency: moneda }).format(valor)
+  } catch {
+    return new Intl.NumberFormat("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(valor)
+  }
 }
-
-/** `Dinero` para mostrar en pantalla: "S/ 12.50". */
-export const formatearDinero = (dinero: Dinero | null | undefined): string => formatearCentimos(aCentimos(dinero))
 
 /** Reparte un total en `partes` iguales sin perder ni inventar céntimos (los sobrantes van a las primeras partes). */
 export function repartirCentimos(totalCentimos: number, partes: number): number[] {
