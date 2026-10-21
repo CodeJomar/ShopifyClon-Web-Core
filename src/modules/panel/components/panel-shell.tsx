@@ -99,7 +99,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
 
         {tienda && !tienda.operativa && (
-          <Alert variant="warning" className="mt-4">
+          <Alert variant="warning" className="mt-1 sm:mt-3">
             <TriangleAlert aria-hidden="true" />
             <AlertTitle>Tu suscripción no está activa</AlertTitle>
             <AlertDescription>
@@ -113,7 +113,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           </Alert>
         )}
 
-        <main className="mt-5 flex flex-1 flex-col">
+        <main className={cn("flex flex-1 flex-col", tienda && !tienda.operativa ? "mt-4 sm:mt-6" : "mt-1 sm:mt-3")}>
           {cargando && (
             <p className="text-[13px] text-muted-foreground" aria-live="polite">
               {exigirTienda ? "Cargando tu tienda…" : "Cargando…"}
