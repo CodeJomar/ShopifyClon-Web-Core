@@ -56,10 +56,14 @@ export function VarianteForm({ inicial, digital, verCosto, mostrarCantidadInicia
     setError(null)
     const resultado = await onEnviar({ ...valores, requiere_envio: digital ? false : valores.requiere_envio })
     if (resultado.error) {
-      for (const [campo, mensaje] of Object.entries(resultado.error.validaciones ?? {})) {
+      const e = resultado.error
+      // CAT-003 (SKU repetido) y CAT-004 (comparación ≤ precio) se pintan en su campo; el resto, en la alerta.
+      if (e.codigo === "CAT-003") form.setError("sku", { message: e.message })
+      else if (e.codigo === "CAT-004") form.setError("precio_comparacion", { message: e.message })
+      for (const [campo, mensaje] of Object.entries(e.validaciones ?? {})) {
         form.setError(campo as keyof VarianteValues, { message: mensaje })
       }
-      setError(resultado.error)
+      setError(e.codigo === "CAT-003" || e.codigo === "CAT-004" ? null : e)
     }
   })
 
