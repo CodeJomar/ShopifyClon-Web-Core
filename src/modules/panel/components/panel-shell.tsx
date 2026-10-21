@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { TriangleAlert } from "lucide-react"
+import { ShieldCheck, TriangleAlert } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { AppSidebar } from "@/shared/components/layout/app-sidebar"
 import { WorkspaceHeader } from "@/shared/components/layout/workspace-header"
@@ -11,7 +11,13 @@ import { Button } from "@/shared/components/ui/button"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { Sheet, SheetContent, SheetTitle } from "@/shared/components/ui/sheet"
 import { Card, CardContent } from "@/shared/components/ui/card"
-import { NAVEGACION, NAVEGACION_SIN_TIENDA, filtrarNavegacion, permisoDeRuta } from "@/shared/constants/navegacion"
+import {
+  NAVEGACION,
+  NAVEGACION_PLATAFORMA,
+  NAVEGACION_SIN_TIENDA,
+  filtrarNavegacion,
+  permisoDeRuta,
+} from "@/shared/constants/navegacion"
 import { PERMISO, ROL } from "@/shared/constants/permisos"
 import { cerrarSesionAction } from "@/modules/auth"
 import { cn } from "@/shared/utils/cn"
@@ -32,22 +38,44 @@ function abreviar(texto: string): string {
 }
 
 /**
- * Armazón compartido por el panel y la cuenta: barra lateral (marca = tienda activa) y encabezado con el menú del
- * usuario, más el aviso de suscripción (SUS-017). Con `exigirTienda={false}` (la cuenta) se muestra aunque no haya
- * tienda activa, con la barra reducida a "Crear mi tienda".
+ * Armazón compartido por el panel, la cuenta y la plataforma: barra lateral y encabezado con el menú del
+ * usuario. Con `exigirTienda={false}` se muestra aunque no haya tienda activa (cuenta o plataforma).
  */
 export function PanelShell({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar, isDrawerOpen, setIsDrawerOpen, isMobile } = useWorkspaceLayout()
-  const { tienda, rol, nombres, apellidos, puede, cargando, error } = usePanel()
+  const { tienda, rol, nombres, apellidos, esAdministradorPlataforma, puede, cargando, error } = usePanel()
 
-  const items = React.useMemo(() => (tienda ? filtrarNavegacion(NAVEGACION, puede) : NAVEGACION_SIN_TIENDA), [tienda, puede])
-  const etiquetaRol = rol ? (ETIQUETA_ROL[rol] ?? rol) : ""
+  const esRutaPlataforma = pathname.startsWith("/plataforma")
+
+  const items = React.useMemo(() => {
+    if (esRutaPlataforma) {
+      return NAVEGACION_PLATAFORMA
+    }
+    const base = tienda ? filtrarNavegacion(NAVEGACION, puede) : [...NAVEGACION_SIN_TIENDA]
+    if (esAdministradorPlataforma) {
+      base.push({
+        id: "plataforma",
+        label: "Plataforma",
+        icon: ShieldCheck,
+        href: "/plataforma/planes",
+      })
+    }
+    return base
+  }, [tienda, puede, esRutaPlataforma, esAdministradorPlataforma])
+
+  const etiquetaRol = esRutaPlataforma
+    ? "Administrador de plataforma"
+    : rol
+    ? (ETIQUETA_ROL[rol] ?? rol)
+    : esAdministradorPlataforma
+    ? "Administrador"
+    : ""
   const iniciales = ((nombres.trim()[0] ?? "") + (apellidos.trim()[0] ?? "") || "U").toUpperCase()
   const nombreCorto = [abreviar(nombres), abreviar(apellidos)].filter(Boolean).join(" ")
   const permiso = permisoDeRuta(pathname)
-  const permitida = !permiso || puede(permiso)
+  const permitida = esRutaPlataforma ? esAdministradorPlataforma : (!permiso || puede(permiso))
 
   const cerrarSesion = async () => {
     await cerrarSesionAction()
@@ -58,8 +86,8 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
     <AppSidebar
       items={items}
       isCollapsed={isCollapsed && !isMobile}
-      nombreMarca={tienda?.nombre ?? "OTemu"}
-      tieneTienda={Boolean(tienda)}
+      nombreMarca={esRutaPlataforma ? "Plataforma OTemu" : (tienda?.nombre ?? "OTemu")}
+      tieneTienda={!esRutaPlataforma && Boolean(tienda)}
     />
   )
 
@@ -91,14 +119,14 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           userName={nombreCorto || "Usuario"}
           userRole={etiquetaRol}
           userInitials={iniciales}
-          puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
-          tieneTienda={Boolean(tienda)}
+          puedeConfigurar={!esRutaPlataforma && Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
+          tieneTienda={!esRutaPlataforma && Boolean(tienda)}
         />
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
 
-        {tienda && !tienda.operativa && (
+        {!esRutaPlataforma && tienda && !tienda.operativa && (
           <Alert variant="warning" className="mt-1 sm:mt-3">
             <TriangleAlert aria-hidden="true" />
             <AlertTitle>Tu suscripción no está activa</AlertTitle>
@@ -113,7 +141,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           </Alert>
         )}
 
-        <main className={cn("flex flex-1 flex-col", tienda && !tienda.operativa ? "mt-4 sm:mt-6" : "mt-1 sm:mt-3")}>
+        <main className={cn("flex flex-1 flex-col", !esRutaPlataforma && tienda && !tienda.operativa ? "mt-4 sm:mt-6" : "mt-1 sm:mt-3")}>
           {cargando && (
             <p className="text-[13px] text-muted-foreground" aria-live="polite">
               {exigirTienda ? "Cargando tu tienda…" : "Cargando…"}
@@ -122,14 +150,21 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           {error && (
             <Card>
               <CardContent>
-                <EstadoVacio titulo="No pudimos cargar tu tienda" descripcion={error.message} />
+                <EstadoVacio titulo="No pudimos cargar tu información" descripcion={error.message} />
               </CardContent>
             </Card>
           )}
           {!cargando && !error && (tienda || !exigirTienda) && (permitida ? children : (
             <Card>
               <CardContent>
-                <EstadoVacio titulo="No tienes acceso a esta sección" descripcion="Tu rol no incluye este permiso. Pide a la propietaria o al propietario que te lo asigne." />
+                <EstadoVacio
+                  titulo="No tienes acceso a esta sección"
+                  descripcion={
+                    esRutaPlataforma
+                      ? "Esta sección es exclusiva para administradores de la plataforma."
+                      : "Tu rol no incluye este permiso. Pide a la propietaria o al propietario que te lo asigne."
+                  }
+                />
               </CardContent>
             </Card>
           ))}

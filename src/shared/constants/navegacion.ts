@@ -4,6 +4,7 @@ import {
   ChartNoAxesColumn,
   CreditCard,
   FolderTree,
+  Layers,
   Package,
   Plus,
   ReceiptText,
@@ -30,7 +31,6 @@ export function seccionCuentaDe(pathname: string): string {
   if (pathname.startsWith("/cuenta/direcciones")) return "Direcciones"
   return "Perfil"
 }
-
 
 /**
  * Mapa único de navegación del panel. De aquí salen el menú lateral, las migas de pan y la protección de cada ruta.
@@ -80,6 +80,13 @@ export const NAVEGACION_SIN_TIENDA: NavItem[] = [
   { id: "crear-tienda", label: "Crear mi tienda", icon: Plus, href: "/cuenta/tiendas/nueva" },
 ]
 
+/** Menú lateral exclusivo para el panel de plataforma (W-017). */
+export const NAVEGACION_PLATAFORMA: NavItem[] = [
+  { id: "plataforma-planes", label: "Planes", icon: Layers, href: "/plataforma/planes", migas: ["Plataforma", "Planes"] },
+  { id: "plataforma-suscripciones", label: "Suscripciones", icon: Store, href: "/plataforma/suscripciones", migas: ["Plataforma", "Suscripciones"] },
+  { id: "plataforma-comisiones", label: "Comisiones", icon: ChartNoAxesColumn, href: "/plataforma/comisiones", migas: ["Plataforma", "Comisiones"] },
+]
+
 /** Una pantalla encontrada en el mapa, junto con el grupo al que pertenece (si lo tiene). */
 export interface RutaEncontrada {
   item: NavItem
@@ -109,6 +116,12 @@ export function permisoDeRuta(pathname: string): Permiso | undefined {
 /** Migas de pan [sección, pantalla] de una URL. */
 export function migasDe(pathname: string): [string, string] {
   if (pathname === PERFIL_HREF || pathname.startsWith(`${PERFIL_HREF}/`)) return ["Mi cuenta", seccionCuentaDe(pathname)]
+  if (pathname.startsWith("/plataforma")) {
+    if (pathname.startsWith("/plataforma/planes")) return ["Plataforma", "Planes"]
+    if (pathname.startsWith("/plataforma/suscripciones")) return ["Plataforma", "Suscripciones"]
+    if (pathname.startsWith("/plataforma/comisiones")) return ["Plataforma", "Comisiones"]
+    return ["Plataforma", "Planes"]
+  }
   const ruta = rutaDe(pathname)
   if (!ruta) return ["Panel", "Dashboard"]
   return ruta.item.migas ?? [ruta.grupo?.label ?? ruta.item.label, ruta.item.label]

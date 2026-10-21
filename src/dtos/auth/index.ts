@@ -4,7 +4,13 @@
 export interface LoginDatosDto {
   tipo: string
   expira_en: string
-  usuario: { id: string; nombres: string; apellidos: string; correo_electronico: string }
+  usuario: {
+    id: string
+    nombres: string
+    apellidos: string
+    correo_electronico: string
+    es_administrador_plataforma?: boolean
+  }
   tiendas: { tienda_id: string; nombre: string; subdominio: string; rol: string }[]
 }
 
@@ -15,4 +21,5 @@ export interface PerfilDto {
   apellidos: string
   correo_electronico: string
   telefono?: string
+  es_administrador_plataforma?: boolean
 }
