@@ -6,9 +6,5 @@ export const metadata = {
 }
 
 export default function CuentaPage() {
-  return (
-    <div className="max-w-4xl">
-      <CuentaView />
-    </div>
-  )
+  return <CuentaView />
 }
