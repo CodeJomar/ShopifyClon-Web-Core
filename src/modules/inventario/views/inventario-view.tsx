@@ -79,10 +79,13 @@ export function InventarioView() {
     await cargarStocks(res.datos.variantes)
   }
 
-  const alGuardar = (stock: StockVarianteDto, mensaje: string) => {
-    setStocks((s) => ({ ...s, [stock.variante_id]: stock }))
+  // Tras guardar se vuelve a leer el stock de la variante: la respuesta del PUT no siempre trae la forma de StockVarianteDto.
+  const alGuardar = async (varianteId: string, mensaje: string) => {
     setPanel(null)
     toast.add({ type: "success", title: mensaje })
+    const res = await stockVarianteAction(varianteId)
+    if (res.ok) setStocks((s) => ({ ...s, [varianteId]: res.datos }))
+    else setError(res.error)
   }
 
   if (!puedeVer) {
@@ -211,7 +214,7 @@ export function InventarioView() {
             key={panel.variante.id}
             formId={FORM_AJUSTE}
             stock={stocks[panel.variante.id]}
-            onGuardado={(s) => alGuardar(s, "Stock ajustado")}
+            onGuardado={() => alGuardar(panel.variante.id, "Stock ajustado")}
           />
         )}
         {panel?.tipo === "configurar" && stocks[panel.variante.id] && (
@@ -219,7 +222,7 @@ export function InventarioView() {
             key={panel.variante.id}
             formId={FORM_CONFIGURACION}
             stock={stocks[panel.variante.id]}
-            onGuardado={(s) => alGuardar(s, "Configuración guardada")}
+            onGuardado={() => alGuardar(panel.variante.id, "Configuración guardada")}
           />
         )}
         {panel?.tipo === "historial" && <MovimientosVariante varianteId={panel.variante.id} zonaHoraria={tienda?.zona_horaria} />}
