@@ -1,6 +1,14 @@
-import { redirect } from "next/navigation"
+import { MisTiendasView } from "@/modules/tienda"
 
-// La cuenta es una sola pantalla: esta ruta antigua lleva a su sección.
-export default function Page() {
-  redirect("/cuenta#tiendas")
+export const metadata = {
+  title: "Mis tiendas | OTemu",
+  description: "Elige con cuál tienda quieres trabajar.",
+}
+
+export default function MisTiendasPage() {
+  return (
+    <div className="max-w-4xl">
+      <MisTiendasView />
+    </div>
+  )
 }

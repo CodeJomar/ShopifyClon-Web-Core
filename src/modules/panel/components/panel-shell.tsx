@@ -26,7 +26,7 @@ const ETIQUETA_ROL: Record<string, string> = {
 
 /** "Jomar Luis" → "Jomar L.": el primer nombre (o apellido) completo y la inicial del siguiente. */
 function abreviar(texto: string): string {
-  const [primero, segundo] = texto.trim().split(/s+/)
+  const [primero, segundo] = texto.trim().split(/\s+/)
   if (!primero) return ""
   return segundo ? `${primero} ${segundo[0].toUpperCase()}.` : primero
 }

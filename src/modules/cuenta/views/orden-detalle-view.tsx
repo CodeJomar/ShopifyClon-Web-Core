@@ -38,7 +38,7 @@ export function OrdenDetalleView({ id }: { id: string }) {
   return (
     <div className="space-y-6">
       <div>
-        <Link href="/cuenta#compras" className="text-[12px] font-bold text-brand-text hover:underline">
+        <Link href="/cuenta/ordenes" className="text-[12px] font-bold text-brand-text hover:underline">
           ← Mis órdenes
         </Link>
         <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">

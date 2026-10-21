@@ -19,7 +19,7 @@ import type { Paginado } from "@/dtos/core/respuesta-api.dto"
 import type { ErrorApi } from "@/lib/api/error-api"
 
 /** Historial de compras. La API empieza en la página 0; la barra muestra desde 1. */
-export function OrdenesView({ embebido = false }: { embebido?: boolean }) {
+export function OrdenesView() {
   const router = useRouter()
   const [pagina, setPagina] = React.useState(0)
   const [datos, setDatos] = React.useState<Paginado<OrdenCuentaDto> | null>(null)
@@ -44,16 +44,10 @@ export function OrdenesView({ embebido = false }: { embebido?: boolean }) {
   return (
     <div className="space-y-6">
       <div>
-        {!embebido && (
-          <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
-            ← Mi cuenta
-          </Link>
-        )}
-        {embebido ? (
-          <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Mis compras</h2>
-        ) : (
-          <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis compras</h1>
-        )}
+        <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
+          ← Mi cuenta
+        </Link>
+        <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis compras</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Las compras que hiciste en cualquier tienda.</p>
       </div>
 

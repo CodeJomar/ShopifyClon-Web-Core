@@ -9,7 +9,9 @@ import {
   ReceiptText,
   Settings,
   Ticket,
+  Store,
   Truck,
+  User,
   Users,
 } from "lucide-react"
 
@@ -71,8 +73,10 @@ export const NAVEGACION: NavItem[] = [
   { id: "suscripcion", label: "Suscripción", icon: CreditCard, href: "/panel/suscripcion", permiso: PERMISO.SUSCRIPCION_GESTIONAR, migas: ["Tienda", "Suscripción"] },
 ]
 
-/** Único acceso del menú lateral cuando la persona aún no tiene tienda activa. */
+/** Menú lateral cuando la persona aún no tiene tienda activa: su cuenta, elegir una de sus tiendas o crear una. */
 export const NAVEGACION_SIN_TIENDA: NavItem[] = [
+  { id: "mi-cuenta", label: "Mi cuenta", icon: User, href: "/cuenta" },
+  { id: "mis-tiendas", label: "Mis tiendas", icon: Store, href: "/cuenta/tiendas" },
   { id: "crear-tienda", label: "Crear mi tienda", icon: Plus, href: "/cuenta/tiendas/nueva" },
 ]
 

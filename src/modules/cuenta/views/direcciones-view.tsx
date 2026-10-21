@@ -16,7 +16,7 @@ import { direccionesAction, eliminarDireccionAction, marcarDireccionPrincipalAct
 import type { DireccionDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-export function DireccionesView({ embebido = false }: { embebido?: boolean }) {
+export function DireccionesView() {
   const confirmar = useConfirm()
   const [direcciones, setDirecciones] = React.useState<DireccionDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -72,16 +72,10 @@ export function DireccionesView({ embebido = false }: { embebido?: boolean }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          {!embebido && (
-            <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
-              ← Mi cuenta
-            </Link>
-          )}
-          {embebido ? (
-            <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Mis direcciones</h2>
-          ) : (
-            <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis direcciones</h1>
-          )}
+          <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
+            ← Mi cuenta
+          </Link>
+          <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis direcciones</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">Donde recibes tus compras. Puedes guardar hasta 20.</p>
         </div>
         <Button onClick={() => setPanel({ abierto: true })}>Agregar dirección</Button>

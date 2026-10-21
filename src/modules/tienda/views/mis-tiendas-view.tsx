@@ -13,7 +13,7 @@ import { fijarTiendaAction, misTiendasAction } from "../actions/tienda.actions"
 import type { MiTiendaDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-export function MisTiendasView({ embebido = false }: { embebido?: boolean }) {
+export function MisTiendasView() {
   const router = useRouter()
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -46,11 +46,7 @@ export function MisTiendasView({ embebido = false }: { embebido?: boolean }) {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          {embebido ? (
-            <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Mis tiendas</h2>
-          ) : (
-            <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Mis tiendas</h1>
-          )}
+          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Mis tiendas</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">Elige con cuál quieres trabajar.</p>
         </div>
         <Button variant="default" onClick={() => router.push("/cuenta/tiendas/nueva")}>
@@ -116,13 +112,11 @@ export function MisTiendasView({ embebido = false }: { embebido?: boolean }) {
         </ul>
       )}
 
-      {!embebido && (
-        <p className="text-center text-[13px] text-muted-foreground">
-          <Link href="/cuenta" className="font-bold text-brand-text hover:underline">
-            Volver a mi cuenta
-          </Link>
-        </p>
-      )}
+      <p className="text-center text-[13px] text-muted-foreground">
+        <Link href="/cuenta" className="font-bold text-brand-text hover:underline">
+          Volver a mi cuenta
+        </Link>
+      </p>
     </div>
   )
 }
