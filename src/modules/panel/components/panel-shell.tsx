@@ -58,7 +58,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   return (
     <div className="flex min-h-screen bg-background">
       {!isMobile && (
-        <aside className={cn("sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
+        <aside className={cn("sticky top-0 h-screen shrink-0 border-r border-brand-strong/12 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
         </aside>
       )}
@@ -80,6 +80,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
           userRole={etiquetaRol}
           userInitials={iniciales}
           puedeConfigurar={Boolean(tienda) && puede(PERMISO.TIENDA_CONFIGURAR)}
+          tieneTienda={Boolean(tienda)}
         />
 
         {tienda && !tienda.operativa && (

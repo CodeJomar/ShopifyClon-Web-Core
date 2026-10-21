@@ -12,6 +12,8 @@ export interface UserProfileProps extends React.HTMLAttributes<HTMLDivElement> {
   chevron?: boolean;
   /** Menos de 640 px: solo avatar (y chevron). */
   compacto?: boolean;
+  /** Cabecera del menú desplegable: textos pequeños siempre visibles. */
+  enMenu?: boolean;
 }
 
 export function UserProfile({
@@ -21,6 +23,7 @@ export function UserProfile({
   imageUrl,
   chevron = false,
   compacto = false,
+  enMenu = false,
   className,
   ...props
 }: UserProfileProps) {
@@ -35,16 +38,16 @@ export function UserProfile({
 
   return (
     <div className={cn("flex items-center", compacto ? "gap-2" : "gap-3", className)} {...props}>
-      <Avatar className={compacto ? "size-9" : undefined}>
+      <Avatar className={compacto ? "size-9" : enMenu ? "size-10" : undefined}>
         <AvatarImage src={imageUrl} alt="" />
         <AvatarFallback>{displayInitials}</AvatarFallback>
       </Avatar>
 
       <div className={cn("min-w-0 flex-col text-left", compacto ? "hidden sm:flex" : "flex")}>
-        <span className={cn("truncate font-extrabold leading-tight text-foreground", compacto ? "text-[13.5px]" : "text-[17px] font-semibold")}>
+        <span className={cn("truncate font-extrabold leading-tight text-foreground", compacto || enMenu ? "text-[13.5px]" : "text-[17px] font-semibold")}>
           {name}
         </span>
-        <span className={cn("truncate font-normal text-muted-foreground", compacto ? "text-[12px]" : "text-[13px]")}>
+        <span className={cn("truncate font-normal text-muted-foreground", compacto || enMenu ? "text-[12px]" : "text-[13px]")}>
           {role}
         </span>
       </div>

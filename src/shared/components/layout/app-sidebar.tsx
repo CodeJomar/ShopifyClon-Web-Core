@@ -20,7 +20,7 @@ interface AppSidebarProps {
   className?: string
   /** Nombre de la tienda activa; sin tienda, "OTemu". */
   nombreMarca?: string
-  /** Con tienda activa se muestra el enlace "Cambiar de tienda" y la marca lleva al panel. */
+  /** Con tienda activa la marca lleva al panel y debajo del nombre va "OTemu"; cambiar de tienda está en el menú del usuario. */
   tieneTienda?: boolean
 }
 
@@ -74,11 +74,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
                 <Link href={homeHref} className="truncate rounded-md text-base font-extrabold leading-tight text-foreground outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/25">
                   {nombreMarca}
                 </Link>
-                {tieneTienda && (
-                  <Link href="/cuenta/tiendas" className="truncate rounded-md text-xs font-bold text-brand-text outline-none hover:underline focus-visible:ring-[3px] focus-visible:ring-ring/25">
-                    Cambiar de tienda
-                  </Link>
-                )}
+                {tieneTienda && <span className="truncate text-xs font-bold text-muted-foreground">OTemu</span>}
               </div>
             </div>
           )}
