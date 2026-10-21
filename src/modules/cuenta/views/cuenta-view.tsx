@@ -46,7 +46,7 @@ export function CuentaView() {
   }, [])
 
   return (
-    <div className="max-w-6xl space-y-8">
+    <div className="max-w-[1400px] space-y-8">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>

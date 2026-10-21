@@ -37,7 +37,7 @@ export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuent
   const estado = (campo: keyof PerfilValues) => (form.formState.errors[campo] ? "error" : "default") as "error" | "default"
 
   return (
-    <form onSubmit={guardar} noValidate className="space-y-7">
+    <form onSubmit={guardar} noValidate className="@container space-y-7">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos guardar tu perfil</AlertTitle>
@@ -46,7 +46,7 @@ export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuent
       )}
       <section className="space-y-4" aria-labelledby="perfil-datos">
         <h3 id="perfil-datos" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Datos personales</h3>
-        <div className="grid items-start gap-5 2xl:grid-cols-2">
+        <div className="grid items-start gap-5 @lg:grid-cols-2">
       <FloatingInput
         label="Nombres"
         leftIcon={<User className="size-4" aria-hidden="true" />}
@@ -67,7 +67,7 @@ export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuent
       </section>
       <section className="space-y-4" aria-labelledby="perfil-contacto">
         <h3 id="perfil-contacto" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Contacto</h3>
-        <div className="grid items-start gap-5 2xl:grid-cols-2">
+        <div className="grid items-start gap-5 @lg:grid-cols-2">
       {correo}
       <FloatingInput
         label="Teléfono (opcional)"
