@@ -2,9 +2,9 @@
 
 import * as React from "react"
 
-/** Clave de 32 caracteres hexadecimales (la API acepta de 8 a 64 con letras, números, "-" o "_"). */
+/** UUID v4 con guiones: la API exige un UUID en `Idempotency-Key` (CHK-007). */
 export function crearClaveIdempotencia(): string {
-  return crypto.randomUUID().replace(/-/g, "")
+  return crypto.randomUUID()
 }
 
 /**
