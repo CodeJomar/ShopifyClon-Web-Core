@@ -92,7 +92,12 @@ export function ProductosView() {
               <SelectItem value="borradores">Borradores</SelectItem>
             </SelectContent>
           </FloatingSelect>
-          <FloatingSelect label="Categoría" value={categoriaId} onValueChange={(v) => { setPagina(0); setCategoriaId(String(v)) }}>
+          <FloatingSelect
+            label="Categoría"
+            value={categoriaId}
+            items={[{ value: SIN_FILTRO, label: "Todas" }, ...categorias.map((c) => ({ value: c.id, label: c.nombre }))]}
+            onValueChange={(v) => { setPagina(0); setCategoriaId(String(v)) }}
+          >
             <SelectContent>
               <SelectItem value={SIN_FILTRO}>Todas</SelectItem>
               {categorias.map((c) => (
