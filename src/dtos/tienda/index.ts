@@ -8,7 +8,8 @@ export interface PlanDto {
   precio_mensual: number
   precio_anual: number
   moneda: string
-  limite_productos: number
+  /** null = productos ilimitados (plan Avanzado). */
+  limite_productos: number | null
   limite_personal: number
   /** Fracción: 0.02 = 2 %. */
   porcentaje_comision: number
