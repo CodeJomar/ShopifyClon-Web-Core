@@ -1,3 +1,4 @@
+import "server-only"
 import type { RespuestaApi } from "@/dtos/core/respuesta-api.dto"
 import { ErrorApi, errorDeConexion } from "@/lib/api/error-api"
 
@@ -17,8 +18,9 @@ export async function obtenerPublico<T>(ruta: string): Promise<T> {
     ? rutaLimpia
     : `vitrina/${rutaLimpia}`
 
-  // Validación: solo rutas de vitrina
-  if (!rutaFinal.startsWith("vitrina/")) {
+  // Validación: solo rutas de vitrina y sin segmentos que suban de nivel ("." o ".."), que el servidor normalizaría
+  const segmentos = rutaFinal.split("?")[0].split("/")
+  if (!rutaFinal.startsWith("vitrina/") || segmentos.some((s) => s === "" || s === "." || s === "..")) {
     throw new ErrorApi({
       estado: 400,
       codigo: "WEB-004",
