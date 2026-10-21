@@ -38,6 +38,7 @@ function aErrorApi(error: unknown): ErrorApi {
       validaciones: cuerpo?.validaciones,
       detalles: cuerpo?.detalles,
       idCorrelacion: cuerpo?.id_correlacion,
+      retryAfterSegundos: Number(error.response.headers["retry-after"]) || undefined,
     })
   }
   return errorDeConexion()

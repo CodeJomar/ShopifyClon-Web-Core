@@ -2,16 +2,14 @@ import { ActivarCuentaView } from "@/modules/auth"
 
 export const metadata = {
   title: "Activar cuenta | OTemu",
-  description: "Define tu contraseña para activar tu cuenta de acceso.",
-  // El enlace lleva un token de un solo uso: no se filtra a otros sitios por el encabezado Referer.
-  referrer: "no-referrer" as const,
+  description: "Escribe el código de 6 dígitos para activar tu cuenta.",
 }
 
 export default async function ActivarCuentaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ token?: string | string[] }>
+  searchParams: Promise<{ correo?: string | string[] }>
 }) {
-  const { token } = await searchParams
-  return <ActivarCuentaView token={Array.isArray(token) ? token[0] : token} />
+  const { correo } = await searchParams
+  return <ActivarCuentaView correo={Array.isArray(correo) ? correo[0] : correo} />
 }

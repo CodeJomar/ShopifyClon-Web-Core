@@ -1,56 +1,39 @@
-import { peticionApi } from "@/lib/api/client"
+import { api, peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
-import type {
-  ActividadDto,
-  LoginResponseDto,
-  SesionUsuarioDto,
-  TokenRestablecimientoDto,
-  ValidarActivacionDto,
-} from "@/dtos/auth"
+import type { LoginDatosDto, PerfilDto } from "@/dtos/auth"
 
-// Llamadas finas a la API Spring: la autenticación, los códigos y las contraseñas se resuelven en el backend.
+// Llamadas a la API real (identidad.md). Todas pasan por /api (proxy de la web): el JWT nunca llega al navegador.
 
-/** `reemplazarSesion`: el usuario confirmó cerrar la sesión activa de la cuenta para iniciar esta (modal «Continuar»). */
-export const loginAction = (email: string, password: string, reemplazarSesion = false) =>
-  resultado(peticionApi<LoginResponseDto>({
-    method: "POST",
-    url: "/auth/login",
-    data: { email, password, ...(reemplazarSesion ? { reemplazar_sesion: true } : {}) },
-  }))
+export const registroAction = (datos: {
+  correo_electronico: string
+  contrasena: string
+  nombres: string
+  apellidos: string
+  telefono?: string
+}) => resultado(peticionApi<{ id: string }>({ method: "POST", url: "/auth/registro", data: datos }))
 
-/** Latido de actividad real del usuario: mantiene viva la sesión (las consultas automáticas no cuentan). */
-export const actividadAction = () =>
-  resultado(peticionApi<ActividadDto>({ method: "POST", url: "/auth/actividad", data: {} }))
+export const activarAction = (correo_electronico: string, codigo: string) =>
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/activar", data: { correo_electronico, codigo } }))
 
-export const logoutAction = () =>
-  resultado(peticionApi<void>({ method: "POST", url: "/auth/logout", data: {} }))
+export const reenviarActivacionAction = (correo_electronico: string) =>
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/reenviar-activacion", data: { correo_electronico } }))
 
-export const solicitarRecuperacionAction = (email: string) =>
-  resultado(peticionApi<void>({ method: "POST", url: "/auth/recuperar", data: { email } }))
+export const loginAction = (correo_electronico: string, contrasena: string) =>
+  resultado(peticionApi<LoginDatosDto>({ method: "POST", url: "/auth/login", data: { correo_electronico, contrasena } }))
 
-export const verificarOtpAction = (email: string, codigo: string) =>
-  resultado(peticionApi<TokenRestablecimientoDto>({
-    method: "POST",
-    url: "/auth/verificar-otp",
-    data: { email, codigo },
-  }))
+export const solicitarRecuperacionAction = (correo_electronico: string) =>
+  resultado(peticionApi<void>({ method: "POST", url: "/auth/recuperar-clave/solicitar", data: { correo_electronico } }))
 
-export const restablecerPasswordAction = (token: string, nuevaPassword: string) =>
-  resultado(peticionApi<void>({
-    method: "POST",
-    url: "/auth/restablecer-password",
-    data: { token, nueva_password: nuevaPassword },
-  }))
+export const confirmarRecuperacionAction = (correo_electronico: string, codigo: string, contrasena_nueva: string) =>
+  resultado(
+    peticionApi<void>({
+      method: "POST",
+      url: "/auth/recuperar-clave/confirmar",
+      data: { correo_electronico, codigo, contrasena_nueva },
+    }),
+  )
 
-export const validarActivacionAction = (token: string) =>
-  resultado(peticionApi<ValidarActivacionDto>({
-    method: "POST",
-    url: "/auth/activar/validar",
-    data: { token },
-  }))
+export const perfilAction = () => resultado(peticionApi<PerfilDto>({ method: "GET", url: "/cuenta/perfil" }))
 
-export const activarCuentaAction = (token: string, password: string) =>
-  resultado(peticionApi<void>({ method: "POST", url: "/auth/activar", data: { token, password } }))
-
-export const perfilAction = () =>
-  resultado(peticionApi<SesionUsuarioDto>({ method: "GET", url: "/auth/me" }))
+/** Cierra la sesión de la web (borra las cookies). La API no tiene logout. */
+export const cerrarSesionAction = () => resultado(api.delete("/sesion").then(() => undefined))

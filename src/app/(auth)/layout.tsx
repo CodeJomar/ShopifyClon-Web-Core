@@ -23,7 +23,8 @@ export default function AuthLayout({
       </aside>
 
       {/* Sección derecha: 4 columnas (formulario) */}
-      <div className="col-span-12 flex items-center justify-center p-8 sm:p-12 lg:col-span-4">
+      {/* El formulario va sobre el lienzo: la etiqueta flotante corta el borde con el color del lienzo, no el de la isla. */}
+      <div className="col-span-12 flex items-center justify-center p-8 [--campo-exterior:var(--background)] sm:p-12 lg:col-span-4">
         <div className="w-full max-w-sm">
           {children}
         </div>

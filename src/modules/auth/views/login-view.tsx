@@ -3,149 +3,111 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Mail, TriangleAlert } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
-import { Mail, Lock, Eye, EyeOff, Store } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
+import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { toast } from "@/shared/components/ui/toast"
-import { useLogin } from "../hooks/use-login"
-import { SesionActivaModal } from "../components/sesion-activa-modal"
+import { CampoContrasena } from "../components/campo-contrasena"
+import { useCuentaRegresiva } from "../hooks/use-cuenta-regresiva"
+import { loginAction } from "../actions/auth.actions"
+import { loginSchema, type LoginValues } from "../schema"
+import { destinoSeguro } from "../utils"
+import type { ErrorApi } from "@/lib/api/error-api"
 
 interface LoginViewProps {
-  /** Ruta a la que volver tras iniciar sesión (la fija el Proxy al redirigir), vía ?siguiente= */
+  correo?: string
   siguiente?: string
-  /** Por qué se volvió al login: se avisa con un toast (inactividad o sesión reemplazada desde otro navegador). */
-  motivo?: "inactividad" | "reemplazada"
 }
 
-export function LoginView({ siguiente, motivo }: LoginViewProps) {
+export function LoginView({ correo, siguiente }: LoginViewProps) {
   const router = useRouter()
-  const [showPassword, setShowPassword] = React.useState(false)
+  const [error, setError] = React.useState<ErrorApi | null>(null)
+  const espera = useCuentaRegresiva()
 
-  // Se volvió al login por un cierre de sesión: se explica con un toast y se limpia la dirección para no repetirlo al recargar.
-  const avisado = React.useRef(false)
-  React.useEffect(() => {
-    if (!motivo || avisado.current) return
-    avisado.current = true
-    if (motivo === "inactividad") {
-      toast.add({
-        type: "warning",
-        title: "Tu sesión se cerró por inactividad",
-        description: "Ingresa de nuevo para continuar.",
-        timeout: 8000,
-      })
-    } else {
-      toast.add({
-        type: "error",
-        title: "Tu sesión se cerró",
-        description: (
-          <>
-            Se inició sesión con tu cuenta en otro dispositivo o navegador. Si no fuiste tú,{" "}
-            <button
-              type="button"
-              onClick={() => router.push("/forgot-password")}
-              className="cursor-pointer font-semibold text-destructive-text underline underline-offset-2 hover:text-destructive-text  "
-            >
-              cambia tu contraseña
-            </button>
-            .
-          </>
-        ),
-        timeout: 15000,
-      })
+  const form = useForm<LoginValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { correo_electronico: correo ?? "", contrasena: "" },
+  })
+
+  const enviar = form.handleSubmit(async (valores) => {
+    setError(null)
+    const res = await loginAction(valores.correo_electronico, valores.contrasena)
+    if (res.ok) {
+      toast.add({ type: "success", title: "Sesión iniciada", description: "Bienvenido de nuevo." })
+      router.replace(destinoSeguro(siguiente))
+      return
     }
-    router.replace("/login")
-  }, [motivo, router])
+    const e = res.error
+    for (const [campo, mensaje] of Object.entries(e.validaciones ?? {})) {
+      form.setError(campo as keyof LoginValues, { message: mensaje })
+    }
+    setError(e)
+    form.resetField("contrasena")
+    if (e.estado === 429) espera.iniciar(e.retryAfterSegundos ?? 60)
+  })
 
-  const { form, submit, bloqueoSegundos, sesionActiva } = useLogin(siguiente)
-  const {
-    register,
-    formState: { errors, isSubmitting },
-  } = form
-
-  const bloqueado = bloqueoSegundos > 0
+  const bloqueado = espera.restan > 0
 
   return (
-    <div className="flex flex-col gap-8 w-full">
-      {/* Identidad OTemu */}
-      <div className="flex flex-col items-center text-center gap-2">
-        <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white shadow-sm">
-          <Store size={30} strokeWidth={2.2} />
-        </div>
-        <h1 className="font-extrabold text-2xl font-bold text-foreground tracking-tight">
-          OTemu
-        </h1>
-        <p className="text-xs text-muted-foreground font-medium">
-          Acceso de Personal
-        </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Inicia sesión</h1>
+        <p className="mt-1 text-[13px] text-muted-foreground">Entra a tu cuenta de OTemu.</p>
       </div>
 
-      {/* Formulario utilizando FloatingInput y Button base */}
-      <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
-        <div className="space-y-1">
-          <FloatingInput
-            label="Correo Electrónico"
-            type="email"
-            leftIcon={<Mail size={18} />}
-            state={errors.email ? "error" : "default"}
-            disabled={isSubmitting}
-            autoComplete="email"
-            {...register("email")}
-          />
-          {errors.email && <p className="px-2 text-[11px] text-destructive-text">{errors.email.message}</p>}
+      {error && (
+        <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
+          <AlertTitle>{error.codigo === "USR-003" ? "Tu cuenta no está activada" : "No pudimos iniciar sesión"}</AlertTitle>
+          <AlertDescription>
+            {error.message}
+            {error.estado === 429 && bloqueado && ` Intenta de nuevo en ${espera.restan} s.`}
+          </AlertDescription>
+          {error.codigo === "USR-003" && (
+            <Button variant="soft" size="sm" className="mt-2" type="button" onClick={() => router.push(`/activar-cuenta?correo=${encodeURIComponent(form.getValues("correo_electronico"))}`)}>
+              Activar mi cuenta
+            </Button>
+          )}
+        </Alert>
+      )}
+
+      <form onSubmit={enviar} noValidate className="space-y-5">
+        <FloatingInput
+          label="Correo electrónico"
+          type="email"
+          autoComplete="email"
+          leftIcon={<Mail className="size-4" aria-hidden="true" />}
+          state={form.formState.errors.correo_electronico ? "error" : "default"}
+          mensajeError={form.formState.errors.correo_electronico?.message}
+          {...form.register("correo_electronico")}
+        />
+        <CampoContrasena
+          label="Contraseña"
+          state={form.formState.errors.contrasena ? "error" : "default"}
+          mensajeError={form.formState.errors.contrasena?.message}
+          {...form.register("contrasena")}
+        />
+
+        <div className="flex justify-end">
+          <Link href="/recuperar" className="text-[12px] font-bold text-brand-text hover:underline">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </div>
 
-        <div className="space-y-1">
-          <FloatingInput
-            label="Contraseña"
-            type={showPassword ? "text" : "password"}
-            leftIcon={<Lock size={18} />}
-            rightIcon={
-              <button
-                type="button"
-                onClick={() => setShowPassword((prev) => !prev)}
-                tabIndex={-1}
-                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
-                className="flex items-center justify-center text-muted-foreground hover:text-muted-foreground outline-none cursor-pointer"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            }
-            state={errors.password ? "error" : "default"}
-            disabled={isSubmitting}
-            autoComplete="current-password"
-            {...register("password")}
-          />
-          {errors.password && <p className="px-2 text-[11px] text-destructive-text">{errors.password.message}</p>}
-          <div className="flex justify-end pt-1">
-            <Link
-              href="/forgot-password"
-              className="text-[11px] font-medium text-muted-foreground hover:text-brand-text transition-colors cursor-pointer"
-            >
-              ¿Olvidaste tu contraseña?
-            </Link>
-          </div>
-        </div>
-
-        <Button
-          type="submit"
-          variant="default"
-          size="default"
-          disabled={isSubmitting || bloqueado}
-          className="mt-2 w-full font-semibold shadow-sm cursor-pointer"
-        >
-          <span>
-            {bloqueado ? `Reintentar en ${bloqueoSegundos}s` : "Iniciar Sesión"}
-          </span>
+        <Button type="submit" className="w-full" size="lg" loading={form.formState.isSubmitting} disabled={bloqueado}>
+          {bloqueado ? `Espera ${espera.restan} s` : "Iniciar sesión"}
         </Button>
       </form>
 
-      <SesionActivaModal
-        open={sesionActiva.abierta}
-        enviando={sesionActiva.enviando}
-        onContinuar={() => void sesionActiva.continuar()}
-        onCancelar={sesionActiva.cancelar}
-        onNoSoyYo={sesionActiva.noSoyYo}
-      />
+      <p className="text-center text-[13px] text-muted-foreground">
+        ¿No tienes cuenta?{" "}
+        <Link href="/registro" className="font-bold text-brand-text hover:underline">
+          Regístrate
+        </Link>
+      </p>
     </div>
   )
 }

@@ -1,67 +1,115 @@
 "use client"
 
+import * as React from "react"
+import { Mail, TriangleAlert } from "lucide-react"
 import Link from "next/link"
-import { Store, ArrowLeft, MailWarning } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Button } from "@/shared/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
+import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { toast } from "@/shared/components/ui/toast"
+import { OtpInput } from "../components/otp-input"
+import { useCuentaRegresiva } from "../hooks/use-cuenta-regresiva"
+import { activarAction, reenviarActivacionAction } from "../actions/auth.actions"
+import { activarSchema, type ActivarValues } from "../schema"
+import type { ErrorApi } from "@/lib/api/error-api"
 
-import { Spinner } from "@/shared/components/ui/spinner"
-import { NewPasswordForm } from "@/modules/auth/components/new-password-form"
-import { useActivarCuenta } from "@/modules/auth/hooks/use-activar-cuenta"
+export function ActivarCuentaView({ correo }: { correo?: string }) {
+  const router = useRouter()
+  const [codigo, setCodigo] = React.useState("")
+  const [errorCodigo, setErrorCodigo] = React.useState<string | undefined>()
+  const [error, setError] = React.useState<ErrorApi | null>(null)
+  const [enviando, setEnviando] = React.useState(false)
+  const espera = useCuentaRegresiva()
 
-interface ActivarCuentaViewProps {
-  /** Token del enlace de activación recibido por correo (?token=). */
-  token?: string
-}
+  const form = useForm<ActivarValues>({
+    resolver: zodResolver(activarSchema),
+    defaultValues: { correo_electronico: correo ?? "", codigo: "" },
+  })
 
-export function ActivarCuentaView({ token }: ActivarCuentaViewProps) {
-  const { estado, nombre, mensajeInvalido, activar } = useActivarCuenta(token)
+  const enviar = form.handleSubmit(async (valores) => {
+    setError(null)
+    const parsed = activarSchema.safeParse({ ...valores, codigo })
+    if (!parsed.success) {
+      setErrorCodigo(parsed.error.issues.find((i) => i.path[0] === "codigo")?.message)
+      return
+    }
+    setErrorCodigo(undefined)
+    setEnviando(true)
+    const res = await activarAction(valores.correo_electronico, codigo)
+    setEnviando(false)
+    if (res.ok) {
+      toast.add({ type: "success", title: "Cuenta activada", description: "Ya puedes iniciar sesión." })
+      router.replace(`/login?correo=${encodeURIComponent(valores.correo_electronico)}`)
+      return
+    }
+    setError(res.error)
+    setCodigo("")
+  })
+
+  const reenviar = async () => {
+    const correoActual = form.getValues("correo_electronico")
+    const parsed = activarSchema.shape.correo_electronico.safeParse(correoActual)
+    if (!parsed.success) {
+      form.setError("correo_electronico", { message: parsed.error.issues[0]?.message })
+      return
+    }
+    const res = await reenviarActivacionAction(correoActual)
+    if (res.ok) {
+      toast.add({ type: "info", title: "Código enviado", description: res.mensaje || "Revisa tu correo." })
+      espera.iniciar(60)
+    } else {
+      setError(res.error)
+    }
+  }
 
   return (
-    <div className="flex flex-col gap-8 w-full">
-      {/* Cabecera idéntica al Login */}
-      <div className="flex flex-col items-center text-center gap-2 select-none">
-        <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white shadow-sm">
-          <Store size={30} strokeWidth={2.2} />
-        </div>
-        <h1 className="font-extrabold text-2xl font-bold text-foreground  tracking-tight">
-          OTemu
-        </h1>
-        <p className="text-xs text-muted-foreground  font-medium">
-          {estado === "invalido" ? "Enlace no disponible" : "Activar Cuenta"}
-        </p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Activa tu cuenta</h1>
+        <p className="mt-1 text-[13px] text-muted-foreground">Escribe el código de 6 dígitos que te enviamos por correo.</p>
       </div>
 
-      {estado === "validando" && (
-        <div className="flex flex-col items-center gap-3 py-6 text-xs text-muted-foreground" role="status">
-          <Spinner />
-          <span>Verificando tu enlace...</span>
-        </div>
+      {error && (
+        <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
+          <AlertTitle>No pudimos activar tu cuenta</AlertTitle>
+          <AlertDescription>{error.message}</AlertDescription>
+        </Alert>
       )}
 
-      {estado === "valido" && (
-        <NewPasswordForm
-          description={`Hola ${nombre}, define la contraseña con la que ingresarás a OTemu.`}
-          submitLabel="Activar Cuenta"
-          onSubmit={activar}
+      <form onSubmit={enviar} noValidate className="space-y-6">
+        <FloatingInput
+          leftIcon={<Mail className="size-4" aria-hidden="true" />}
+          label="Correo electrónico"
+          type="email"
+          autoComplete="email"
+          state={form.formState.errors.correo_electronico ? "error" : "default"}
+          mensajeError={form.formState.errors.correo_electronico?.message}
+          {...form.register("correo_electronico")}
         />
-      )}
 
-      {estado === "invalido" && (
-        <div className="flex flex-col items-center gap-4 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-warning/12 text-warning-text">
-            <MailWarning size={24} />
-          </div>
-          <p className="text-xs text-muted-foreground  leading-relaxed">{mensajeInvalido}</p>
-          <p className="text-xs text-muted-foreground  leading-relaxed">
-            Pide al administrador que te reenvíe el correo de activación.
-          </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground hover:text-brand-text transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={14} /> Ir a Iniciar Sesión
-          </Link>
+        <div className="space-y-2">
+          <p className="text-[13px] font-bold text-foreground">Código de activación</p>
+          <OtpInput value={codigo} onChange={(valor: string) => setCodigo(valor)} disabled={enviando} />
+          {errorCodigo && <p className="text-[11px] font-bold text-destructive-text">{errorCodigo}</p>}
         </div>
-      )}
+
+        <Button type="submit" className="w-full" size="lg" loading={enviando}>
+          Activar cuenta
+        </Button>
+      </form>
+
+      <div className="flex flex-col items-center gap-2 text-[13px] text-muted-foreground">
+        <Button type="button" variant="ghost" size="sm" disabled={espera.restan > 0} onClick={reenviar}>
+          {espera.restan > 0 ? `Reenviar código en ${espera.restan} s` : "Reenviar código"}
+        </Button>
+        <Link href="/login" className="font-bold text-brand-text hover:underline">
+          Ya tengo cuenta activa
+        </Link>
+      </div>
     </div>
   )
 }

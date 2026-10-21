@@ -2,19 +2,14 @@ import { LoginView } from "@/modules/auth"
 
 export const metadata = {
   title: "Iniciar sesión | OTemu",
-  description: "Ingresar credenciales para el accesso al sistema.",
+  description: "Entra a tu cuenta de OTemu.",
 }
 
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ siguiente?: string | string[]; motivo?: string | string[] }>
+  searchParams: Promise<{ correo?: string | string[]; siguiente?: string | string[] }>
 }) {
-  const { siguiente, motivo } = await searchParams
-  return (
-    <LoginView
-      siguiente={Array.isArray(siguiente) ? siguiente[0] : siguiente}
-      motivo={((m) => (m === "inactividad" || m === "reemplazada" ? m : undefined))(Array.isArray(motivo) ? motivo[0] : motivo)}
-    />
-  )
+  const { correo, siguiente } = await searchParams
+  return <LoginView correo={Array.isArray(correo) ? correo[0] : correo} siguiente={Array.isArray(siguiente) ? siguiente[0] : siguiente} />
 }

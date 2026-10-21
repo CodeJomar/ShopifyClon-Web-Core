@@ -1,37 +1,70 @@
 import { z } from "zod"
 
-// Misma política que el backend (la API la vuelve a validar): 8+ caracteres con letras, números y un símbolo.
-export const passwordNuevaSchema = z
+// Mismas reglas que valida la API (identidad.md, USR-002, USR-010…): la API las vuelve a comprobar.
+const MENSAJE_CONTRASENA = "La contraseña debe tener entre 8 y 72 caracteres, con al menos una letra y un número."
+const PATRON_TELEFONO = /^[0-9+ ()-]{6,30}$/
+
+export const contrasenaSchema = z
   .string()
-  .min(8, "La contraseña debe tener al menos 8 caracteres.")
-  .max(100, "La contraseña no puede exceder los 100 caracteres.")
-  .regex(/(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9])/, "La contraseña debe incluir letras, números y un símbolo (por ejemplo ! @ # $ . -).")
+  .min(8, MENSAJE_CONTRASENA)
+  .max(72, MENSAJE_CONTRASENA)
+  .regex(/(?=.*[A-Za-z])(?=.*\d)/, MENSAJE_CONTRASENA)
+
+const correoSchema = z
+  .string()
+  .trim()
+  .min(1, "Escribe tu correo electrónico.")
+  .max(255, "El correo no puede superar los 255 caracteres.")
+  .email("Ingresa un correo válido.")
+
+const codigoSchema = z.string().regex(/^\d{6}$/, "El código tiene 6 dígitos.")
+
+export const registroSchema = z.object({
+  nombres: z.string().trim().min(1, "Escribe tus nombres.").max(100, "Máximo 100 caracteres."),
+  apellidos: z.string().trim().min(1, "Escribe tus apellidos.").max(100, "Máximo 100 caracteres."),
+  correo_electronico: correoSchema,
+  telefono: z
+    .string()
+    .trim()
+    .refine((valor) => valor === "" || PATRON_TELEFONO.test(valor), "El teléfono solo admite números, espacios y + ( ) -."),
+  contrasena: contrasenaSchema,
+})
+
+export const activarSchema = z.object({
+  correo_electronico: correoSchema,
+  codigo: codigoSchema,
+})
 
 export const loginSchema = z.object({
-  email: z.string().trim().min(1, "El correo es obligatorio.").email("Ingresa un correo válido."),
-  password: z.string().min(1, "La contraseña es obligatoria.").max(100),
+  correo_electronico: correoSchema,
+  contrasena: z.string().min(1, "Escribe tu contraseña."),
 })
 
-export const recuperarSchema = z.object({
-  email: z.string().trim().min(1, "El correo es obligatorio.").email("Ingresa un correo válido."),
+export const recuperarSolicitarSchema = z.object({
+  correo_electronico: correoSchema,
 })
 
-export const otpSchema = z.object({
-  codigo: z.string().regex(/^\d{6}$/, "El código debe tener 6 dígitos."),
-})
-
-/** Contraseña nueva + confirmación (activación de cuenta y recuperación). */
-export const nuevaPasswordSchema = z
+/** Contraseña nueva y confirmación (el código se valida aparte con `codigoSchema`: su campo está fuera del formulario). */
+export const nuevaClaveSchema = z
   .object({
-    password: passwordNuevaSchema,
-    confirmPassword: z.string().min(1, "Confirma tu contraseña."),
+    contrasena_nueva: contrasenaSchema,
+    confirmar: z.string().min(1, "Confirma tu contraseña."),
   })
-  .refine((valores) => valores.password === valores.confirmPassword, {
-    path: ["confirmPassword"],
+  .refine((valores) => valores.contrasena_nueva === valores.confirmar, {
+    path: ["confirmar"],
     message: "Las contraseñas no coinciden.",
   })
 
+export const recuperarConfirmarSchema = z.object({
+  codigo: codigoSchema,
+  contrasena_nueva: contrasenaSchema,
+  confirmar: z.string().min(1, "Confirma tu contraseña."),
+})
+
+export { codigoSchema }
+
+export type RegistroValues = z.infer<typeof registroSchema>
+export type ActivarValues = z.infer<typeof activarSchema>
 export type LoginValues = z.infer<typeof loginSchema>
-export type RecuperarValues = z.infer<typeof recuperarSchema>
-export type OtpValues = z.infer<typeof otpSchema>
-export type NuevaPasswordValues = z.infer<typeof nuevaPasswordSchema>
+export type RecuperarSolicitarValues = z.infer<typeof recuperarSolicitarSchema>
+export type RecuperarConfirmarValues = z.infer<typeof recuperarConfirmarSchema>
