@@ -63,7 +63,7 @@ export function InicioView() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Inicio</h1>
+          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Dashboard</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">Cómo va tu tienda. Los montos están en {moneda}.</p>
         </div>
         <div className="flex gap-2" role="group" aria-label="Rango de fechas">
