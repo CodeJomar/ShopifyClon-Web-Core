@@ -9,7 +9,6 @@ import {
   Plus,
   ReceiptText,
   Settings,
-  ShieldCheck,
   Ticket,
   Store,
   Truck,

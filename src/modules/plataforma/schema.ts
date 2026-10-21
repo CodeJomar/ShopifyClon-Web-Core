@@ -12,45 +12,56 @@ export const planBaseSchema = z.object({
     .max(500, "La descripción no puede superar los 500 caracteres")
     .optional()
     .or(z.literal("")),
-  precio_mensual: z.coerce
-    .number({ message: "El precio mensual debe ser un número válido" })
-    .min(0, "El precio mensual no puede ser negativo"),
-  precio_anual: z.coerce
-    .number({ message: "El precio anual debe ser un número válido" })
-    .min(0, "El precio anual no puede ser negativo"),
+  precio_mensual: z
+    .string()
+    .trim()
+    .refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "El precio mensual debe ser un número mayor o igual a 0"),
+  precio_anual: z
+    .string()
+    .trim()
+    .refine((v) => !Number.isNaN(Number(v)) && Number(v) >= 0, "El precio anual debe ser un número mayor o igual a 0"),
   moneda: z
     .string()
     .trim()
     .regex(/^[A-Z]{3}$/, "La moneda debe ser un código de 3 letras mayúsculas (p. ej. USD)"),
   limite_productos: z
     .string()
+    .trim()
     .optional()
-    .transform((val) => {
-      if (!val || val.trim() === "") return null
-      const num = Number(val)
-      return isNaN(num) ? null : num
-    })
-    .pipe(
-      z
-        .number()
-        .min(1, "El límite de productos debe ser al menos 1")
-        .nullable(),
+    .refine(
+      (v) => !v || (!Number.isNaN(Number(v)) && Number.isInteger(Number(v)) && Number(v) >= 1),
+      "El límite de productos debe ser un número entero mayor o igual a 1",
     ),
-  limite_personal: z.coerce
-    .number({ message: "El límite de personal debe ser un número válido" })
-    .int("El límite de personal debe ser un número entero")
-    .min(0, "El límite de personal no puede ser negativo"),
-  /** Se introduce como porcentaje (0 a 10) y se transforma en fracción para la API (0 a 0.10). */
-  comision_porcentaje: z.coerce
-    .number({ message: "La comisión debe ser un número válido" })
-    .min(0, "La comisión no puede ser negativa")
-    .max(10, "La comisión no puede superar el 10 %"),
-  dias_prueba: z.coerce
-    .number({ message: "Los días de prueba deben ser un número válido" })
-    .int("Los días de prueba deben ser enteros")
-    .min(0, "Los días de prueba no pueden ser negativos"),
-  es_publico: z.boolean().default(true),
-  orden: z.coerce.number().int("El orden debe ser entero").default(0),
+  limite_personal: z
+    .string()
+    .trim()
+    .refine(
+      (v) => !Number.isNaN(Number(v)) && Number.isInteger(Number(v)) && Number(v) >= 0,
+      "El límite de personal debe ser un número entero mayor o igual a 0",
+    ),
+  /** Se introduce como porcentaje (0 a 10) y se envía como fracción para la API (0 a 0.10). */
+  comision_porcentaje: z
+    .string()
+    .trim()
+    .refine(
+      (v) => !Number.isNaN(Number(v)) && Number(v) >= 0 && Number(v) <= 10,
+      "La comisión debe ser un porcentaje entre 0 % y 10 %",
+    ),
+  dias_prueba: z
+    .string()
+    .trim()
+    .refine(
+      (v) => !Number.isNaN(Number(v)) && Number.isInteger(Number(v)) && Number(v) >= 0,
+      "Los días de prueba deben ser un número entero mayor o igual a 0",
+    ),
+  es_publico: z.boolean(),
+  orden: z
+    .string()
+    .trim()
+    .refine(
+      (v) => !Number.isNaN(Number(v)) && Number.isInteger(Number(v)),
+      "El orden debe ser un número entero",
+    ),
 })
 
 export const crearPlanSchema = planBaseSchema.extend({
