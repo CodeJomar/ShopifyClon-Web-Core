@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Mail, Phone, TriangleAlert, User } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -51,16 +52,21 @@ export function RegistroView() {
 
       {error && (
         <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
           <AlertTitle>No pudimos crear tu cuenta</AlertTitle>
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={enviar} noValidate className="space-y-5">
-        <FloatingInput label="Nombres" autoComplete="given-name" state={campo("nombres")} mensajeError={mensaje("nombres")} {...form.register("nombres")} />
-        <FloatingInput label="Apellidos" autoComplete="family-name" state={campo("apellidos")} mensajeError={mensaje("apellidos")} {...form.register("apellidos")} />
-        <FloatingInput label="Correo electrónico" type="email" autoComplete="email" state={campo("correo_electronico")} mensajeError={mensaje("correo_electronico")} {...form.register("correo_electronico")} />
-        <FloatingInput label="Teléfono (opcional)" type="tel" autoComplete="tel" state={campo("telefono")} mensajeError={mensaje("telefono")} {...form.register("telefono")} />
+        <FloatingInput
+          leftIcon={<User className="size-4" aria-hidden="true" />} label="Nombres" autoComplete="given-name" state={campo("nombres")} mensajeError={mensaje("nombres")} {...form.register("nombres")} />
+        <FloatingInput
+          leftIcon={<User className="size-4" aria-hidden="true" />} label="Apellidos" autoComplete="family-name" state={campo("apellidos")} mensajeError={mensaje("apellidos")} {...form.register("apellidos")} />
+        <FloatingInput
+          leftIcon={<Mail className="size-4" aria-hidden="true" />} label="Correo electrónico" type="email" autoComplete="email" state={campo("correo_electronico")} mensajeError={mensaje("correo_electronico")} {...form.register("correo_electronico")} />
+        <FloatingInput
+          leftIcon={<Phone className="size-4" aria-hidden="true" />} label="Teléfono (opcional)" type="tel" autoComplete="tel" state={campo("telefono")} mensajeError={mensaje("telefono")} {...form.register("telefono")} />
         <CampoContrasena
           label="Contraseña"
           autoComplete="new-password"

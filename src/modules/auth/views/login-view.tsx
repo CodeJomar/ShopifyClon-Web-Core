@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Mail } from "lucide-react"
+import { Mail, TriangleAlert } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
@@ -60,6 +60,7 @@ export function LoginView({ correo, siguiente }: LoginViewProps) {
 
       {error && (
         <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
           <AlertTitle>{error.codigo === "USR-003" ? "Tu cuenta no está activada" : "No pudimos iniciar sesión"}</AlertTitle>
           <AlertDescription>
             {error.message}

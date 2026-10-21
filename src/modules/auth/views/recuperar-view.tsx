@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Mail, TriangleAlert } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -80,6 +81,7 @@ export function RecuperarView() {
 
       {error && (
         <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
           <AlertTitle>No pudimos continuar</AlertTitle>
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
@@ -88,6 +90,7 @@ export function RecuperarView() {
       {paso === "correo" ? (
         <form onSubmit={pedirCodigo} noValidate className="space-y-5">
           <FloatingInput
+          leftIcon={<Mail className="size-4" aria-hidden="true" />}
             label="Correo electrónico"
             type="email"
             autoComplete="email"

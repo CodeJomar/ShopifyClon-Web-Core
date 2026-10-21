@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Mail, TriangleAlert } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -73,6 +74,7 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
 
       {error && (
         <Alert variant="destructive">
+          <TriangleAlert aria-hidden="true" />
           <AlertTitle>No pudimos activar tu cuenta</AlertTitle>
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
@@ -80,6 +82,7 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
 
       <form onSubmit={enviar} noValidate className="space-y-6">
         <FloatingInput
+          leftIcon={<Mail className="size-4" aria-hidden="true" />}
           label="Correo electrónico"
           type="email"
           autoComplete="email"
