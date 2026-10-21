@@ -43,7 +43,7 @@ function SelectTrigger({
         "peer relative flex h-11 w-full items-center rounded-xl px-3.5 text-left text-[13px] font-medium cursor-pointer",
         claseCampo,
         claseEstadoCampo[state],
-        "data-popup-open:border-brand-strong data-popup-open:ring-[3.5px] data-popup-open:ring-brand-strong/18",
+        "data-popup-open:border-primary data-popup-open:ring-[3.5px] data-popup-open:ring-primary/18",
         leftIcon ? "pl-11" : "",
         "pr-11",
 

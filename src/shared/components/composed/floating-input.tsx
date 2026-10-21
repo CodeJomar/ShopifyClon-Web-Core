@@ -20,8 +20,8 @@ export const claseCorteEtiqueta = cn(
 export const claseEtiqueta = cn(
   "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
   claseCorteEtiqueta,
-  "peer-focus:top-0 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
-  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
+  "peer-focus:top-0 peer-focus:left-3 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
+  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:left-3 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
   "peer-disabled:text-muted-foreground"
 )
 

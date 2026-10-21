@@ -40,7 +40,7 @@ const FloatingTextarea = React.forwardRef<HTMLTextAreaElement, FloatingTextareaP
             claseCorteEtiqueta,
             "peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
             "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
-            state === "error" && "text-destructive-text",
+            state === "error" && "text-destructive-text peer-focus:text-destructive-text",
             state === "success" && "text-tono-exito-fg"
           )}
         >
