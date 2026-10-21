@@ -22,7 +22,7 @@ import { ErroresDemo } from "./errores-demo";
 
 // Cada sección del playground corresponde a un componente de docs/diseno-web.md §4 con sus estados.
 const VARIANTES_BOTON = [
-  "default", "shadow", "outline", "soft", "ghost", "link", "neutral", "danger", "danger-outline",
+  "default", "outline", "soft", "ghost", "link", "neutral", "warning", "danger", "danger-outline",
 ] as const;
 
 const TONOS: { tono: TonoInsignia; texto: string }[] = [
@@ -97,7 +97,7 @@ export default function PlaygroundPage() {
                   {variante}
                 </Button>
               ))}
-              <Button variant="shadow" rightIcon={<ArrowRight />}>Publicar producto</Button>
+              <Button variant="default" rightIcon={<ArrowRight />}>Publicar producto</Button>
             </div>
           </div>
           <div className="space-y-3">
