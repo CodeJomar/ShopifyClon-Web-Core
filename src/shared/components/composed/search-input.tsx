@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Search, X } from "lucide-react"
 
-import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { FloatingInput, claseBotonAccion } from "@/shared/components/composed/floating-input"
 
 export interface SearchInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange" | "type"> {
   value: string
@@ -35,9 +35,9 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
             type="button"
             onClick={() => onValueChange("")}
             aria-label="Limpiar búsqueda"
-            className="flex size-6 cursor-pointer items-center justify-center rounded-full"
+            className={claseBotonAccion}
           >
-            <X className="size-3.5" />
+            <X aria-hidden="true" className="size-4" />
           </button>
         ) : atajo ? (
           <kbd className="pointer-events-none hidden rounded-md border border-border bg-card px-1.5 text-[11px] font-semibold text-muted-foreground sm:block   ">

@@ -11,20 +11,22 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-primary text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)] hover:brightness-105 hover:-translate-y-px",
-        // Una sola acción de conversión por pantalla (Publicar producto, Comprar)
-        shadow:
-          "bg-primary text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)] shadow-[0_8px_22px_-3px_rgb(var(--brand-rgb)/.55)] hover:brightness-105 hover:-translate-y-px",
+        // Los tintes de marca usan --primary con opacidad (como la plantilla), no --brand-strong
         outline:
-          "border-[1.8px] border-brand-strong bg-transparent text-brand-text hover:bg-brand-strong/10",
+          "border-[1.8px] border-brand-strong bg-transparent text-brand-text hover:bg-primary/10",
         soft:
-          "border-[1.8px] border-brand-strong/30 bg-brand-strong/14 text-brand-text hover:bg-brand-strong/20",
+          "border-[1.8px] border-primary/32 bg-primary/14 text-brand-text hover:bg-primary/22",
         ghost:
-          "bg-transparent text-brand-text hover:bg-brand-strong/12",
+          "border-[1.8px] border-transparent bg-transparent text-foreground hover:bg-primary/12 hover:text-brand-text",
+        // Subrayado de 2 px que crece de izquierda a derecha
         link:
-          "h-auto px-0 text-brand-text underline-offset-4 hover:underline",
+          "relative px-0 text-brand-text after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-current after:transition-transform after:duration-200 hover:after:scale-x-100",
         // Cancelar / Volver en diálogos
         neutral:
           "border-[1.8px] border-border bg-card text-foreground hover:bg-muted",
+        // Acción que requiere atención sin ser destructiva (Reintentar cobro, Pausar tienda)
+        warning:
+          "bg-warning text-warning-foreground hover:brightness-105 hover:-translate-y-px",
         // Confirmar algo destructivo
         danger:
           "bg-destructive text-white hover:brightness-105",
@@ -41,6 +43,10 @@ const buttonVariants = cva(
         "icon-xs": "",
       },
     },
+    compoundVariants: [
+      // El enlace en texto no tiene alto fijo: el subrayado queda pegado al texto
+      { variant: "link", size: "default", className: "h-auto" },
+    ],
     defaultVariants: {
       variant: "default",
       size: "default",
