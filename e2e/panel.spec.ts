@@ -14,7 +14,7 @@ test.describe("Panel de administración y gestión de órdenes (W-011)", () => {
     // 1. Iniciar sesión con la cuenta administradora
     await page.goto("/login")
     await page.getByLabel("Correo electrónico").fill(correo!)
-    await page.getByLabel("Contraseña").fill(contrasena!)
+    await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
     await page.waitForURL(/\/(cuenta|panel)/)
@@ -30,7 +30,7 @@ test.describe("Panel de administración y gestión de órdenes (W-011)", () => {
     }
 
     // 2. Verificar que el Dashboard carga correctamente
-    await expect(page.getByRole("heading", { name: "Inicio", level: 1 })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Dashboard", level: 1 })).toBeVisible()
 
     // 3. Navegar a /panel/ordenes
     await page.goto("/panel/ordenes")
@@ -70,8 +70,8 @@ test.describe("Panel de administración y gestión de órdenes (W-011)", () => {
       await expect(page.getByRole("heading", { name: "Registrar pago manual" })).toBeVisible()
       await page.getByLabel("Referencia del pago (opcional)").fill("REF-E2E-TRANSFERENCIA")
 
-      // Confirmar pago en el pie de FormPanel
-      await page.getByRole("button", { name: "Confirmar" }).click()
+      // Guardar pago en el pie de FormPanel
+      await page.getByRole("button", { name: "Guardar" }).click()
     }
 
     // 7. Verificar que la orden muestra la insignia "Pagada"

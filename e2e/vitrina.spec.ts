@@ -28,7 +28,7 @@ test.describe("Vitrina pública y catálogo (W-014)", () => {
     await page.goto("/tienda/tienda-no-existe-xyz")
 
     await expect(
-      page.getByText(/Esta tienda no está disponible|no se encuentra operativo/i),
+      page.getByRole("heading", { name: "Esta tienda no está disponible" }),
     ).toBeVisible()
   })
 })

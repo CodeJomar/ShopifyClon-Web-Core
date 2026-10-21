@@ -7,13 +7,12 @@ test.describe("Autenticación y sesión (W-004)", () => {
     await expect(page.getByRole("heading", { name: "Inicia sesión", level: 1 })).toBeVisible()
 
     await page.getByLabel("Correo electrónico").fill("correo.inexistente@otemu.test")
-    await page.getByLabel("Contraseña").fill("ClaveIncorrecta123!")
+    await page.getByLabel("Contraseña", { exact: true }).fill("ClaveIncorrecta123!")
 
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
-    const alerta = page.getByRole("alert")
+    const alerta = page.getByRole("alert").filter({ hasText: /No pudimos iniciar sesión|incorrectos|USR-004/i })
     await expect(alerta).toBeVisible()
-    await expect(alerta).toContainText(/USR-004|No pudimos iniciar sesión|incorrectos/i)
 
     // La página no se recarga ni navega a otra ruta
     expect(new URL(page.url()).pathname).toBe("/login")
@@ -27,7 +26,7 @@ test.describe("Autenticación y sesión (W-004)", () => {
 
     await page.goto("/login")
     await page.getByLabel("Correo electrónico").fill(correo!)
-    await page.getByLabel("Contraseña").fill(contrasena!)
+    await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
     await page.waitForURL(/\/(cuenta|panel)/)
@@ -43,7 +42,7 @@ test.describe("Autenticación y sesión (W-004)", () => {
 
     await page.goto("/login")
     await page.getByLabel("Correo electrónico").fill(correo!)
-    await page.getByLabel("Contraseña").fill(contrasena!)
+    await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
     await page.waitForURL(/\/(cuenta|panel)/)

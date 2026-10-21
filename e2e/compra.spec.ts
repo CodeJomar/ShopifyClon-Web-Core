@@ -13,10 +13,11 @@ test.describe("Flujo de compra de invitado (W-015, W-016)", () => {
     // 2. Agregar al carrito
     const botonAgregar = page.getByRole("button", { name: "Agregar al carrito" })
     await botonAgregar.click()
+    await expect(page.getByText("Producto agregado al carrito")).toBeVisible()
 
     // 3. Ir al carrito
     await page.goto("/tienda/tienda-w006-prueba/carrito")
-    await expect(page.getByRole("heading", { name: "Tu carrito", level: 1 })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Carrito", level: 1 })).toBeVisible()
     await expect(page.getByText("Plato W008 UI").first()).toBeVisible()
     await expect(page.getByText("Total estimado")).toBeVisible()
 
@@ -25,7 +26,7 @@ test.describe("Flujo de compra de invitado (W-015, W-016)", () => {
     await botonCheckout.click()
 
     await page.waitForURL(/\/tienda\/tienda-w006-prueba\/checkout/)
-    await expect(page.getByRole("heading", { name: "Tus datos" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Datos de compra", level: 1 })).toBeVisible()
 
     // 5. Llenar formulario de datos y envío
     await page.getByLabel("Correo").fill("comprador.e2e@otemu.test")
@@ -52,7 +53,7 @@ test.describe("Flujo de compra de invitado (W-015, W-016)", () => {
     await page.getByRole("button", { name: "Continuar" }).click()
 
     // 6. Resumen y confirmación de compra
-    await expect(page.getByRole("heading", { name: "Resumen" })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Confirma tu compra", level: 1 })).toBeVisible()
     const botonConfirmar = page.getByRole("button", { name: "Confirmar compra" })
     await botonConfirmar.click()
 
