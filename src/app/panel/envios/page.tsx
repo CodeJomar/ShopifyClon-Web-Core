@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { EnviosView } from "@/modules/envios"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Envíos" />
+  return <EnviosView />
 }
