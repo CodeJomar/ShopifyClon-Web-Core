@@ -26,11 +26,15 @@ export function ContrasenaForm() {
       contrasena_nueva: valores.contrasena_nueva,
     })
     if (!res.ok) {
-      if (res.error.codigo === "USR-010") form.setError("contrasena_actual", { message: res.error.message })
-      else setError(res.error)
-      form.resetField("contrasena_actual")
-      form.resetField("contrasena_nueva")
-      form.resetField("confirmar")
+      // Con USR-010 el error queda en el campo de la actual (no se limpia); el resto va en la alerta.
+      if (res.error.codigo === "USR-010") {
+        form.setError("contrasena_actual", { message: res.error.message })
+        form.resetField("contrasena_nueva")
+        form.resetField("confirmar")
+      } else {
+        setError(res.error)
+        form.reset()
+      }
       return
     }
     toast.add({ type: "success", title: "Contraseña actualizada", description: "Usa la nueva la próxima vez que inicies sesión." })
