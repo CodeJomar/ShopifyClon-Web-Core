@@ -1,38 +1,65 @@
 import type { LucideIcon } from "lucide-react"
+import {
+  Boxes,
+  ChartNoAxesColumn,
+  CreditCard,
+  FolderTree,
+  Package,
+  ReceiptText,
+  Settings,
+  Ticket,
+  Truck,
+  Users,
+} from "lucide-react"
 
-import type { Puede, Requisito } from "./permisos"
+import { PERMISO, type Permiso, type Puede } from "./permisos"
 
-// TODO(W-007): la navegación del panel se define al rehacer el layout del panel. Vacía tras W-001.
+/** Inicio del panel: tras iniciar sesión en una tienda y al elegir "Abrir" en el selector. */
+export const HOME_HREF = "/panel"
 
-/** Pantalla de inicio. TODO(W-007): sin pantallas de workspace todavía; la raíz "/" es el marcador. */
-export const HOME_HREF = "/"
+/** Perfil de la cuenta (no está en el menú: se abre desde el pie del menú). */
+export const PERFIL_HREF = "/cuenta"
 
 /**
- * Mapa único de navegación del workspace. De aquí salen: el menú lateral, las migas de pan, la protección de
- * cada ruta y la página inicial tras el login. Para añadir una pantalla se agrega UNA entrada aquí.
+ * Mapa único de navegación del panel. De aquí salen el menú lateral, las migas de pan y la protección de cada ruta.
+ * Para añadir una sección, se agrega UNA entrada aquí. Se muestra solo si el rol tiene el permiso (ver permisos.ts).
  */
 export interface NavItem {
   id: string
   /** Texto del menú lateral. */
   label: string
   icon: LucideIcon
-  /** Ruta de la pantalla. Un grupo no tiene ruta propia, solo hijos. */
+  /** Ruta de la sección. */
   href?: string
-  /** Permiso mínimo para ver la pantalla. Un grupo se muestra si el usuario ve al menos un hijo. */
-  permiso?: Requisito
-  /** Migas de pan [sección, pantalla]; por defecto [label del grupo o del ítem, label]. */
+  /** Permiso para ver la sección. Sin permiso no aparece en el menú. */
+  permiso?: Permiso
+  /** Migas de pan [sección, pantalla]; por defecto [label, label]. */
   migas?: [string, string]
   hijos?: NavItem[]
-  /** No se dibuja en el menú lateral (se llega por otro lado, p. ej. el logo), pero sí cuenta para migas y rutas. */
+  /** No se dibuja en el menú lateral, pero sí cuenta para migas y rutas. */
   oculto?: boolean
 }
 
-// TODO(W-007): entradas del panel (Q-W-001: lista vacía hasta que el diseño y los módulos se definan)
-export const NAVEGACION: NavItem[] = []
-
-/** Mi perfil: no está en el menú; se abre desde el usuario al pie de la barra lateral y no pide permiso. */
-// TODO(W-007): la ruta /perfil se define al rehacer la cuenta; hoy no existe.
-export const PERFIL_HREF = "/perfil"
+/** Entradas del panel en el orden del menú (docs/orquestacion-frontend/tareas/W-007). */
+export const NAVEGACION: NavItem[] = [
+  {
+    id: "inicio",
+    label: "Inicio",
+    icon: ChartNoAxesColumn,
+    href: "/panel",
+    permiso: PERMISO.METRICAS_VER,
+    migas: ["Panel", "Inicio"],
+  },
+  { id: "productos", label: "Productos", icon: Package, href: "/panel/productos", permiso: PERMISO.CATALOGO_GESTIONAR, migas: ["Catálogo", "Productos"] },
+  { id: "categorias", label: "Categorías", icon: FolderTree, href: "/panel/categorias", permiso: PERMISO.CATALOGO_GESTIONAR, migas: ["Catálogo", "Categorías"] },
+  { id: "inventario", label: "Inventario", icon: Boxes, href: "/panel/inventario", permiso: PERMISO.INVENTARIO_AJUSTAR, migas: ["Catálogo", "Inventario"] },
+  { id: "ordenes", label: "Órdenes", icon: ReceiptText, href: "/panel/ordenes", permiso: PERMISO.ORDENES_VER, migas: ["Ventas", "Órdenes"] },
+  { id: "cupones", label: "Cupones", icon: Ticket, href: "/panel/cupones", permiso: PERMISO.CUPONES_GESTIONAR, migas: ["Ventas", "Cupones"] },
+  { id: "envios", label: "Envíos", icon: Truck, href: "/panel/envios", permiso: PERMISO.ENVIOS_CONFIGURAR, migas: ["Ventas", "Envíos"] },
+  { id: "personal", label: "Personal", icon: Users, href: "/panel/personal", permiso: PERMISO.PERSONAL_GESTIONAR, migas: ["Tienda", "Personal"] },
+  { id: "configuracion", label: "Configuración", icon: Settings, href: "/panel/configuracion", permiso: PERMISO.TIENDA_CONFIGURAR, migas: ["Tienda", "Configuración"] },
+  { id: "suscripcion", label: "Suscripción", icon: CreditCard, href: "/panel/suscripcion", permiso: PERMISO.SUSCRIPCION_GESTIONAR, migas: ["Tienda", "Suscripción"] },
+]
 
 /** Una pantalla encontrada en el mapa, junto con el grupo al que pertenece (si lo tiene). */
 export interface RutaEncontrada {
@@ -47,27 +74,30 @@ function hojas(items: NavItem[], grupo?: NavItem): RutaEncontrada[] {
 /** Todas las pantallas con ruta, en el orden del menú. */
 export const RUTAS: RutaEncontrada[] = hojas(NAVEGACION)
 
-/** Pantalla que corresponde a una URL (exacta o anidada: /menu/123 → /menu). */
+/** Pantalla que corresponde a una URL (exacta o anidada: /panel/ordenes/123 → /panel/ordenes). */
 export function rutaDe(pathname: string): RutaEncontrada | undefined {
-  return RUTAS.find(({ item }) => pathname === item.href || pathname.startsWith(`${item.href}/`))
+  // Se toma la coincidencia más larga para que /panel/ordenes no caiga en /panel
+  return RUTAS.filter(({ item }) => pathname === item.href || pathname.startsWith(`${item.href}/`)).sort(
+    (a, b) => (b.item.href?.length ?? 0) - (a.item.href?.length ?? 0),
+  )[0]
 }
 
 /** Permiso que exige una URL; undefined si la ruta no está en el mapa o no pide permiso. */
-export function permisoDeRuta(pathname: string): Requisito | undefined {
+export function permisoDeRuta(pathname: string): Permiso | undefined {
   return rutaDe(pathname)?.item.permiso
 }
 
 /** Migas de pan [sección, pantalla] de una URL. */
 export function migasDe(pathname: string): [string, string] {
-  if (pathname === PERFIL_HREF) return ["Cuenta", "Mi perfil"]
+  if (pathname === PERFIL_HREF) return ["Cuenta", "Mi cuenta"]
   const ruta = rutaDe(pathname)
-  if (!ruta) return ["Workspace", "General"]
+  if (!ruta) return ["Panel", "Inicio"]
   return ruta.item.migas ?? [ruta.grupo?.label ?? ruta.item.label, ruta.item.label]
 }
 
 const permitido = (item: NavItem, puede: Puede) => !item.permiso || puede(item.permiso)
 
-/** Menú que ve este usuario: sin las pantallas que no puede abrir y sin grupos vacíos. */
+/** Menú que ve este usuario: sin las secciones que no puede abrir y sin grupos vacíos. */
 export function filtrarNavegacion(items: NavItem[], puede: Puede): NavItem[] {
   return items.flatMap((item) => {
     if (item.hijos) {
@@ -78,7 +108,7 @@ export function filtrarNavegacion(items: NavItem[], puede: Puede): NavItem[] {
   })
 }
 
-/** Pantalla a la que se vuelve cuando no hay otra mejor: la primera que el usuario puede abrir. */
+/** Primera sección que el usuario puede abrir; null si no tiene ninguna. */
 export function rutaInicial(puede: Puede): string | null {
   return RUTAS.find(({ item }) => permitido(item, puede))?.item.href ?? null
 }

@@ -36,9 +36,17 @@ export interface TiendaCreadaDto {
   operativa: boolean
 }
 
-/** `datos` de GET /panel/tienda. TODO(Q-W-006): confirmar los campos reales de la respuesta. */
+/** `datos` de GET /panel/tienda (TiendaConfiguracionResponse, verificado en la API real en W-007). */
 export interface TiendaActivaDto {
+  id: string
   nombre: string
   subdominio: string
-  moneda?: string
+  moneda: string
+  correo_contacto: string
+  zona_horaria: string
+  esta_activa: boolean
+  /** false = suscripción no activa: las escrituras responden SUS-017. */
+  operativa: boolean
+  suscripcion: { estado: string; codigo_plan: string; fin_periodo_actual: string }
+  fecha_creacion: string
 }

@@ -2,6 +2,7 @@ import axios, { isAxiosError, type AxiosRequestConfig } from "axios"
 import type { RespuestaApi } from "@/dtos/core/respuesta-api.dto"
 import { conexion, esFalloDeConexion } from "@/lib/connection"
 import { ErrorApi, errorDeConexion } from "./error-api"
+import { toast } from "@/shared/components/ui/toast"
 
 /** Mismo origen: el proxy de la web (src/app/api/[...ruta]) reenvía a la API Spring. El navegador nunca ve el JWT. */
 export const RUTA_API = "/api"
@@ -54,6 +55,8 @@ export async function peticionApi<T>(config: AxiosRequestConfig): Promise<T> {
     return data.datos as T
   } catch (error) {
     const errorApi = aErrorApi(error)
+    // SUS-017: la suscripción de la tienda no está activa; las escrituras se rechazan con el mensaje de la API.
+    if (errorApi.codigo === "SUS-017") toast.add({ type: "warning", title: "Suscripción no activa", description: errorApi.message })
     if (errorApi.estado === 401 && !esRutaAuth(config.url) && typeof window !== "undefined") {
       window.location.replace(`/login?siguiente=${encodeURIComponent(window.location.pathname)}`)
     }
