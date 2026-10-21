@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
-import { Button } from "@/shared/components/ui/button"
+import { Button, buttonVariants } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
@@ -231,10 +231,9 @@ export function CarritoView({ subdominio }: { subdominio: string }) {
             </div>
           </dl>
 
-          {/* TODO(W-016): Conectar con el checkout */}
-          <Button type="button" className="w-full" disabled title="El pago se habilita en la siguiente fase">
+          <Link href={`/tienda/${subdominio}/checkout`} className={`${buttonVariants({})} w-full`}>
             Continuar con la compra
-          </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>
