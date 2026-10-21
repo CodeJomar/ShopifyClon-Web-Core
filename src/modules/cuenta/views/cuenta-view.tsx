@@ -48,6 +48,9 @@ export function CuentaView() {
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
+          <Button variant="soft" className="w-full" onClick={() => router.push("/cuenta/tiendas")}>
+            Mis tiendas
+          </Button>
           <Button variant="neutral" onClick={cerrarSesion} loading={cerrando} className="w-full">
             Cerrar sesión
           </Button>

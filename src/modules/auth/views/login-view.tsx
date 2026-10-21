@@ -37,7 +37,10 @@ export function LoginView({ correo, siguiente }: LoginViewProps) {
     const res = await loginAction(valores.correo_electronico, valores.contrasena)
     if (res.ok) {
       toast.add({ type: "success", title: "Sesión iniciada", description: "Bienvenido de nuevo." })
-      router.replace(destinoSeguro(siguiente))
+      // Sin "siguiente": 0 tiendas → crear la primera; 1 → su panel (el proxy ya fijó la tienda); varias → elegir.
+      const tiendas = res.datos.tiendas.length
+      const destinoPorDefecto = tiendas === 0 ? "/cuenta/tiendas/nueva" : tiendas === 1 ? "/panel" : "/cuenta/tiendas"
+      router.replace(siguiente ? destinoSeguro(siguiente) : destinoPorDefecto)
       return
     }
     const e = res.error
