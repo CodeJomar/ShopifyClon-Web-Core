@@ -35,6 +35,8 @@ export interface Carrito {
   subtotal: Dinero | number
   descuento_total: Dinero | number
   impuestos_total: Dinero | number
+  /** Envío de la tarifa elegida (solo con `tarifa_envio_id`): la API lo incluye en `total_estimado`. */
+  costo_envio?: Dinero | number | null
   total_estimado: Dinero | number
   requiere_envio: boolean
   advertencias: AdvertenciaCarrito[]
