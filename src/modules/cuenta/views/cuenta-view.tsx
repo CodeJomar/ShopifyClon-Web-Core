@@ -60,9 +60,9 @@ export function CuentaView() {
         </p>
       )}
 
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_280px]">
+      <div>
       {perfil ? (
-        <Card className="gap-0 py-0 lg:grid lg:grid-cols-[300px_1fr]">
+        <Card className="gap-0 py-0 lg:grid lg:grid-cols-[380px_1fr]">
           {/* Columna izquierda: identidad, contraseña y apariencia */}
           <div className="flex flex-col gap-6 border-b border-border/60 p-6 sm:p-7 lg:border-b-0 lg:border-r">
             <div className="flex flex-col items-center gap-3 text-center">
@@ -102,7 +102,7 @@ export function CuentaView() {
           </div>
 
           {/* Columna derecha: información del perfil */}
-          <div className="p-6 sm:p-7">
+          <div className="@container p-6 sm:p-7">
             <div className="mb-6">
               <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Información del perfil</h2>
               <p className="mt-1 text-[13px] text-muted-foreground">Así te verán las tiendas donde compras.</p>
@@ -121,31 +121,33 @@ export function CuentaView() {
                 />
               }
             />
+
+            {/* Tarjetas hacia las otras pantallas de la cuenta, debajo de los datos */}
+            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-mas">
+              <h3 id="cuenta-mas" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tus tiendas, direcciones y compras</h3>
+              <nav aria-label="Más de tu cuenta" className="grid gap-3 @2xl:grid-cols-3">
+                {ACCESOS.map(({ href, icono: Icono, titulo, descripcion }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className="group flex items-center gap-3.5 rounded-xl border border-island-border bg-card p-4 shadow-isla outline-none transition-all hover:-translate-y-px hover:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
+                  >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                      <Icono className="size-5" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[14px] font-extrabold text-foreground">{titulo}</span>
+                      <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
+                    </span>
+                    <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
+                  </Link>
+                ))}
+              </nav>
+            </section>
           </div>
         </Card>
-      ) : (
-        <div />
-      )}
+      ) : null}
 
-      {/* Contenedor de la derecha: tarjetas hacia las otras pantallas de la cuenta */}
-      <nav aria-label="Más de tu cuenta" className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-        {ACCESOS.map(({ href, icono: Icono, titulo, descripcion }) => (
-          <Link
-            key={href}
-            href={href}
-            className="group flex items-center gap-3.5 rounded-xl border border-island-border bg-card p-4 shadow-isla outline-none transition-all hover:-translate-y-px hover:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
-          >
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
-              <Icono className="size-5" />
-            </span>
-            <span className="min-w-0 flex-1">
-              <span className="block text-[14px] font-extrabold text-foreground">{titulo}</span>
-              <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
-            </span>
-            <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
-          </Link>
-        ))}
-      </nav>
       </div>
     </div>
   )

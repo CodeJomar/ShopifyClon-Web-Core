@@ -13,6 +13,10 @@ export const CampoContrasena = React.forwardRef<HTMLInputElement, FloatingInputP
     ref={ref}
     type="password"
     autoComplete={props.autoComplete ?? "current-password"}
+    // La contraseña no se copia ni se corta del campo (seguridad)
+    onCopy={(e) => e.preventDefault()}
+    onCut={(e) => e.preventDefault()}
+    data-1p-ignore
     leftIcon={<Lock className="size-4" aria-hidden="true" />}
     {...props}
   />
