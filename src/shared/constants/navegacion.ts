@@ -32,7 +32,6 @@ export interface PestanaCuenta {
 
 export const PESTANAS_CUENTA: PestanaCuenta[] = [
   { id: "perfil", label: "Perfil", href: "/cuenta" },
-  { id: "seguridad", label: "Seguridad", href: "/cuenta/seguridad" },
   { id: "direcciones", label: "Direcciones", href: "/cuenta/direcciones" },
   { id: "compras", label: "Mis compras", href: "/cuenta/ordenes", prefijos: ["/cuenta/ordenes/"] },
   { id: "tiendas", label: "Mis tiendas", href: "/cuenta/tiendas", prefijos: ["/cuenta/tiendas/"] },

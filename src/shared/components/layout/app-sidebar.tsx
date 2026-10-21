@@ -74,7 +74,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
                 <Link href={homeHref} className="truncate rounded-md text-base font-extrabold leading-tight text-foreground outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/25">
                   {nombreMarca}
                 </Link>
-                {tieneTienda && <span className="truncate text-xs font-bold text-muted-foreground">OTemu</span>}
+                {tieneTienda && <span className="truncate text-xs font-medium text-muted-foreground">OTemu • Tienda en línea</span>}
               </div>
             </div>
           )}

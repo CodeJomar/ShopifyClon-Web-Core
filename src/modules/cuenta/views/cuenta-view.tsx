@@ -9,11 +9,12 @@ import { Switch } from "@/shared/components/ui/switch"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
 import { PerfilForm } from "../components/perfil-form"
+import { ContrasenaForm } from "../components/contrasena-form"
 import { perfilCuentaAction } from "../actions/cuenta.actions"
 import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-/** Pestaña Perfil: datos personales y preferencias (tema claro/oscuro). El título y las pestañas las pone el layout. */
+/** Pestaña Perfil, todo en una pantalla: datos personales, contraseña y preferencias (tema). El título y las pestañas las pone el layout. */
 export function CuentaView() {
   const [perfil, setPerfil] = React.useState<PerfilCuentaDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -34,7 +35,7 @@ export function CuentaView() {
   }, [])
 
   return (
-    <div className="max-w-[720px] space-y-6">
+    <div className="max-w-5xl space-y-6">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -48,6 +49,7 @@ export function CuentaView() {
         </p>
       )}
 
+      <div className="grid items-start gap-6 lg:grid-cols-2">
       {perfil && (
         <Card>
           <CardHeader>
@@ -67,6 +69,17 @@ export function CuentaView() {
           </CardContent>
         </Card>
       )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Seguridad</CardTitle>
+          <CardDescription>Cambia tu contraseña cuando lo necesites.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ContrasenaForm />
+        </CardContent>
+      </Card>
+      </div>
 
       <Card>
         <CardHeader>

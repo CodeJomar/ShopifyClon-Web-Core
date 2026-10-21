@@ -58,8 +58,10 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   return (
     <div className="flex min-h-screen bg-background">
       {!isMobile && (
-        <aside className={cn("sticky top-0 h-screen shrink-0 border-r border-brand-strong/12 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
+        <aside className={cn("sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
+          {/* Divisor vertical: arranca a la altura del divisor del encabezado (76 px) y deja aire abajo */}
+          <div aria-hidden="true" className="absolute right-0 top-[76px] bottom-3 w-px bg-brand-strong/12" />
         </aside>
       )}
       {isMobile && (
@@ -71,7 +73,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
         </Sheet>
       )}
 
-      <div className="flex min-w-0 flex-1 flex-col p-4 sm:p-6">
+      <div className="flex min-w-0 flex-1 flex-col px-4 pb-4 sm:px-6 sm:pb-6">
         <WorkspaceHeader
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
