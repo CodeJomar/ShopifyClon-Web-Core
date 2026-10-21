@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { CheckStatus } from '@/dtos/core/checkStatus.dto';
-import type { OneQuery } from '@/dtos/core/oneQuery.dto';
+import type { Resultado } from '@/lib/api/resultado';
 
 type UseEntityFormProps<
   TDetail,
@@ -10,9 +9,9 @@ type UseEntityFormProps<
   TCreateResponse,
 > = {
   id?: string;
-  actionGet?: (id: string) => Promise<OneQuery<TDetail>>;
-  actionCreate?: (payload: TCreatePayload) => Promise<OneQuery<TCreateResponse>>;
-  actionUpdate?: (id: string, payload: TUpdatePayload) => Promise<CheckStatus>;
+  actionGet?: (id: string) => Promise<Resultado<TDetail>>;
+  actionCreate?: (payload: TCreatePayload) => Promise<Resultado<TCreateResponse>>;
+  actionUpdate?: (id: string, payload: TUpdatePayload) => Promise<Resultado<unknown>>;
   mapEntityToForm: (entity: TDetail) => TFormValues;
   mapFormToCreatePayload: (values: TFormValues) => TCreatePayload;
   mapFormToUpdatePayload: (values: TFormValues, id: string) => TUpdatePayload;
@@ -55,12 +54,12 @@ export function useEntityForm<
     if (!id || !actionGet) return Promise.resolve();
     return actionGet(id)
       .then((res) => {
-        if (!res.isOk()) {
+        if (!res.ok) {
           setHasLoadingError(true);
-          onLoadError?.(res.getMessage());
+          onLoadError?.(res.mensaje);
           return;
         }
-        setEntity(res.data);
+        setEntity(res.datos);
       })
       .catch(() => {
         setHasLoadingError(true);
@@ -87,8 +86,8 @@ export function useEntityForm<
         if (isEditing && id && actionUpdate) {
           const payload = mapFormToUpdatePayload(values, id);
           const res = await actionUpdate(id, payload);
-          if (!res.isOk()) {
-            onSaveError?.(res.getMessage());
+          if (!res.ok) {
+            onSaveError?.(res.mensaje);
             return null;
           }
           onUpdated?.(values);
@@ -98,12 +97,12 @@ export function useEntityForm<
         if (actionCreate) {
           const payload = mapFormToCreatePayload(values);
           const res = await actionCreate(payload);
-          if (!res.isOk()) {
-            onSaveError?.(res.getMessage());
+          if (!res.ok) {
+            onSaveError?.(res.mensaje);
             return null;
           }
-          onCreated?.(res.data, values);
-          if (mapCreateToForm) return mapCreateToForm(values, res.data);
+          onCreated?.(res.datos, values);
+          if (mapCreateToForm) return mapCreateToForm(values, res.datos);
           return values;
         }
         return null;

@@ -8,3 +8,13 @@ export function rangoUltimosDias(dias: number): { fecha_inicio: string; fecha_fi
   const inicio = new Date(hoy.getTime() - (Math.max(1, dias) - 1) * 24 * 60 * 60 * 1000)
   return { fecha_inicio: fechaLima(inicio), fecha_fin: fechaLima(hoy) }
 }
+
+/**
+ * Fecha y hora para mostrar a partir de la marca ISO UTC que entrega la API (docs/arquitectura-frontend.md, regla 6).
+ * Por defecto, hora de Lima. Usa Intl porque date-fns no convierte zonas horarias sin una dependencia extra.
+ */
+export function formatearFecha(isoUtc: string, zonaHoraria: string = "America/Lima"): string {
+  const fecha = new Date(isoUtc)
+  if (Number.isNaN(fecha.getTime())) return ""
+  return new Intl.DateTimeFormat("es-PE", { timeZone: zonaHoraria, dateStyle: "medium", timeStyle: "short" }).format(fecha)
+}

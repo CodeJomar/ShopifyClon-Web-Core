@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation"
 import { Spinner } from "@/shared/components/ui/spinner"
 import type { SesionUsuarioDto } from "@/dtos/auth"
 import { logoutAction, perfilAction } from "../actions/auth.actions"
-import { EVENTO_SESION_REEMPLAZADA, sesionReemplazada } from "@/lib/api/sesion-reemplazada"
 import { toast } from "@/shared/components/ui/toast"
 import { useAvisosSesion } from "../hooks/use-avisos-sesion"
 import { useInactividad } from "../hooks/use-inactividad"
@@ -47,16 +46,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const [usuario, setUsuario] = React.useState<SesionUsuarioDto | null>(null)
   const avisar = useAvisosSesion()
 
-  // Otra persona inició sesión con esta cuenta en otro navegador y continuó: esta sesión se cierra de inmediato y el
-  // login explica con un toast lo que pasó (?motivo=reemplazada).
-  React.useEffect(() => {
-    const alReemplazar = () => {
-      void logoutAction().finally(() => window.location.replace("/login?motivo=reemplazada"))
-    }
-    window.addEventListener(EVENTO_SESION_REEMPLAZADA, alReemplazar)
-    return () => window.removeEventListener(EVENTO_SESION_REEMPLAZADA, alReemplazar)
-  }, [])
-
   // Huella del perfil mostrado (sin los avisos): el sondeo solo vuelve a pintar el workspace si algo cambió.
   const huellaPerfil = React.useRef("")
   const aplicar = React.useCallback((datos: SesionUsuarioDto) => {
@@ -74,10 +63,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
   const refrescar = React.useCallback(
     () =>
       perfilAction().then((res) => {
-        if (res.isOk()) {
-          aplicar(res.data)
-          avisar(res.data.avisos)
-        } else if (!sesionReemplazada()) router.replace(`/login?siguiente=${encodeURIComponent(rutaActual.current)}`)
+        if (res.ok) {
+          aplicar(res.datos)
+          avisar(res.datos.avisos)
+        } else router.replace(`/login?siguiente=${encodeURIComponent(rutaActual.current)}`)
       }),
     [router, avisar, aplicar],
   )
@@ -89,10 +78,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       perfilAction().then((res) => {
         // Los avisos ya se entregaron (la API los borra al enviarlos): se muestran aunque esta consulta haya quedado
         // obsoleta (p. ej., el montaje doble de React en desarrollo), para no perderlos.
-        if (res.isOk()) avisar(res.data.avisos)
+        if (res.ok) avisar(res.datos.avisos)
         if (cancelado) return
-        if (res.isOk()) aplicar(res.data)
-        else if (!sesionReemplazada()) router.replace(`/login?siguiente=${encodeURIComponent(rutaActual.current)}`)
+        if (res.ok) aplicar(res.datos)
+        else router.replace(`/login?siguiente=${encodeURIComponent(rutaActual.current)}`)
       })
 
     // Sondeo periódico: entrega avisos y detecta que la sesión ya no existe, sin repintar si el perfil no cambió.
@@ -102,11 +91,11 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       sondeando = true
       void perfilAction()
         .then((res) => {
-          if (res.isOk()) avisar(res.data.avisos)
+          if (res.ok) avisar(res.datos.avisos)
           if (cancelado) return
-          if (res.isOk()) {
-            if (JSON.stringify({ ...res.data, avisos: [] }) !== huellaPerfil.current) aplicar(res.data)
-          } else if ((res.httpStatusCode === 401 || res.httpStatusCode === 403) && !sesionReemplazada()) {
+          if (res.ok) {
+            if (JSON.stringify({ ...res.datos, avisos: [] }) !== huellaPerfil.current) aplicar(res.datos)
+          } else if ((res.estado === 401 || res.estado === 403)) {
             router.replace(`/login?siguiente=${encodeURIComponent(rutaActual.current)}`)
           }
         })

@@ -21,13 +21,13 @@ export function useActivarCuenta(token: string | undefined) {
 
     validarActivacionAction(token).then((res) => {
       if (cancelado) return
-      if (res.isOk()) {
-        setNombre(res.data.nombre)
+      if (res.ok) {
+        setNombre(res.datos.nombre)
         setEstado("valido")
         // El token ya no necesita permanecer visible en la barra de direcciones ni en el historial.
         window.history.replaceState(null, "", window.location.pathname)
       } else {
-        setMensajeInvalido(res.getMessage())
+        setMensajeInvalido(res.mensaje)
         setEstado("invalido")
       }
     })
@@ -47,10 +47,10 @@ export function useActivarCuenta(token: string | undefined) {
       error: "No se pudo activar la cuenta",
     })
 
-    if (res.isOk()) {
+    if (res.ok) {
       router.replace("/login")
-    } else if (res.httpStatusCode === 400 && /enlace/i.test(res.getMessage())) {
-      setMensajeInvalido(res.getMessage())
+    } else if (res.estado === 400 && /enlace/i.test(res.mensaje)) {
+      setMensajeInvalido(res.mensaje)
       setEstado("invalido")
     }
   }

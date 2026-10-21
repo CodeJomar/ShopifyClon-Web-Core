@@ -1,9 +1,5 @@
 import type { NextConfig } from "next";
 
-// URL de la API Spring vista desde el servidor de Next (en Docker: http://api-core:8080).
-// Se fija en tiempo de build (las reglas de rewrites se serializan en el build standalone).
-const API_INTERNAL_URL = (process.env.API_INTERNAL_URL ?? "http://localhost:8080").replace(/\/$/, "");
-
 const esProduccion = process.env.NODE_ENV === "production";
 
 /**
@@ -47,12 +43,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: cabecerasSeguridad }];
   },
-  // El navegador habla SIEMPRE con su propio origen (/api/...) y Next reenvía a la API Spring (/api/v1).
-  // Así las cookies de sesión son de primera parte (sin SameSite=None ni CORS, que Safari/iPad bloquea).
-  // TODO(W-003): reemplazar por el route handler proxy (JWT en cookie httpOnly, X-Tienda-Id).
-  async rewrites() {
-    return [{ source: "/api/:path*", destination: `${API_INTERNAL_URL}/api/v1/:path*` }];
-  },
+  // /api lo atiende el route handler src/app/api/[...ruta]/route.ts (proxy con JWT en cookie httpOnly, W-003).
 };
 
 export default nextConfig;

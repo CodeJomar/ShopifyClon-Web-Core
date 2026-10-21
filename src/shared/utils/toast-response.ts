@@ -1,61 +1,60 @@
 import { toast } from "@/shared/components/ui/toast"
-import { BaseResponse } from "@/dtos/core/baseResponse.dto"
+import type { Resultado } from "@/lib/api/resultado"
+import type { ErrorApi } from "@/lib/api/error-api"
 
-interface ToastResponseOptions<R> {
+interface ToastResponseOptions<T> {
   /** Título mientras la petición está en curso. */
   loading: string
-  /** Título al terminar bien; puede depender de la respuesta. */
-  success: string | ((respuesta: R) => string)
+  /** Título al terminar bien; puede depender de los datos. */
+  success: string | ((datos: T) => string)
   /** Descripción opcional del toast de éxito. */
   successDescription?: string
-  /** Título cuando la API responde con error; puede depender de la respuesta (p. ej. por código HTTP). */
-  error?: string | ((respuesta: R) => string)
-  /** Detalle del error. Por defecto, los mensajes que devuelve el backend. */
-  errorDescription?: (respuesta: R) => string
+  /** Título cuando la API responde con error; puede depender del error (p. ej. por código HTTP). */
+  error?: string | ((error: ErrorApi) => string)
+  /** Detalle del error. Por defecto, el mensaje que devuelve el backend. */
+  errorDescription?: (error: ErrorApi) => string
 }
 
 /**
- * Muestra el ciclo completo de una petición a la API en un toast (cargando → éxito / error) y devuelve la
- * respuesta para que quien llama continúe con su flujo (`respuesta.isOk()`). El detalle del error sale de los
- * mensajes del backend, así que no hay que repetirlo en cada formulario.
+ * Muestra el ciclo completo de una petición en un toast (cargando → éxito / error) y devuelve el resultado para que
+ * quien llama continúe su flujo (`if (res.ok)`). El detalle del error sale del mensaje del backend.
  */
-export async function toastResponse<R extends BaseResponse>(
-  peticion: Promise<R>,
+export async function toastResponse<T>(
+  peticion: Promise<Resultado<T>>,
   {
     loading,
     success,
     successDescription,
     error = "No se pudo completar la acción",
-    errorDescription = (respuesta) => respuesta.getMessage(),
-  }: ToastResponseOptions<R>,
-): Promise<R> {
-  // Las respuestas de error de la API se convierten en rechazo para que toast.promise las muestre como error.
-  const evaluada = peticion.then((respuesta) => {
-    if (!respuesta.isOk()) throw respuesta
-    return respuesta
+    errorDescription = (causa) => causa.message,
+  }: ToastResponseOptions<T>,
+): Promise<Resultado<T>> {
+  const evaluada = peticion.then((res) => {
+    if (!res.ok) throw res
+    return res
   })
 
   toast
     .promise(evaluada, {
       loading: { title: loading },
-      success: (respuesta) => ({
-        title: typeof success === "function" ? success(respuesta) : success,
+      success: (res) => ({
+        title: typeof success === "function" ? success(res.ok ? res.datos : (undefined as T)) : success,
         description: successDescription,
       }),
       error: (causa: unknown) => {
-        if (!(causa instanceof BaseResponse)) return { title: error as string, description: "Ocurrió un error inesperado." }
-        const respuesta = causa as R
+        const res = causa as Resultado<T>
+        if (!res || res.ok) return { title: error as string, description: "Ocurrió un error inesperado." }
         return {
-          title: typeof error === "function" ? error(respuesta) : error,
-          description: errorDescription(respuesta),
+          title: typeof error === "function" ? error(res.error) : error,
+          description: errorDescription(res.error),
         }
       },
     })
-    .catch(() => undefined) // el rechazo ya se muestra en el toast; el flujo continúa abajo con la respuesta
+    .catch(() => undefined) // el rechazo ya se muestra en el toast; el flujo continúa abajo con el resultado
 
   try {
     return await evaluada
   } catch (causa) {
-    return causa as R
+    return causa as Resultado<T>
   }
 }
