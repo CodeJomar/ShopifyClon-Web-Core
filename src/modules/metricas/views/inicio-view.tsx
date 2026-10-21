@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Banknote, Coins, Wallet } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
@@ -82,9 +83,11 @@ export function InicioView() {
       )}
 
       {!datos && !error && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando métricas…
-        </p>
+        <div className="grid gap-(--float-gap) sm:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Cargando métricas">
+          {Array.from({ length: 4 }, (_, i) => (
+            <Skeleton key={i} className="h-36 rounded-xl" />
+          ))}
+        </div>
       )}
 
       {datos && (

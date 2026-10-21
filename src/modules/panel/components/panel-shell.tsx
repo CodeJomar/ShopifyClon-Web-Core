@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { TriangleAlert } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { AppSidebar } from "@/shared/components/layout/app-sidebar"
@@ -91,7 +92,8 @@ export function PanelShell({ children }: { children: React.ReactNode }) {
         )}
 
         {tienda && !tienda.operativa && (
-          <Alert className="mt-4">
+          <Alert variant="warning" className="mt-4">
+            <TriangleAlert aria-hidden="true" />
             <AlertTitle>Tu suscripción no está activa</AlertTitle>
             <AlertDescription>
               Puedes ver tu tienda, pero no hacer cambios.
