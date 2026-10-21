@@ -201,7 +201,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
                 }}
               />
               <FloatingInput
-                label="Correo de contacto (opcional)"
+                label="Correo de contacto"
                 type="email"
                 leftIcon={<Mail className="size-4" aria-hidden="true" />}
                 state={form.formState.errors.correo_contacto ? "error" : "default"}
