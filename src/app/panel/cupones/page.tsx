@@ -1,5 +1,5 @@
-import { MarcadorSeccion } from "@/modules/panel"
+import { CuponesView } from "@/modules/cupones"
 
 export default function Page() {
-  return <MarcadorSeccion titulo="Cupones" />
+  return <CuponesView />
 }
