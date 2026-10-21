@@ -172,10 +172,12 @@ function actualizarCookieCarrito(respuesta: NextResponse, subdominio: string, es
 }
 
 const TIMEOUT_VINCULAR_MS = 5_000
+// Tope de carritos a vincular por login: cada uno es una llamada a la API y el login la espera.
+const MAX_CARRITOS_VINCULAR = 10
 
 /** Fusiona los carritos anónimos del navegador con la cuenta recién autenticada (CAR-007). Mejor esfuerzo: no bloquea el login. */
 async function vincularCarritos(request: NextRequest, token: string): Promise<void> {
-  for (const carrito of carritosDeLaPeticion(request)) {
+  for (const carrito of carritosDeLaPeticion(request).slice(0, MAX_CARRITOS_VINCULAR)) {
     const destino = urlDestino(["vitrina", carrito.subdominio, "carrito", "vincular"], "")
     if (!destino) continue
     try {
