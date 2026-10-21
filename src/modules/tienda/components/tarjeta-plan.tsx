@@ -61,7 +61,7 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
 
       <ul className="space-y-1 text-[12.5px] text-muted-foreground">
         <li>{plan.dias_prueba} días de prueba gratis</li>
-        {plan.limite_productos === null ? (
+        {plan.limite_productos == null ? (
           <li>Productos ilimitados</li>
         ) : (
           <li>Hasta {plan.limite_productos.toLocaleString("es-PE")} productos</li>

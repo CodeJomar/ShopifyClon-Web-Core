@@ -9,7 +9,7 @@ export interface PlanDto {
   precio_anual: number
   moneda: string
   /** null = productos ilimitados (plan Avanzado). */
-  limite_productos: number | null
+  limite_productos: number | null | undefined
   /** null o ausente = sin límite de personal. */
   limite_personal: number | null | undefined
   /** Fracción: 0.02 = 2 %. */
