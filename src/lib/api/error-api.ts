@@ -10,6 +10,8 @@ export interface DatosErrorApi {
   validaciones?: ValidacionesApi
   detalles?: Record<string, unknown>
   idCorrelacion?: string
+  /** Solo con GEN-429: segundos que indica el encabezado Retry-After. */
+  retryAfterSegundos?: number
 }
 
 /**
@@ -23,6 +25,7 @@ export class ErrorApi extends Error {
   readonly validaciones?: ValidacionesApi
   readonly detalles?: Record<string, unknown>
   readonly idCorrelacion?: string
+  readonly retryAfterSegundos?: number
 
   constructor(datos: DatosErrorApi) {
     super(datos.mensaje)
@@ -32,6 +35,7 @@ export class ErrorApi extends Error {
     this.validaciones = datos.validaciones
     this.detalles = datos.detalles
     this.idCorrelacion = datos.idCorrelacion
+    this.retryAfterSegundos = datos.retryAfterSegundos
   }
 }
 
