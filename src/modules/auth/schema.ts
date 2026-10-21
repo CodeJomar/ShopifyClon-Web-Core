@@ -44,9 +44,9 @@ export const recuperarSolicitarSchema = z.object({
   correo_electronico: correoSchema,
 })
 
-export const recuperarConfirmarSchema = z
+/** Contraseña nueva y confirmación (el código se valida aparte con `codigoSchema`: su campo está fuera del formulario). */
+export const nuevaClaveSchema = z
   .object({
-    codigo: codigoSchema,
     contrasena_nueva: contrasenaSchema,
     confirmar: z.string().min(1, "Confirma tu contraseña."),
   })
@@ -54,6 +54,14 @@ export const recuperarConfirmarSchema = z
     path: ["confirmar"],
     message: "Las contraseñas no coinciden.",
   })
+
+export const recuperarConfirmarSchema = z.object({
+  codigo: codigoSchema,
+  contrasena_nueva: contrasenaSchema,
+  confirmar: z.string().min(1, "Confirma tu contraseña."),
+})
+
+export { codigoSchema }
 
 export type RegistroValues = z.infer<typeof registroSchema>
 export type ActivarValues = z.infer<typeof activarSchema>

@@ -13,11 +13,13 @@ import { CampoContrasena } from "../components/campo-contrasena"
 import { OtpInput } from "../components/otp-input"
 import { confirmarRecuperacionAction, solicitarRecuperacionAction } from "../actions/auth.actions"
 import {
-  recuperarConfirmarSchema,
+  codigoSchema,
+  nuevaClaveSchema,
   recuperarSolicitarSchema,
-  type RecuperarConfirmarValues,
   type RecuperarSolicitarValues,
 } from "../schema"
+
+type NuevaClaveValues = { contrasena_nueva: string; confirmar: string }
 import type { ErrorApi } from "@/lib/api/error-api"
 
 export function RecuperarView() {
@@ -32,9 +34,9 @@ export function RecuperarView() {
     resolver: zodResolver(recuperarSolicitarSchema),
     defaultValues: { correo_electronico: "" },
   })
-  const formNueva = useForm<RecuperarConfirmarValues>({
-    resolver: zodResolver(recuperarConfirmarSchema),
-    defaultValues: { codigo: "", contrasena_nueva: "", confirmar: "" },
+  const formNueva = useForm<NuevaClaveValues>({
+    resolver: zodResolver(nuevaClaveSchema),
+    defaultValues: { contrasena_nueva: "", confirmar: "" },
   })
 
   // La API responde 200 aunque el correo no exista (USR-005): no se revela si la cuenta existe.
@@ -49,9 +51,9 @@ export function RecuperarView() {
 
   const cambiarClave = formNueva.handleSubmit(async (valores) => {
     setError(null)
-    const parsed = recuperarConfirmarSchema.safeParse({ ...valores, codigo })
+    const parsed = codigoSchema.safeParse(codigo)
     if (!parsed.success) {
-      setErrorCodigo(parsed.error.issues.find((i) => i.path[0] === "codigo")?.message)
+      setErrorCodigo(parsed.error.issues[0]?.message)
       return
     }
     setErrorCodigo(undefined)
