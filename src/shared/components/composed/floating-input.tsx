@@ -1,5 +1,7 @@
+"use client"
+
 import * as React from "react"
-import { Copy, Lock, TriangleAlert } from "lucide-react"
+import { Copy, Eye, EyeOff, Lock, TriangleAlert } from "lucide-react"
 import { Input, type EstadoCampo } from "@/shared/components/ui/input"
 import { toast } from "@/shared/components/ui/toast"
 import { cn } from "@/shared/utils/cn"
@@ -23,6 +25,10 @@ export const claseEtiqueta = cn(
   "peer-disabled:text-muted-foreground"
 )
 
+/** Botón de acción a la derecha del campo (§4.2): 28 px, hover con --primary al 12 %. */
+export const claseBotonAccion =
+  "flex size-7 cursor-pointer items-center justify-center rounded-lg text-muted-foreground outline-none transition-colors hover:bg-primary/12 hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/25"
+
 export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string
   state?: EstadoCampo
@@ -37,13 +43,27 @@ export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputE
 }
 
 const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
-  ({ className, label, state = "default", leftIcon, rightIcon, ayuda, mensajeError, copiable, id, disabled, readOnly, value, ...props }, ref) => {
+  ({ className, label, state = "default", leftIcon, rightIcon, ayuda, mensajeError, copiable, id, disabled, readOnly, value, type, ...props }, ref) => {
     const inputId = id || label.replace(/\s+/g, "-").toLowerCase()
     const mensaje = state === "error" ? mensajeError : ayuda
     const esSoloLectura = readOnly && copiable
+    const esContrasena = type === "password"
+    const [mostrar, setMostrar] = React.useState(false)
+    const refInterno = React.useRef<HTMLInputElement | null>(null)
+    const asignarRef = React.useCallback(
+      (nodo: HTMLInputElement | null) => {
+        refInterno.current = nodo
+        if (typeof ref === "function") ref(nodo)
+        else if (ref) ref.current = nodo
+      },
+      [ref]
+    )
+    const izquierda = esSoloLectura ? <Lock className="size-4" /> : leftIcon
+    const hayAccion = esSoloLectura || esContrasena || Boolean(rightIcon)
 
     const copiar = async () => {
-      const texto = String(value ?? "")
+      // Lee el valor del input: funciona también con `defaultValue` (no controlado)
+      const texto = String(value ?? refInterno.current?.value ?? "")
       try {
         await navigator.clipboard.writeText(texto)
         toast.add({ type: "success", title: "Copiado", description: `${label} copiado al portapapeles.` })
@@ -53,44 +73,60 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
     }
 
     return (
-      <div className={cn("relative w-full", className)}>
-        {leftIcon && (
-          <div className="pointer-events-none absolute left-3.5 top-1/2 z-10 flex -translate-y-1/2 items-center text-muted-foreground">
-            {leftIcon}
-          </div>
-        )}
+      <div className={cn("w-full", className)}>
+        {/* Solo el campo y sus íconos: los íconos se centran respecto a este bloque, no al mensaje de abajo */}
+        <div className="relative">
+          {izquierda && (
+            <div aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 z-10 flex -translate-y-1/2 items-center text-muted-foreground">
+              {izquierda}
+            </div>
+          )}
 
-        <Input
-          id={inputId}
-          ref={ref}
-          state={state}
-          disabled={disabled}
-          readOnly={readOnly}
-          value={value}
-          placeholder=" "
-          className={cn("peer h-11", leftIcon ? "pl-11" : "", rightIcon || esSoloLectura ? "pr-11" : "")}
-          {...props}
-        />
+          <Input
+            id={inputId}
+            ref={asignarRef}
+            state={state}
+            disabled={disabled}
+            readOnly={readOnly}
+            value={value}
+            type={esContrasena && mostrar ? "text" : type}
+            placeholder=" "
+            aria-describedby={mensaje ? `${inputId}-ayuda` : undefined}
+            className={cn("peer h-11", izquierda ? "pl-11" : "", hayAccion ? "pr-11" : "")}
+            {...props}
+          />
 
-        <label htmlFor={inputId} className={cn(claseEtiqueta, leftIcon ? "left-11" : "left-3", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-tono-exito-fg")}>
-          {label}
-        </label>
+          <label htmlFor={inputId} className={cn(claseEtiqueta, izquierda ? "left-11" : "left-3", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-tono-exito-fg")}>
+            {label}
+          </label>
 
-        {esSoloLectura ? (
-          <div className="absolute right-3 top-1/2 z-10 flex -translate-y-1/2 items-center gap-1.5 text-muted-foreground">
-            <Lock aria-hidden="true" className="size-3.5" />
-            <button
-              type="button"
-              onClick={copiar}
-              aria-label={`Copiar ${label}`}
-              className="flex size-7 items-center justify-center rounded-lg text-brand-text outline-none hover:bg-brand-strong/12 focus-visible:ring-[3px] focus-visible:ring-ring/25 cursor-pointer"
-            >
-              <Copy aria-hidden="true" className="size-3.5" />
-            </button>
-          </div>
-        ) : rightIcon ? (
-          <div className="absolute right-3.5 top-1/2 z-10 flex -translate-y-1/2 items-center text-muted-foreground">{rightIcon}</div>
-        ) : null}
+          {esSoloLectura ? (
+            <div className="absolute right-3 top-1/2 z-10 flex -translate-y-1/2 items-center">
+              <button
+                type="button"
+                onClick={copiar}
+                aria-label={`Copiar ${label}`}
+                className={claseBotonAccion}
+              >
+                <Copy aria-hidden="true" className="size-4" />
+              </button>
+            </div>
+          ) : esContrasena && !disabled ? (
+            <div className="absolute right-3 top-1/2 z-10 flex -translate-y-1/2 items-center">
+              <button
+                type="button"
+                onClick={() => setMostrar((v) => !v)}
+                aria-label={mostrar ? "Ocultar contraseña" : "Mostrar contraseña"}
+                aria-pressed={mostrar}
+                className={claseBotonAccion}
+              >
+                {mostrar ? <EyeOff aria-hidden="true" className="size-4" /> : <Eye aria-hidden="true" className="size-4" />}
+              </button>
+            </div>
+          ) : rightIcon ? (
+            <div className="absolute right-3 top-1/2 z-10 flex -translate-y-1/2 items-center text-muted-foreground">{rightIcon}</div>
+          ) : null}
+        </div>
 
         {mensaje && (
           <p
