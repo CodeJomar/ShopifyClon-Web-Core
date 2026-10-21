@@ -17,6 +17,8 @@ export interface PanelContextValue {
   nombres: string
   /** Apellidos de la persona (perfil). */
   apellidos: string
+  /** Indica si la persona es administradora global de la plataforma (acceso a /plataforma). */
+  esAdministradorPlataforma: boolean
   cargando: boolean
   error: ErrorApi | null
   /** Oculta lo que el rol no puede hacer. La API vuelve a comprobar cada petición. */
@@ -32,7 +34,7 @@ const PanelContext = React.createContext<PanelContextValue | null>(null)
 /**
  * Carga lo que el panel necesita en cada pantalla: la tienda activa, el rol en ella y el perfil.
  * Con `exigirTienda` (el panel), sin tienda activa (SEG-001 / 404) manda a elegir una (`/cuenta/tiendas`).
- * Sin `exigirTienda` (la cuenta) la falta de tienda activa es normal: no redirige y solo carga el perfil.
+ * Sin `exigirTienda` (la cuenta o plataforma) la falta de tienda activa es normal: no redirige y solo carga el perfil.
  */
 export function PanelProvider({ children, exigirTienda = true }: { children: React.ReactNode; exigirTienda?: boolean }) {
   const router = useRouter()
@@ -40,6 +42,7 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
   const [rol, setRol] = React.useState<string | undefined>(undefined)
   const [nombres, setNombres] = React.useState("")
   const [apellidos, setApellidos] = React.useState("")
+  const [esAdministradorPlataforma, setEsAdministradorPlataforma] = React.useState(false)
   const [cargando, setCargando] = React.useState(true)
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
@@ -62,6 +65,7 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
           if (perfil.ok) {
             setNombres(perfil.datos.nombres)
             setApellidos(perfil.datos.apellidos)
+            setEsAdministradorPlataforma(Boolean(perfil.datos.es_administrador_plataforma))
           }
           setCargando(false)
           return
@@ -81,6 +85,7 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       if (perfil.ok) {
         setNombres(perfil.datos.nombres)
         setApellidos(perfil.datos.apellidos)
+        setEsAdministradorPlataforma(Boolean(perfil.datos.es_administrador_plataforma))
       }
       setCargando(false)
     })()
@@ -95,13 +100,14 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       rol,
       nombres,
       apellidos,
+      esAdministradorPlataforma,
       cargando,
       error,
       puede: puedeConRol(rol),
       permisos: permisosDeRol(rol),
       recargar,
     }),
-    [tienda, rol, nombres, apellidos, cargando, error, recargar],
+    [tienda, rol, nombres, apellidos, esAdministradorPlataforma, cargando, error, recargar],
   )
 
   return <PanelContext.Provider value={valor}>{children}</PanelContext.Provider>
