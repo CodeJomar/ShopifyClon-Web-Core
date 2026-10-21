@@ -2,13 +2,18 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronRight, Mail, MapPin, Moon, Receipt, Store, Sun, User } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ChevronRight, LogOut, Mail, MapPin, MonitorSmartphone, Moon, Receipt, Store, Sun, Trash2, User } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Card } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Switch } from "@/shared/components/ui/switch"
+import { Button } from "@/shared/components/ui/button"
+import { Badge } from "@/shared/components/ui/badge"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
+import { cerrarSesionAction } from "@/modules/auth"
+import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { PerfilForm } from "../components/perfil-form"
 import { ContrasenaForm } from "../components/contrasena-form"
 import { direccionesAction, ordenesCuentaAction, perfilCuentaAction } from "../actions/cuenta.actions"
@@ -30,6 +35,10 @@ const ACCESOS = [
 export function CuentaView() {
   const [perfil, setPerfil] = React.useState<PerfilCuentaDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
+  const router = useRouter()
+  const { tienda } = usePanel()
+  const [cerrando, setCerrando] = React.useState(false)
+  const [conAtencion, setConAtencion] = React.useState(0)
   const { theme, setTheme } = useTheme()
   const montado = useMounted()
   const oscuro = montado && theme === "dark"
@@ -40,6 +49,7 @@ export function CuentaView() {
     let cancelado = false
     Promise.all([misTiendasAction(), direccionesAction(), ordenesCuentaAction(1)]).then(([tiendas, direcciones, compras]) => {
       if (cancelado) return
+      if (tiendas.ok) setConAtencion(tiendas.datos.filter((t) => !t.operativa).length)
       setCantidades({
         "/cuenta/tiendas": tiendas.ok ? tiendas.datos.length : undefined,
         "/cuenta/direcciones": direcciones.ok ? direcciones.datos.length : undefined,
@@ -50,6 +60,12 @@ export function CuentaView() {
       cancelado = true
     }
   }, [])
+
+  const cerrarSesion = async () => {
+    setCerrando(true)
+    await cerrarSesionAction()
+    router.replace("/login")
+  }
 
   React.useEffect(() => {
     let cancelado = false
@@ -117,6 +133,23 @@ export function CuentaView() {
                 </div>
               </div>
             </section>
+
+            <div className="h-px bg-border/60" />
+
+            <section className="space-y-3" aria-labelledby="cuenta-sesion">
+              <h2 id="cuenta-sesion" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Sesión y cuenta</h2>
+              <Button variant="danger-outline" className="w-full" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
+                Cerrar sesión
+              </Button>
+              {/* Próximamente: necesitan endpoints nuevos (docs/orquestacion/ajustes/A-003) */}
+              <Button variant="neutral" className="w-full" disabled leftIcon={<MonitorSmartphone aria-hidden="true" />} aria-describedby="cuenta-pronto">
+                Cerrar sesión en otros dispositivos
+              </Button>
+              <Button variant="danger-outline" className="w-full" disabled leftIcon={<Trash2 aria-hidden="true" />} aria-describedby="cuenta-pronto">
+                Eliminar mi cuenta
+              </Button>
+              <p id="cuenta-pronto" className="text-[11.5px] text-muted-foreground">Estas dos opciones llegan pronto.</p>
+            </section>
           </div>
 
           {/* Columna derecha: información del perfil */}
@@ -136,6 +169,37 @@ export function CuentaView() {
               }
             />
 
+            {/* Tienda activa */}
+            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-tienda">
+              <h3 id="cuenta-tienda" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tienda activa</h3>
+              {tienda ? (
+                <div className="flex flex-wrap items-center gap-4 rounded-xl border border-border/60 bg-muted/40 p-4">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                    <Store className="size-5" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[14px] font-extrabold text-foreground">{tienda.nombre}</p>
+                    <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
+                  </div>
+                  {tienda.operativa ? (
+                    <Badge variant="estado" tono="marca">Activa</Badge>
+                  ) : (
+                    <Badge variant="estado" tono="aviso">Requiere atención</Badge>
+                  )}
+                  <Button variant="soft" size="sm" onClick={() => router.push("/panel")}>
+                    Abrir panel
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-dashed border-border p-4">
+                  <p className="text-[13px] text-muted-foreground">Aún no tienes una tienda activa. Elige una de tus tiendas o crea la primera.</p>
+                  <Button variant="soft" size="sm" onClick={() => router.push("/cuenta/tiendas")}>
+                    Elegir tienda
+                  </Button>
+                </div>
+              )}
+            </section>
+
             {/* Tarjetas hacia las otras pantallas de la cuenta, debajo de los datos */}
             <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-mas">
               <h3 id="cuenta-mas" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tus tiendas, direcciones y compras</h3>
@@ -150,13 +214,16 @@ export function CuentaView() {
                       <Icono className="size-5" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2 text-[14px] font-extrabold text-foreground">
+                      <span className="flex items-center gap-2 whitespace-nowrap text-[14px] font-extrabold text-foreground">
                 {titulo}
                 {cantidades[href] !== undefined && (
                   <span className="rounded-full bg-primary/14 px-2 py-0.5 text-[11px] font-bold text-brand-text">{cantidades[href]}</span>
                 )}
               </span>
                       <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
+              {href === "/cuenta/tiendas" && conAtencion > 0 && (
+                <Badge variant="estado" tono="aviso" className="mt-2">{conAtencion === 1 ? "1 requiere atención" : `${conAtencion} requieren atención`}</Badge>
+              )}
                     </span>
                     <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
                   </Link>
