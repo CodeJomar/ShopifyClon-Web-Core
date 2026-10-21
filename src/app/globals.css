@@ -106,6 +106,7 @@
   --brand-strong: #00A36C;
   --brand-text: #007A52;
   --brand-rgb: 0 230 153;
+  --campo-exterior: var(--card);
   --success: #1E9E6A;
   --warning: #E8C100;
   --warning-text: #A16207;
@@ -175,6 +176,7 @@
   --ring: #00E699;
   --brand-strong: #00E699;
   --brand-text: #00E699;
+  --campo-exterior: var(--card);
   --success: #34D399;
   --warning: #E8C100;
   --warning-text: #FCD34D;

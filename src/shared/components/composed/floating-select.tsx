@@ -37,8 +37,8 @@ export function FloatingSelect({
             claseEtiqueta,
             leftIcon ? "left-11" : "left-3",
             "top-1/2",
-            "peer-[:not([data-placeholder])]:top-0 peer-[:not([data-placeholder])]:bg-card peer-[:not([data-placeholder])]:text-[10.5px] peer-[:not([data-placeholder])]:font-bold",
-            "peer-data-popup-open:top-0 peer-data-popup-open:bg-card peer-data-popup-open:text-[10.5px] peer-data-popup-open:font-bold peer-data-popup-open:text-brand-text",
+            "peer-[:not([data-placeholder])]:top-0 peer-[:not([data-placeholder])]:[background-image:var(--etiqueta-corte)] peer-[:not([data-placeholder])]:text-[10.5px] peer-[:not([data-placeholder])]:font-bold",
+            "peer-data-popup-open:top-0 peer-data-popup-open:[background-image:var(--etiqueta-corte)] peer-data-popup-open:text-[10.5px] peer-data-popup-open:font-bold peer-data-popup-open:text-brand-text",
             state === "error" && "text-destructive-text",
             state === "success" && "text-tono-exito-fg"
           )}

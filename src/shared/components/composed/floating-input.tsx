@@ -9,11 +9,18 @@ import { cn } from "@/shared/utils/cn"
  * sube y corta el borde superior con el fondo de la isla. Los selectores `peer-[...]` son el mismo estado para
  * input, select y textarea.
  */
+export const claseCorteEtiqueta = cn(
+  // Mitad superior = fondo del contenedor; mitad inferior = fondo del campo (muted en deshabilitado y solo lectura)
+  "[--etiqueta-corte:linear-gradient(to_bottom,var(--campo-exterior)_50%,var(--campo-fondo,var(--campo-exterior))_50%)]",
+  "peer-disabled:[--campo-fondo:var(--muted)] peer-[:is(input,textarea):read-only]:[--campo-fondo:var(--muted)]"
+)
+
 export const claseEtiqueta = cn(
   "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
-  "peer-focus:top-0 peer-focus:bg-card peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
-  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:bg-card peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
-  "peer-disabled:bg-transparent peer-disabled:text-muted-foreground"
+  claseCorteEtiqueta,
+  "peer-focus:top-0 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-brand-text",
+  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
+  "peer-disabled:text-muted-foreground"
 )
 
 export interface FloatingInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
