@@ -44,6 +44,15 @@ export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuent
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Información del perfil</h2>
+          <p className="mt-1 text-[13px] text-muted-foreground">Así te verán las tiendas donde compras.</p>
+        </div>
+        <Button type="submit" loading={form.formState.isSubmitting}>
+          Guardar cambios
+        </Button>
+      </div>
       <section className="space-y-4" aria-labelledby="perfil-datos">
         <h3 id="perfil-datos" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Datos personales</h3>
         <div className="grid items-start gap-5 @lg:grid-cols-2">
@@ -80,11 +89,6 @@ export function PerfilForm({ perfil, correo, onGuardado }: { perfil: PerfilCuent
       />
         </div>
       </section>
-      <div className="flex justify-end">
-        <Button type="submit" loading={form.formState.isSubmitting}>
-          Guardar cambios
-        </Button>
-      </div>
     </form>
   )
 }

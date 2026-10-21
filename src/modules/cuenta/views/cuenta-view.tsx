@@ -11,7 +11,8 @@ import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
 import { PerfilForm } from "../components/perfil-form"
 import { ContrasenaForm } from "../components/contrasena-form"
-import { perfilCuentaAction } from "../actions/cuenta.actions"
+import { direccionesAction, ordenesCuentaAction, perfilCuentaAction } from "../actions/cuenta.actions"
+import { misTiendasAction } from "@/modules/tienda/actions/tienda.actions"
 import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
@@ -33,6 +34,23 @@ export function CuentaView() {
   const montado = useMounted()
   const oscuro = montado && theme === "dark"
 
+  // Cantidades para las tarjetas (tiendas, direcciones, compras); si una llamada falla, la tarjeta queda sin número
+  const [cantidades, setCantidades] = React.useState<Record<string, number | undefined>>({})
+  React.useEffect(() => {
+    let cancelado = false
+    Promise.all([misTiendasAction(), direccionesAction(), ordenesCuentaAction(1)]).then(([tiendas, direcciones, compras]) => {
+      if (cancelado) return
+      setCantidades({
+        "/cuenta/tiendas": tiendas.ok ? tiendas.datos.length : undefined,
+        "/cuenta/direcciones": direcciones.ok ? direcciones.datos.length : undefined,
+        "/cuenta/ordenes": compras.ok ? compras.datos.total : undefined,
+      })
+    })
+    return () => {
+      cancelado = true
+    }
+  }, [])
+
   React.useEffect(() => {
     let cancelado = false
     perfilCuentaAction().then((res) => {
@@ -46,7 +64,7 @@ export function CuentaView() {
   }, [])
 
   return (
-    <div className="max-w-[1400px] space-y-8">
+    <div className="max-w-[1180px] space-y-8">
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -103,10 +121,6 @@ export function CuentaView() {
 
           {/* Columna derecha: información del perfil */}
           <div className="@container p-6 sm:p-7">
-            <div className="mb-6">
-              <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Información del perfil</h2>
-              <p className="mt-1 text-[13px] text-muted-foreground">Así te verán las tiendas donde compras.</p>
-            </div>
             <PerfilForm
               perfil={perfil}
               onGuardado={setPerfil}
@@ -136,7 +150,12 @@ export function CuentaView() {
                       <Icono className="size-5" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[14px] font-extrabold text-foreground">{titulo}</span>
+                      <span className="flex items-center gap-2 text-[14px] font-extrabold text-foreground">
+                {titulo}
+                {cantidades[href] !== undefined && (
+                  <span className="rounded-full bg-primary/14 px-2 py-0.5 text-[11px] font-bold text-brand-text">{cantidades[href]}</span>
+                )}
+              </span>
                       <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
                     </span>
                     <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
