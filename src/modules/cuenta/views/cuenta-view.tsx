@@ -16,8 +16,7 @@ import { cerrarSesionAction } from "@/modules/auth"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { PerfilForm } from "../components/perfil-form"
 import { ContrasenaForm } from "../components/contrasena-form"
-import { direccionesAction, ordenesCuentaAction, perfilCuentaAction } from "../actions/cuenta.actions"
-import { misTiendasAction } from "@/modules/tienda/actions/tienda.actions"
+import { perfilCuentaAction } from "../actions/cuenta.actions"
 import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
@@ -38,28 +37,9 @@ export function CuentaView() {
   const router = useRouter()
   const { tienda } = usePanel()
   const [cerrando, setCerrando] = React.useState(false)
-  const [conAtencion, setConAtencion] = React.useState(0)
   const { theme, setTheme } = useTheme()
   const montado = useMounted()
   const oscuro = montado && theme === "dark"
-
-  // Cantidades para las tarjetas (tiendas, direcciones, compras); si una llamada falla, la tarjeta queda sin número
-  const [cantidades, setCantidades] = React.useState<Record<string, number | undefined>>({})
-  React.useEffect(() => {
-    let cancelado = false
-    Promise.all([misTiendasAction(), direccionesAction(), ordenesCuentaAction(1)]).then(([tiendas, direcciones, compras]) => {
-      if (cancelado) return
-      if (tiendas.ok) setConAtencion(tiendas.datos.filter((t) => !t.operativa).length)
-      setCantidades({
-        "/cuenta/tiendas": tiendas.ok ? tiendas.datos.length : undefined,
-        "/cuenta/direcciones": direcciones.ok ? direcciones.datos.length : undefined,
-        "/cuenta/ordenes": compras.ok ? compras.datos.total : undefined,
-      })
-    })
-    return () => {
-      cancelado = true
-    }
-  }, [])
 
   const cerrarSesion = async () => {
     setCerrando(true)
@@ -134,22 +114,6 @@ export function CuentaView() {
               </div>
             </section>
 
-            <div className="h-px bg-border/60" />
-
-            <section className="space-y-3" aria-labelledby="cuenta-sesion">
-              <h2 id="cuenta-sesion" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Sesión y cuenta</h2>
-              <Button variant="danger-outline" className="w-full" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
-                Cerrar sesión
-              </Button>
-              {/* Próximamente: necesitan endpoints nuevos (docs/orquestacion/ajustes/A-003) */}
-              <Button variant="neutral" className="w-full" disabled leftIcon={<MonitorSmartphone aria-hidden="true" />} aria-describedby="cuenta-pronto">
-                Cerrar sesión en otros dispositivos
-              </Button>
-              <Button variant="danger-outline" className="w-full" disabled leftIcon={<Trash2 aria-hidden="true" />} aria-describedby="cuenta-pronto">
-                Eliminar mi cuenta
-              </Button>
-              <p id="cuenta-pronto" className="text-[11.5px] text-muted-foreground">Estas dos opciones llegan pronto.</p>
-            </section>
           </div>
 
           {/* Columna derecha: información del perfil */}
@@ -216,19 +180,31 @@ export function CuentaView() {
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-2 whitespace-nowrap text-[14px] font-extrabold text-foreground">
                 {titulo}
-                {cantidades[href] !== undefined && (
-                  <span className="rounded-full bg-primary/14 px-2 py-0.5 text-[11px] font-bold text-brand-text">{cantidades[href]}</span>
-                )}
               </span>
                       <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
-              {href === "/cuenta/tiendas" && conAtencion > 0 && (
-                <Badge variant="estado" tono="aviso" className="mt-2">{conAtencion === 1 ? "1 requiere atención" : `${conAtencion} requieren atención`}</Badge>
-              )}
                     </span>
                     <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
                   </Link>
                 ))}
               </nav>
+            </section>
+
+            {/* Sesión y cuenta: botones en una fila */}
+            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-sesion">
+              <h3 id="cuenta-sesion" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Sesión y cuenta</h3>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
+                  Cerrar sesión
+                </Button>
+                {/* Próximamente: necesitan endpoints nuevos (docs/orquestacion/ajustes/A-003) */}
+                <Button variant="neutral" disabled leftIcon={<MonitorSmartphone aria-hidden="true" />} aria-describedby="cuenta-pronto">
+                  Cerrar sesión en otros dispositivos
+                </Button>
+                <Button variant="danger-outline" disabled leftIcon={<Trash2 aria-hidden="true" />} aria-describedby="cuenta-pronto">
+                  Eliminar mi cuenta
+                </Button>
+              </div>
+              <p id="cuenta-pronto" className="mt-3 text-[11.5px] text-muted-foreground">Cerrar sesión en otros dispositivos y eliminar tu cuenta llegan pronto.</p>
             </section>
           </div>
         </Card>
