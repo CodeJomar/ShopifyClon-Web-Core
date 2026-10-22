@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { Check, ShoppingBag } from "lucide-react"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
@@ -116,18 +118,27 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
     setError(res.error)
   }
 
-  if (cargando) return <p className="text-[13px] text-muted-foreground">Cargando tu compra…</p>
+  if (cargando) {
+    return (
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px]" aria-busy="true" aria-label="Cargando tu compra">
+        <Skeleton className="h-96 rounded-xl" />
+        <Skeleton className="h-64 rounded-xl" />
+      </div>
+    )
+  }
 
   if (!carrito || carrito.items.length === 0) {
     return (
-      <div className="space-y-6">
-        <EstadoVacio titulo="Tu carrito está vacío" descripcion="Agrega productos antes de continuar con la compra." />
-        <div className="text-center">
-          <Link href={`/tienda/${subdominio}/productos`} className="text-[13px] font-bold text-brand-text hover:underline">
-            Seguir comprando
-          </Link>
-        </div>
-      </div>
+      <Card>
+        <CardContent>
+          <EstadoVacio icono={ShoppingBag} titulo="Tu carrito está vacío" descripcion="Agrega productos antes de continuar con la compra." />
+          <div className="pb-2 text-center">
+            <Link href={`/tienda/${subdominio}/productos`} className="text-[13px] font-bold text-brand-text hover:underline">
+              Seguir comprando
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -136,13 +147,25 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">
-          {datos ? "Confirma tu compra" : "Datos de compra"}
+        <h1 className="text-[22px] font-extrabold tracking-tight text-foreground">
+          {datos ? "Confirma tu compra" : "Finaliza tu compra"}
         </h1>
         <Link href={`/tienda/${subdominio}/carrito`} className="text-[12px] font-bold text-brand-text hover:underline">
           Volver al carrito
         </Link>
       </div>
+
+      <ol className="flex items-center gap-3 text-[12.5px] font-bold" aria-label="Pasos de la compra">
+        {[["Tus datos", !datos], ["Confirmar", Boolean(datos)]].map(([etiqueta, activo], i) => (
+          <li key={String(etiqueta)} className="flex items-center gap-2" aria-current={activo ? "step" : undefined}>
+            {i > 0 && <span aria-hidden="true" className="h-px w-8 bg-border" />}
+            <span className={`flex size-6 items-center justify-center rounded-full text-[11px] ${activo ? "bg-primary text-primary-foreground" : i === 0 && datos ? "bg-primary/14 text-brand-text" : "bg-muted text-muted-foreground"}`}>
+              {i === 0 && datos ? <Check aria-hidden="true" className="size-3.5" /> : i + 1}
+            </span>
+            <span className={activo ? "text-foreground" : "text-muted-foreground"}>{etiqueta}</span>
+          </li>
+        ))}
+      </ol>
 
       {error && (
         <Alert variant="destructive">
@@ -163,6 +186,7 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
       )}
 
       {!datos ? (
+        <div className="grid items-start gap-6 lg:grid-cols-[1fr_340px]">
         <FormularioDatos
           requiereEnvio={requiereEnvio}
           moneda={carrito.moneda}
@@ -178,6 +202,28 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
             setAviso(null)
           }}
         />
+        <Card className="lg:sticky lg:top-24">
+          <CardContent className="space-y-4">
+            <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Tu pedido</h2>
+            <ul className="divide-y divide-border/60 text-[13px]">
+              {carrito.items.map((linea) => (
+                <li key={linea.variante_id} className="flex items-start justify-between gap-3 py-2.5 first:pt-0">
+                  <div className="min-w-0">
+                    <p className="truncate font-bold text-foreground">{linea.titulo_producto}</p>
+                    <p className="text-[12px] text-muted-foreground">{linea.titulo_variante ? `${linea.titulo_variante} · ` : ""}{linea.cantidad} u.</p>
+                  </div>
+                  <span className="shrink-0 font-bold">{formatearDinero(linea.total_linea, carrito.moneda)}</span>
+                </li>
+              ))}
+            </ul>
+            <dl className="space-y-1.5 border-t border-border pt-3 text-[13px]">
+              <div className="flex justify-between"><dt className="text-muted-foreground">Subtotal</dt><dd className="font-bold">{formatearDinero(carrito.subtotal, carrito.moneda)}</dd></div>
+              {requiereEnvio && cotizacion && <div className="flex justify-between"><dt className="text-muted-foreground">Envío</dt><dd className="font-bold">{formatearDinero(cotizacion.costo_envio, carrito.moneda)}</dd></div>}
+              <div className="flex justify-between text-[16px] font-extrabold"><dt>Total</dt><dd>{formatearDinero((requiereEnvio && cotizacion ? cotizacion : carrito).total_estimado, carrito.moneda)}</dd></div>
+            </dl>
+          </CardContent>
+        </Card>
+        </div>
       ) : (
         <ResumenConfirmacion
           carrito={carrito}
