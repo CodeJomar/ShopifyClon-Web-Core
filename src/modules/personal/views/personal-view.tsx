@@ -4,6 +4,10 @@ import * as React from "react"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
+import { Skeleton } from "@/shared/components/ui/skeleton"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { Pencil, Plus, UserMinus, Users } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FormPanel } from "@/shared/components/composed/form-panel"
@@ -23,6 +27,15 @@ const NOMBRE_ROL: Record<string, string> = {
   GESTOR_CATALOGO: "Gestor de catálogo",
   GESTOR_PEDIDOS: "Gestor de pedidos",
 }
+
+const QUE_PUEDE: Record<string, string> = {
+  PROPIETARIO: "Todo: tienda, suscripción, personal, catálogo, órdenes y métricas.",
+  ADMINISTRADOR: "Configurar la tienda, gestionar personal, catálogo, inventario, cupones, envíos y órdenes.",
+  GESTOR_CATALOGO: "Productos, categorías e inventario.",
+  GESTOR_PEDIDOS: "Ver y gestionar órdenes, y cancelarlas.",
+}
+
+const iniciales = (m: MiembroPersonalDto) => ((m.nombres.trim()[0] ?? "") + (m.apellidos.trim()[0] ?? "")).toUpperCase() || "?"
 
 export function PersonalView() {
   const { tienda, rol: rolSesion, puede } = usePanel()
@@ -86,18 +99,18 @@ export function PersonalView() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Personal de la tienda</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            Invita a colaboradores con roles específicos para administrar el catálogo, pedidos o configuración.
-          </p>
-        </div>
-        {puedeGestionar && (
-          <Button onClick={() => setPanelAgregar(true)}>Agregar personal</Button>
-        )}
-      </div>
+    <div className="space-y-5">
+      <EncabezadoPagina
+        titulo="Personal"
+        descripcion={personal ? `${personal.length} ${personal.length === 1 ? "persona" : "personas"} con acceso a tu tienda.` : "Quién puede entrar a administrar tu tienda y con qué permisos."}
+        acciones={
+          puedeGestionar && (
+            <Button onClick={() => setPanelAgregar(true)} leftIcon={<Plus aria-hidden="true" />}>
+              Agregar personal
+            </Button>
+          )
+        }
+      />
 
       {error && (
         <Alert variant="destructive">
@@ -107,15 +120,18 @@ export function PersonalView() {
       )}
 
       {!personal && !error && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando personal…
-        </p>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Cargando personal">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} className="h-40 rounded-xl" />
+          ))}
+        </div>
       )}
 
       {personal && personal.length === 0 && (
         <Card>
           <CardContent>
             <EstadoVacio
+              icono={Users}
               titulo="No hay miembros del personal"
               descripcion="Agrega colaboradores a tu tienda para delegar responsabilidades."
               accion={puedeGestionar ? { texto: "Agregar personal", onClick: () => setPanelAgregar(true) } : undefined}
@@ -125,7 +141,7 @@ export function PersonalView() {
       )}
 
       {personal && personal.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {personal.map((miembro) => {
             const tieneAcciones = puedeGestionarMiembro(miembro)
             const esDueno = miembro.rol === ROL.PROPIETARIO
@@ -133,38 +149,32 @@ export function PersonalView() {
             return (
               <li key={miembro.usuario_id}>
                 <Card className="h-full">
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-[15px] font-bold text-foreground">
-                        {miembro.nombres} {miembro.apellidos}
-                      </CardTitle>
+                  <CardContent className="flex h-full flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <Avatar className="size-12">
+                        <AvatarFallback>{iniciales(miembro)}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[15px] font-extrabold text-foreground">
+                          {miembro.nombres} {miembro.apellidos}
+                        </p>
+                        <p className="truncate text-[12.5px] text-muted-foreground">{miembro.correo_electronico}</p>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
                       <Badge variant="estado" tono={esDueno ? "marca" : "contorno"}>
                         {NOMBRE_ROL[miembro.rol] ?? miembro.rol}
                       </Badge>
+                      <p className="text-[12.5px] leading-snug text-muted-foreground">{QUE_PUEDE[miembro.rol] ?? ""}</p>
                     </div>
-                    <CardDescription className="text-[13px] text-muted-foreground">
-                      {miembro.correo_electronico}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <p className="text-[12px] text-muted-foreground">
-                      Miembro desde {formatearFecha(miembro.desde, zonaHoraria)}
-                    </p>
+                    <p className="text-[12px] text-muted-foreground">Desde el {formatearFecha(miembro.desde, zonaHoraria)}</p>
 
                     {tieneAcciones && (
-                      <div className="flex flex-wrap gap-2 pt-1">
-                        <Button
-                          size="sm"
-                          variant="neutral"
-                          onClick={() => setPanelEditar({ abierto: true, miembro })}
-                        >
+                      <div className="mt-auto flex flex-wrap gap-2 border-t border-border/60 pt-3">
+                        <Button size="sm" variant="neutral" onClick={() => setPanelEditar({ abierto: true, miembro })} leftIcon={<Pencil aria-hidden="true" />}>
                           Cambiar rol
                         </Button>
-                        <Button
-                          size="sm"
-                          variant="danger-outline"
-                          onClick={() => setPanelQuitar({ abierto: true, miembro })}
-                        >
+                        <Button size="sm" variant="danger-outline" onClick={() => setPanelQuitar({ abierto: true, miembro })} leftIcon={<UserMinus aria-hidden="true" />}>
                           Quitar
                         </Button>
                       </div>
