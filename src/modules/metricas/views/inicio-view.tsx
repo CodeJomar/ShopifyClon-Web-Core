@@ -1,12 +1,14 @@
 "use client"
 
 import * as React from "react"
-import { Banknote, Coins, Wallet } from "lucide-react"
-import { Button } from "@/shared/components/ui/button"
+import { Banknote, Coins, Copy, ExternalLink, Percent, Wallet } from "lucide-react"
+import Link from "next/link"
+import { Button, buttonVariants } from "@/shared/components/ui/button"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { ControlSegmentado } from "@/shared/components/composed/control-segmentado"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
-import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { toast } from "@/shared/components/ui/toast"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { rangoUltimosDias } from "@/shared/utils/fechas"
@@ -14,6 +16,7 @@ import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { metricasAction } from "../actions/metricas.actions"
 import { GraficoVentas } from "../components/grafico-ventas"
 import { TarjetaMetrica } from "../components/tarjeta-metrica"
+import { PrimerosPasos } from "../components/primeros-pasos"
 import type { MetricasDto } from "@/dtos/metricas"
 import type { ErrorApi } from "@/lib/api/error-api"
 
@@ -25,7 +28,7 @@ const RANGOS = [
 
 /** Inicio del panel: métricas de la tienda activa en el rango elegido (por defecto, 30 días). */
 export function InicioView() {
-  const { tienda } = usePanel()
+  const { tienda, nombres, puede } = usePanel()
   const [dias, setDias] = React.useState<(typeof RANGOS)[number]["dias"]>(30)
   const [datos, setDatos] = React.useState<MetricasDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -59,21 +62,40 @@ export function InicioView() {
     }
   }
 
+  const maxImporte = Math.max(1, ...(datos?.top_productos.map((p) => p.importe) ?? [0]))
+
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Dashboard</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">Cómo va tu tienda. Los montos están en {moneda}.</p>
-        </div>
-        <div className="flex gap-2" role="group" aria-label="Rango de fechas">
-          {RANGOS.map((rango) => (
-            <Button key={rango.dias} size="sm" variant={dias === rango.dias ? "default" : "neutral"} aria-pressed={dias === rango.dias} onClick={() => setDias(rango.dias)}>
-              {rango.etiqueta}
+      <EncabezadoPagina
+        titulo={nombres ? `Hola, ${nombres.split(/s+/)[0]}` : "Dashboard"}
+        descripcion={`Así va ${tienda?.nombre ?? "tu tienda"}. Los montos están en ${moneda}.`}
+        acciones={
+          <ControlSegmentado
+            aria-label="Rango de fechas"
+            valor={dias}
+            onCambiar={setDias}
+            opciones={RANGOS.map((rango) => ({ valor: rango.dias, etiqueta: rango.etiqueta }))}
+          />
+        }
+      />
+
+      {tienda && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-4 py-3 shadow-isla">
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Enlace de tu tienda</p>
+            <p className="truncate font-mono text-[13px] font-medium text-foreground">{enlace}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="soft" size="sm" onClick={copiarEnlace} leftIcon={<Copy aria-hidden="true" />}>
+              Copiar
             </Button>
-          ))}
+            <Link href={`/tienda/${tienda.subdominio}`} target="_blank" rel="noopener" className={buttonVariants({ variant: "neutral", size: "sm" })}>
+              <ExternalLink aria-hidden="true" />
+              Ver tienda
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
 
       {error && (
         <Alert variant="destructive">
@@ -83,7 +105,7 @@ export function InicioView() {
       )}
 
       {!datos && !error && (
-        <div className="grid gap-(--float-gap) sm:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Cargando métricas">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Cargando métricas">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-36 rounded-xl" />
           ))}
@@ -93,22 +115,14 @@ export function InicioView() {
       {datos && (
         <>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <TarjetaMetrica titulo="Ventas netas" valor={formatearDinero(ventasNetas, moneda)} ayuda="En el rango elegido" icono={<Banknote className="size-4" />} />
-            <TarjetaMetrica titulo="Ventas históricas" valor={formatearDinero(datos.resumen.ventas_historicas, moneda)} ayuda="Desde que abriste tu tienda" icono={<Wallet className="size-4" />} />
-            <TarjetaMetrica titulo="Saldo por cobrar" valor={formatearDinero(datos.resumen.saldo_por_cobrar, moneda)} ayuda="Pendiente de liberar" icono={<Coins className="size-4" />} />
-            <TarjetaMetrica titulo="Comisiones" valor={formatearDinero(datos.resumen.comisiones, moneda)} ayuda="Comisión de la plataforma" />
+            <TarjetaMetrica destacada titulo="Ventas netas" valor={formatearDinero(ventasNetas, moneda)} ayuda="En el rango elegido" icono={<Banknote className="size-4.5" />} />
+            <TarjetaMetrica titulo="Ventas históricas" valor={formatearDinero(datos.resumen.ventas_historicas, moneda)} ayuda="Desde que abriste tu tienda" icono={<Wallet className="size-4.5" />} />
+            <TarjetaMetrica titulo="Saldo por cobrar" valor={formatearDinero(datos.resumen.saldo_por_cobrar, moneda)} ayuda="Pendiente de liberar" icono={<Coins className="size-4.5" />} />
+            <TarjetaMetrica titulo="Comisiones" valor={formatearDinero(datos.resumen.comisiones, moneda)} ayuda="Comisión de la plataforma" icono={<Percent className="size-4.5" />} />
           </div>
 
           {sinVentas ? (
-            <Card>
-              <CardContent>
-                <EstadoVacio
-                  titulo="Aún no tienes ventas"
-                  descripcion={`Comparte tu tienda para empezar: ${enlace}`}
-                  accion={{ texto: "Copiar enlace", onClick: copiarEnlace }}
-                />
-              </CardContent>
-            </Card>
+            <PrimerosPasos puede={puede} onCopiarEnlace={copiarEnlace} />
           ) : (
             <div className="grid gap-4 lg:grid-cols-3">
               <Card className="lg:col-span-2">
@@ -123,20 +137,29 @@ export function InicioView() {
               <Card>
                 <CardHeader>
                   <CardTitle>Más vendidos</CardTitle>
+                  <CardDescription>Los productos que más ingresos dejaron en el rango.</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {datos.top_productos.length === 0 ? (
                     <p className="text-[13px] text-muted-foreground">Aún no hay productos vendidos en este rango.</p>
                   ) : (
-                    <ol className="space-y-3">
-                      {datos.top_productos.map((producto) => (
-                        <li key={producto.variante_id} className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="truncate text-[13px] font-bold text-foreground">{producto.titulo_producto}</p>
-                            {producto.titulo_variante && <p className="truncate text-[12px] text-muted-foreground">{producto.titulo_variante}</p>}
-                            <p className="text-[12px] text-muted-foreground">{producto.unidades} u.</p>
+                    <ol className="space-y-4">
+                      {datos.top_productos.map((producto, indice) => (
+                        <li key={producto.variante_id} className="space-y-1.5">
+                          <div className="flex items-start gap-3">
+                            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/14 text-[11px] font-extrabold text-brand-text">{indice + 1}</span>
+                            <div className="min-w-0 flex-1">
+                              <p className="truncate text-[13px] font-bold text-foreground">{producto.titulo_producto}</p>
+                              <p className="truncate text-[12px] text-muted-foreground">
+                                {producto.titulo_variante ? `${producto.titulo_variante} · ` : ""}
+                                {producto.unidades} u.
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-[13px] font-bold text-foreground">{formatearDinero(producto.importe, moneda)}</p>
                           </div>
-                          <p className="shrink-0 text-[13px] font-bold text-foreground">{formatearDinero(producto.importe, moneda)}</p>
+                          <div className="ml-9 h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+                            <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(4, Math.round((producto.importe / maxImporte) * 100))}%` }} />
+                          </div>
                         </li>
                       ))}
                     </ol>
