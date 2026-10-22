@@ -20,6 +20,7 @@ import {
   categoriasAction,
   categoriasDeProductoAction,
   crearImagenAction,
+  subirImagenAction,
   crearVarianteAction,
   editarImagenAction,
   editarProductoAction,
@@ -304,10 +305,37 @@ function ImagenesSeccion({
 }) {
   const confirmar = useConfirm()
   const [enviando, setEnviando] = React.useState(false)
+  const [subiendo, setSubiendo] = React.useState(false)
+  const [errorArchivo, setErrorArchivo] = React.useState<string | null>(null)
+  const inputArchivo = React.useRef<HTMLInputElement>(null)
   const form = useForm<ImagenValues>({
     resolver: zodResolver(imagenSchema),
     defaultValues: { url_imagen: "", texto_alternativo: "" },
   })
+
+  // Validación previa solo para avisar antes de enviar; la API decide (ALM-003 tipo, ALM-005 tamaño).
+  const TIPOS_IMAGEN = ["image/jpeg", "image/png", "image/webp"]
+  const MAX_BYTES = 5 * 1024 * 1024
+
+  const subirArchivo = async (archivo: File) => {
+    if (!TIPOS_IMAGEN.includes(archivo.type)) return setErrorArchivo("Solo se aceptan imágenes JPEG, PNG o WebP.")
+    if (archivo.size > MAX_BYTES) return setErrorArchivo("La imagen no puede pasar de 5 MB.")
+    setErrorArchivo(null)
+    setSubiendo(true)
+    const subida = await subirImagenAction(archivo)
+    if (!subida.ok) {
+      setSubiendo(false)
+      return onError(subida.error)
+    }
+    // La imagen ya está en el almacenamiento; ahora se agrega al producto con el texto alternativo del formulario.
+    const alt = form.getValues("texto_alternativo")
+    const agregada = await crearImagenAction(producto.id, { url_imagen: subida.datos.url, texto_alternativo: alt || undefined })
+    setSubiendo(false)
+    if (!agregada.ok) return onError(agregada.error)
+    onError(null)
+    toast.add({ type: "success", title: "Imagen subida y agregada" })
+    onCambio()
+  }
 
   const agregar = form.handleSubmit(async (valores) => {
     setEnviando(true)
@@ -378,8 +406,31 @@ function ImagenesSeccion({
             <FloatingInput label="Dirección de la imagen (https://…)" state={form.formState.errors.url_imagen ? "error" : "default"} mensajeError={form.formState.errors.url_imagen?.message} {...form.register("url_imagen")} />
             <FloatingInput label="Texto alternativo (opcional)" state={form.formState.errors.texto_alternativo ? "error" : "default"} mensajeError={form.formState.errors.texto_alternativo?.message} {...form.register("texto_alternativo")} />
             <Button type="submit" variant="soft" loading={enviando}>Agregar imagen</Button>
-            {/* TODO(A-001): subir un archivo desde el equipo; por ahora solo por URL. */}
           </form>
+        )}
+
+        {puedeEscribir && (
+          <div className="space-y-3 border-t border-island-border pt-5">
+            <input
+              ref={inputArchivo}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={(e) => {
+                const archivo = e.target.files?.[0]
+                e.target.value = ""
+                if (archivo) void subirArchivo(archivo)
+              }}
+            />
+            <Button type="button" variant="soft" loading={subiendo} onClick={() => inputArchivo.current?.click()}>
+              Subir desde mi equipo
+            </Button>
+            {errorArchivo && (
+              <Alert variant="destructive">
+                <AlertDescription>{errorArchivo}</AlertDescription>
+              </Alert>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>
