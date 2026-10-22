@@ -13,6 +13,13 @@ import { fijarTiendaAction, misTiendasAction } from "../actions/tienda.actions"
 import type { MiTiendaDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
 
+const NOMBRE_ROL: Record<string, string> = {
+  PROPIETARIO: "Propietario",
+  ADMINISTRADOR: "Administrador",
+  GESTOR_CATALOGO: "Gestor de catálogo",
+  GESTOR_PEDIDOS: "Gestor de pedidos",
+}
+
 export function MisTiendasView() {
   const router = useRouter()
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
@@ -80,30 +87,29 @@ export function MisTiendasView() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {tiendas.map((tienda) => (
             <li key={tienda.tienda_id}>
-              <Card className="h-full">
+              <Card className={`h-full transition-colors ${tienda.esta_activa ? "border-primary ring-2 ring-primary/25" : ""}`}>
                 <CardHeader>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <CardTitle className="truncate">{tienda.nombre}</CardTitle>
                       <CardDescription className="font-mono text-[12px]">otemu.com/tienda/{tienda.subdominio}</CardDescription>
                     </div>
-                    <Badge variant="estado" tono="contorno">{tienda.rol}</Badge>
+                    <Badge variant="estado" tono="contorno">{NOMBRE_ROL[tienda.rol] ?? tienda.rol}</Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="flex items-center justify-between gap-3">
-                  {tienda.operativa ? (
-                    <Badge variant="estado" tono="marca">Activa</Badge>
-                  ) : (
-                    <Badge variant="estado" tono="aviso">Requiere atención</Badge>
-                  )}
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {tienda.esta_activa && <Badge variant="estado" tono="marca">Tienda actual</Badge>}
+                    {!tienda.operativa && <Badge variant="estado" tono="aviso">Requiere atención</Badge>}
+                  </div>
                   <Button
-                    variant="soft"
+                    variant={tienda.esta_activa ? "default" : "soft"}
                     size="sm"
                     loading={eligiendo === tienda.tienda_id}
                     disabled={eligiendo !== null}
                     onClick={() => elegir(tienda)}
                   >
-                    Abrir
+                    {tienda.esta_activa ? "Continuar" : "Abrir"}
                   </Button>
                 </CardContent>
               </Card>
