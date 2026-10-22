@@ -10,6 +10,9 @@ interface UsoPlanProps {
   limites: LimitesSuscripcionDto
 }
 
+/** Color de la barra según qué tan cerca está del límite: marca, aviso desde 75 %, peligro desde 90 %. */
+const colorBarra = (porcentaje: number) => (porcentaje >= 90 ? "bg-destructive" : porcentaje >= 75 ? "bg-warning" : "bg-primary")
+
 export function UsoPlan({ uso, limites }: UsoPlanProps) {
   const productosIlimitados = limites.productos == null
   const personalIlimitado = limites.personal == null
@@ -47,7 +50,7 @@ export function UsoPlan({ uso, limites }: UsoPlanProps) {
               <div className="mt-3">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-primary transition-all duration-300"
+                    className={`h-full transition-all duration-300 ${colorBarra(porcentajeProductos)}`}
                     style={{ width: `${porcentajeProductos}%` }}
                   />
                 </div>
@@ -78,7 +81,7 @@ export function UsoPlan({ uso, limites }: UsoPlanProps) {
               <div className="mt-3">
                 <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                   <div
-                    className="h-full bg-primary transition-all duration-300"
+                    className={`h-full transition-all duration-300 ${colorBarra(porcentajePersonal)}`}
                     style={{ width: `${porcentajePersonal}%` }}
                   />
                 </div>

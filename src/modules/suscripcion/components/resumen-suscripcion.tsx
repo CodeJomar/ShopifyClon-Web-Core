@@ -45,6 +45,12 @@ export function ResumenSuscripcion({
   onCancelar,
   onRevertirCancelacion,
 }: ResumenSuscripcionProps) {
+  // Avance del periodo de facturación (la hora se fija al montar la pantalla)
+  const [ahora] = React.useState(() => Date.now())
+  const inicioMs = new Date(suscripcion.inicio_periodo).getTime()
+  const finMs = new Date(suscripcion.fin_periodo).getTime()
+  const diasRestantes = Math.max(0, Math.ceil((finMs - ahora) / 86_400_000))
+  const avancePeriodo = finMs > inicioMs ? Math.min(100, Math.max(0, Math.round(((ahora - inicioMs) / (finMs - inicioMs)) * 100))) : 0
   const puedePagar = esPropietario && (suscripcion.estado === "PRUEBA" || suscripcion.estado === "VENCIDA")
   const puedeCambiarPlan = esPropietario && (suscripcion.estado === "ACTIVA" || suscripcion.estado === "PRUEBA")
   const puedeCancelar = esPropietario && (suscripcion.estado === "ACTIVA" || suscripcion.estado === "PRUEBA") && !suscripcion.cancelar_al_finalizar_periodo
@@ -103,6 +109,16 @@ export function ResumenSuscripcion({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between text-[12.5px]">
+              <span className="font-bold text-foreground">{diasRestantes === 0 ? "El periodo termina hoy" : `Quedan ${diasRestantes} ${diasRestantes === 1 ? "día" : "días"} del periodo`}</span>
+              <span className="text-muted-foreground">{avancePeriodo} % transcurrido</span>
+            </div>
+            <div className="h-2 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+              <div className={`h-full rounded-full transition-all ${diasRestantes <= 3 ? "bg-warning" : "bg-primary"}`} style={{ width: `${avancePeriodo}%` }} />
+            </div>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border bg-muted/20 p-3.5">
               <p className="text-[11.5px] font-medium text-muted-foreground">Precio pactado</p>

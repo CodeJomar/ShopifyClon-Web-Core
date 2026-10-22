@@ -4,6 +4,8 @@ import * as React from "react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
 import { FormPanel } from "@/shared/components/composed/form-panel"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { ROL } from "@/shared/constants/permisos"
 import type { PlanDto } from "@/dtos/tienda"
@@ -77,13 +79,8 @@ export function SuscripcionView() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Suscripción</h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">
-          Revisa el estado de tu plan, periodos de facturación, uso frente a los límites y gestiona tus pagos.
-        </p>
-      </div>
+    <div className="space-y-5">
+      <EncabezadoPagina titulo="Suscripción" descripcion="Tu plan, el periodo de facturación, el uso frente a los límites y tus pagos." />
 
       {error && (
         <Alert variant="destructive">
@@ -93,9 +90,10 @@ export function SuscripcionView() {
       )}
 
       {cargando && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando suscripción de la tienda…
-        </p>
+        <div className="space-y-4" aria-busy="true" aria-label="Cargando suscripción">
+          <Skeleton className="h-56 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+        </div>
       )}
 
       {!cargando && suscripcion && (
