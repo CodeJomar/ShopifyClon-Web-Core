@@ -74,6 +74,23 @@ export const eliminarVarianteAction = (id: string) =>
   resultado(peticionApi<void>({ method: "DELETE", url: `/panel/catalogo/variantes/${id}` }))
 
 // ---- Imágenes (por URL; la subida de archivos está bloqueada por A-001) ----
+/**
+ * Sube una imagen desde el equipo y devuelve su URL pública (A-001). Con `FormData` no se envía el `Content-Type`
+ * JSON de la instancia: `false` lo quita y el navegador pone `multipart/form-data` con su `boundary`.
+ */
+export const subirImagenAction = (archivo: File) => {
+  const datos = new FormData()
+  datos.append("archivo", archivo)
+  return resultado(
+    peticionApi<{ url: string }>({
+      method: "POST",
+      url: "/panel/archivos/imagenes",
+      data: datos,
+      headers: { "Content-Type": false } as unknown as Record<string, string>,
+    }),
+  )
+}
+
 export const crearImagenAction = (productoId: string, datos: { url_imagen: string; texto_alternativo?: string; es_principal?: boolean }) =>
   resultado(peticionApi<ImagenDto>({ method: "POST", url: `/panel/catalogo/productos/${productoId}/imagenes`, data: datos }))
 
