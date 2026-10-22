@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Card, CardContent } from "@/shared/components/ui/card"
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"

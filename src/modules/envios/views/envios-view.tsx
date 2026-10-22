@@ -4,7 +4,10 @@ import * as React from "react"
 import { AlertCircle } from "lucide-react"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Card, CardContent } from "@/shared/components/ui/card"
+import { Skeleton } from "@/shared/components/ui/skeleton"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { Pencil, Plus, Trash2, Truck } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FormPanel } from "@/shared/components/composed/form-panel"
@@ -74,18 +77,18 @@ export function EnviosView() {
   const sinActivas = tarifas != null && tarifas.length > 0 && !tarifas.some((t) => t.esta_activa)
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Tarifas de envío</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">
-            Configura los métodos y costos de envío que tus clientes podrán elegir durante la compra.
-          </p>
-        </div>
-        {puedeEscribir && (
-          <Button onClick={() => setPanel({ abierto: true, editando: undefined })}>Crear tarifa</Button>
-        )}
-      </div>
+    <div className="space-y-5">
+      <EncabezadoPagina
+        titulo="Envíos"
+        descripcion="Los métodos y costos de envío que tus clientes pueden elegir al comprar."
+        acciones={
+          puedeEscribir && (
+            <Button onClick={() => setPanel({ abierto: true, editando: undefined })} leftIcon={<Plus aria-hidden="true" />}>
+              Crear tarifa
+            </Button>
+          )
+        }
+      />
 
       {sinActivas && (
         <Alert variant="destructive">
@@ -105,66 +108,64 @@ export function EnviosView() {
       )}
 
       {!tarifas && !error && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando tarifas de envío…
-        </p>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-busy="true" aria-label="Cargando tarifas de envío">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} className="h-44 rounded-xl" />
+          ))}
+        </div>
       )}
 
       {tarifas && tarifas.length === 0 && (
         <Card>
-          <CardContent className="space-y-4">
+          <CardContent>
             <EstadoVacio
+              icono={Truck}
               titulo="Aún no tienes tarifas de envío"
-              descripcion="Sin tarifas activas, los productos que requieren envío no se podrán comprar."
-              accion={
-                puedeEscribir
-                  ? { texto: "Crear tarifa", onClick: () => setPanel({ abierto: true, editando: undefined }) }
-                  : undefined
-              }
+              descripcion="Crea al menos una tarifa activa, por ejemplo «Envío estándar», para que tus clientes puedan comprar productos que se envían."
+              accion={puedeEscribir ? { texto: "Crear tarifa", onClick: () => setPanel({ abierto: true, editando: undefined }) } : undefined}
             />
           </CardContent>
         </Card>
       )}
 
       {tarifas && tarifas.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {tarifas.map((tarifa) => (
             <li key={tarifa.id}>
-              <Card className="h-full">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <CardTitle className="text-[15px] font-bold text-foreground">{tarifa.nombre}</CardTitle>
+              <Card className={`h-full ${tarifa.esta_activa ? "" : "opacity-80"}`}>
+                <CardContent className="flex h-full flex-col gap-4">
+                  <div className="flex items-start gap-3">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                      <Truck className="size-5" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[15px] font-extrabold text-foreground">{tarifa.nombre}</p>
+                      <p className="text-[22px] font-extrabold leading-tight tracking-tight text-foreground">
+                        {tarifa.precio === 0 ? "Gratis" : formatearDinero(tarifa.precio, moneda)}
+                      </p>
+                    </div>
                     <Badge variant="estado" tono={tarifa.esta_activa ? "marca" : "contorno"}>
                       {tarifa.esta_activa ? "Activa" : "Inactiva"}
                     </Badge>
                   </div>
-                  <CardDescription className="text-[13px] font-semibold text-primary">
-                    {tarifa.precio === 0 ? "Gratis" : formatearDinero(tarifa.precio, moneda)}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {tarifa.descripcion && (
-                    <p className="text-[13px] text-muted-foreground">{tarifa.descripcion}</p>
-                  )}
-                  <div className="space-y-1 text-[12.5px] text-muted-foreground">
+
+                  {tarifa.descripcion && <p className="text-[13px] leading-snug text-muted-foreground">{tarifa.descripcion}</p>}
+
+                  <div className="flex flex-wrap items-center gap-2 text-[12px]">
                     {tarifa.monto_minimo_gratis != null && tarifa.monto_minimo_gratis > 0 && (
-                      <p className="text-brand-text font-medium">
-                        Gratis en compras desde {formatearDinero(tarifa.monto_minimo_gratis, moneda)}
-                      </p>
+                      <span className="rounded-full bg-primary/14 px-2.5 py-1 font-bold text-brand-text">
+                        Gratis desde {formatearDinero(tarifa.monto_minimo_gratis, moneda)}
+                      </span>
                     )}
-                    <p>Orden de visualización: {tarifa.orden}</p>
+                    <span className="rounded-full bg-muted px-2.5 py-1 font-bold text-muted-foreground">Posición {tarifa.orden}</span>
                   </div>
 
                   {puedeEscribir && (
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      <Button
-                        size="sm"
-                        variant="neutral"
-                        onClick={() => setPanel({ abierto: true, editando: tarifa })}
-                      >
+                    <div className="mt-auto flex flex-wrap gap-2 border-t border-border/60 pt-3">
+                      <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: tarifa })} leftIcon={<Pencil aria-hidden="true" />}>
                         Editar
                       </Button>
-                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(tarifa)}>
+                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(tarifa)} leftIcon={<Trash2 aria-hidden="true" />}>
                         Eliminar
                       </Button>
                     </div>
