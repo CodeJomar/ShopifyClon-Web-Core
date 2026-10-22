@@ -9,23 +9,29 @@ interface TarjetaMetricaProps {
   /** Texto de apoyo debajo del monto (rango, aclaración). */
   ayuda?: string
   icono?: React.ReactNode
+  /** La métrica principal de la pantalla: fondo y borde de marca. */
+  destacada?: boolean
   className?: string
 }
 
-/**
- * Tarjeta de métrica del inicio del panel (patrón nuevo de W-007, dentro del módulo): título 12.5 / 600 en
- * `--muted-foreground`, monto 22 / 800, ayuda de 12 px. Pendiente de la revisión de diseño del responsable.
- */
-export function TarjetaMetrica({ titulo, valor, ayuda, icono, className }: TarjetaMetricaProps) {
+/** Tarjeta de métrica del dashboard: ícono en baldosa, monto 24/800 y ayuda de 12 px. */
+export function TarjetaMetrica({ titulo, valor, ayuda, icono, destacada = false, className }: TarjetaMetricaProps) {
   return (
-    <Card className={cn("h-full", className)}>
-      <CardContent className="flex flex-col gap-2 p-5">
-        <div className="flex items-center justify-between gap-3">
+    <Card className={cn("h-full", destacada && "border-primary/40 bg-primary/8", className)}>
+      <CardContent className="flex h-full flex-col gap-3 p-5">
+        <div className="flex items-center gap-3">
+          {icono && (
+            <span
+              className={cn("flex size-9 shrink-0 items-center justify-center rounded-xl", destacada ? "bg-primary text-primary-foreground" : "bg-primary/14 text-brand-text")}
+              aria-hidden="true"
+            >
+              {icono}
+            </span>
+          )}
           <p className="text-[12.5px] font-semibold text-muted-foreground">{titulo}</p>
-          {icono && <span className="text-brand-text" aria-hidden="true">{icono}</span>}
         </div>
-        <p className="text-[22px] font-extrabold tracking-tight text-foreground">{valor}</p>
-        {ayuda && <p className="text-[12px] text-muted-foreground">{ayuda}</p>}
+        <p className="text-[24px] font-extrabold leading-none tracking-tight text-foreground">{valor}</p>
+        {ayuda && <p className="mt-auto text-[12px] text-muted-foreground">{ayuda}</p>}
       </CardContent>
     </Card>
   )

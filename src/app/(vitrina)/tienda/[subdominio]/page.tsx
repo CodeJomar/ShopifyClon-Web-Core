@@ -11,7 +11,7 @@ import {
 } from "@/modules/vitrina/actions/vitrina.actions"
 import { TarjetaProducto } from "@/modules/vitrina/components/tarjeta-producto"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
-import { Button } from "@/shared/components/ui/button"
+import { Button, buttonVariants } from "@/shared/components/ui/button"
 
 interface PortadaPageProps {
   params: Promise<{ subdominio: string }>
@@ -71,36 +71,44 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
 
   return (
     <div className="flex flex-col gap-10">
-      {/* Portada / Banner de la tienda */}
-      <section className="rounded-2xl border border-border bg-card p-6 sm:p-10 shadow-isla">
-        <div className="max-w-2xl flex flex-col gap-3">
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            {tienda.nombre}
-          </h1>
-          <p className="text-sm text-muted-foreground sm:text-base">
-            Bienvenido a nuestra tienda. Explora nuestros productos y novedades.
-          </p>
-
-          {/* Categorías como chips rápidos */}
-          {categorias.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 pt-3">
-              <span className="text-xs font-semibold text-muted-foreground mr-1">
-                Categorías:
-              </span>
-              {categorias.map((cat) => (
-                <Link
-                  key={cat.identificador_url}
-                  href={`/tienda/${subdominio}/productos?categoria=${cat.identificador_url}`}
-                >
-                  <Button variant="neutral" size="sm" className="rounded-full text-xs">
-                    {cat.nombre}
-                  </Button>
-                </Link>
-              ))}
-            </div>
-          )}
+      {/* Portada de la tienda */}
+      <section className="relative overflow-hidden rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-12">
+        <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-primary/18 blur-3xl" />
+        <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-64 rounded-full bg-info/12 blur-3xl" />
+        <div className="relative flex max-w-2xl flex-col gap-5">
+          <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-[24px] font-extrabold text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)]" aria-hidden="true">
+            {tienda.nombre.trim()[0]?.toUpperCase() ?? "T"}
+          </span>
+          <div className="space-y-2">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">{tienda.nombre}</h1>
+            <p className="text-[15px] text-muted-foreground sm:text-base">Descubre lo nuevo de la tienda y compra en pocos pasos.</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href={`/tienda/${subdominio}/productos`} className={buttonVariants({ variant: "default", size: "lg" })}>
+              Explorar catálogo
+              <ArrowRight aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </section>
+
+      {/* Categorías */}
+      {categorias.length > 0 && (
+        <section aria-labelledby="titulo-categorias" className="flex flex-col gap-3">
+          <h2 id="titulo-categorias" className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Compra por categoría</h2>
+          <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:px-0">
+            {categorias.map((cat) => (
+              <Link
+                key={cat.identificador_url}
+                href={`/tienda/${subdominio}/productos?categoria=${cat.identificador_url}`}
+                className="shrink-0 whitespace-nowrap rounded-full border-[1.8px] border-border bg-card px-4 py-2 text-[13px] font-bold text-foreground outline-none transition-colors hover:border-primary hover:bg-primary/10 hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/25"
+              >
+                {cat.nombre}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Productos recientes */}
       <section className="flex flex-col gap-6">

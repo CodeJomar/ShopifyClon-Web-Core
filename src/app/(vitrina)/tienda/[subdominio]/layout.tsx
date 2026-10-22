@@ -43,7 +43,10 @@ export default async function VitrinaLayout({
             href={`/tienda/${subdominio}`}
             className="flex items-center gap-2 text-lg font-black tracking-tight text-foreground hover:text-brand-text transition-colors shrink-0"
           >
-            <span>{tienda.nombre}</span>
+            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-[14px] font-extrabold text-primary-foreground" aria-hidden="true">
+              {tienda.nombre.trim()[0]?.toUpperCase() ?? "T"}
+            </span>
+            <span className="truncate">{tienda.nombre}</span>
           </Link>
 
           {/* Buscador */}
