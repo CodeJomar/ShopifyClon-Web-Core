@@ -4,7 +4,11 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/shared/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { Card, CardContent } from "@/shared/components/ui/card"
+import { Skeleton } from "@/shared/components/ui/skeleton"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { SearchInput } from "@/shared/components/composed/search-input"
+import { FolderTree, Pencil, Plus, Trash2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FormPanel } from "@/shared/components/composed/form-panel"
@@ -29,6 +33,7 @@ export function CategoriasView() {
   const [categorias, setCategorias] = React.useState<CategoriaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const [panel, setPanel] = React.useState<{ abierto: boolean; editando?: CategoriaDto }>({ abierto: false })
+  const [busqueda, setBusqueda] = React.useState("")
 
   const cargar = React.useCallback(async () => {
     const res = await categoriasAction()
@@ -64,15 +69,21 @@ export function CategoriasView() {
     cargar()
   }
 
+  const visibles = (categorias ?? []).filter((c) => c.nombre.toLowerCase().includes(busqueda.trim().toLowerCase()))
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Categorías</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">Organiza tus productos para que tus clientes los encuentren.</p>
-        </div>
-        {puedeEscribir && <Button onClick={() => setPanel({ abierto: true })}>Crear categoría</Button>}
-      </div>
+    <div className="space-y-5">
+      <EncabezadoPagina
+        titulo="Categorías"
+        descripcion={categorias ? `${categorias.length} ${categorias.length === 1 ? "categoría" : "categorías"}. Organiza tus productos para que tus clientes los encuentren.` : "Organiza tus productos para que tus clientes los encuentren."}
+        acciones={
+          puedeEscribir && (
+            <Button onClick={() => setPanel({ abierto: true })} leftIcon={<Plus aria-hidden="true" />}>
+              Crear categoría
+            </Button>
+          )
+        }
+      />
 
       {error && (
         <Alert variant="destructive">
@@ -81,14 +92,21 @@ export function CategoriasView() {
         </Alert>
       )}
 
-      {!categorias && !error && <p className="text-[13px] text-muted-foreground" aria-live="polite">Cargando categorías…</p>}
+      {!categorias && !error && (
+        <div className="space-y-2" aria-busy="true" aria-label="Cargando categorías">
+          {Array.from({ length: 4 }, (_, i) => (
+            <Skeleton key={i} className="h-16 rounded-xl" />
+          ))}
+        </div>
+      )}
 
       {categorias && categorias.length === 0 && (
         <Card>
           <CardContent>
             <EstadoVacio
+              icono={FolderTree}
               titulo="Aún no tienes categorías"
-              descripcion="Crea tu primera categoría para agrupar tus productos."
+              descripcion="Crea tu primera categoría, por ejemplo «Ropa» o «Hogar», para agrupar tus productos."
               accion={puedeEscribir ? { texto: "Crear categoría", onClick: () => setPanel({ abierto: true }) } : undefined}
             />
           </CardContent>
@@ -96,31 +114,43 @@ export function CategoriasView() {
       )}
 
       {categorias && categorias.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {categorias.map((categoria) => (
-            <li key={categoria.id}>
-              <Card className="h-full">
-                <CardHeader>
-                  <CardTitle className="truncate text-[15px]">{categoria.nombre}</CardTitle>
-                  <CardDescription className="font-mono text-[12px]">{categoria.identificador_url}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {categoria.descripcion && <p className="text-[13px] text-muted-foreground">{categoria.descripcion}</p>}
+        <Card className="gap-0 py-0">
+          {categorias.length > 5 && (
+            <div className="border-b border-border/60 p-4 sm:max-w-sm">
+              <SearchInput value={busqueda} onValueChange={setBusqueda} placeholder="Buscar categoría" />
+            </div>
+          )}
+          {visibles.length === 0 ? (
+            <p className="p-6 text-center text-[13px] text-muted-foreground">Ninguna categoría coincide con la búsqueda.</p>
+          ) : (
+            <ul className="divide-y divide-border/60">
+              {visibles.map((categoria) => (
+                <li key={categoria.id} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-5 py-4">
+                  <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                    <FolderTree className="size-5" />
+                  </span>
+                  <div className="min-w-0 flex-1 basis-48">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate text-[14px] font-extrabold text-foreground">{categoria.nombre}</p>
+                      <span className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[11.5px] text-muted-foreground">/{categoria.identificador_url}</span>
+                    </div>
+                    {categoria.descripcion && <p className="mt-0.5 line-clamp-2 text-[12.5px] text-muted-foreground">{categoria.descripcion}</p>}
+                  </div>
                   {puedeEscribir && (
-                    <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: categoria })}>
+                    <div className="flex shrink-0 gap-2">
+                      <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: categoria })} leftIcon={<Pencil aria-hidden="true" />}>
                         Editar
                       </Button>
-                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(categoria)}>
+                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(categoria)} leftIcon={<Trash2 aria-hidden="true" />}>
                         Eliminar
                       </Button>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-            </li>
-          ))}
-        </ul>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       )}
 
       <FormPanel
