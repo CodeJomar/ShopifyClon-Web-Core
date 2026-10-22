@@ -6,6 +6,10 @@ import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { FormPanel } from "@/shared/components/composed/form-panel"
+import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
+import { Skeleton } from "@/shared/components/ui/skeleton"
+import { CreditCard, Store } from "lucide-react"
+import Link from "next/link"
 import { formatearFecha } from "@/shared/utils/fechas"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
 import { PERMISO, ROL } from "@/shared/constants/permisos"
@@ -54,13 +58,8 @@ export function ConfiguracionView() {
   }, [])
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Configuración de la tienda</h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">
-          Administra la información comercial, monedas, impuestos y estado operativo de tu tienda.
-        </p>
-      </div>
+    <div className="space-y-5">
+      <EncabezadoPagina titulo="Configuración" descripcion="La información de tu tienda, su estado y su suscripción." />
 
       {error && (
         <Alert variant="destructive">
@@ -70,13 +69,14 @@ export function ConfiguracionView() {
       )}
 
       {!tienda && !error && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando configuración de la tienda…
-        </p>
+        <div className="grid gap-5 lg:grid-cols-3" aria-busy="true" aria-label="Cargando configuración">
+          <Skeleton className="h-96 rounded-xl lg:col-span-2" />
+          <Skeleton className="h-72 rounded-xl" />
+        </div>
       )}
 
       {tienda && (
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid items-start gap-5 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <ConfiguracionForm
               key={`${tienda.id}-${tienda.nombre}-${tienda.tasa_impuesto}`}
@@ -86,63 +86,85 @@ export function ConfiguracionView() {
             />
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
+            <Card>
+              <CardContent className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
+                    <Store className="size-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate text-[15px] font-extrabold text-foreground">{tienda.nombre}</p>
+                    <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
+                  </div>
+                </div>
+
+                <dl className="divide-y divide-border/60 text-[13px]">
+                  <div className="flex items-center justify-between py-2.5">
+                    <dt className="font-medium text-muted-foreground">Vitrina</dt>
+                    <dd>
+                      <Badge variant="estado" tono={tienda.esta_activa ? "marca" : "contorno"}>
+                        {tienda.esta_activa ? "Visible" : "Oculta"}
+                      </Badge>
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between py-2.5">
+                    <dt className="font-medium text-muted-foreground">Ventas</dt>
+                    <dd>
+                      <Badge variant="estado" tono={tienda.operativa ? "marca" : "aviso"}>
+                        {tienda.operativa ? "Habilitadas" : "Suscripción inactiva"}
+                      </Badge>
+                    </dd>
+                  </div>
+                </dl>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
-                <CardTitle className="text-[16px]">Estado de la tienda</CardTitle>
-                <CardDescription className="text-[13px]">
-                  Disponibilidad de la vitrina y suscripción activa.
-                </CardDescription>
+                <CardTitle className="flex items-center gap-2 text-[15px]">
+                  <CreditCard aria-hidden="true" className="size-4 text-brand-text" />
+                  Suscripción
+                </CardTitle>
+                <CardDescription className="text-[12.5px]">El plan que mantiene tu tienda operativa.</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between border-b pb-3">
-                  <span className="text-[13px] font-medium text-foreground">Estado</span>
-                  <Badge variant="estado" tono={tienda.esta_activa ? "marca" : "contorno"}>
-                    {tienda.esta_activa ? "Activa" : "Inactiva"}
-                  </Badge>
-                </div>
-
-                <div className="flex items-center justify-between border-b pb-3">
-                  <span className="text-[13px] font-medium text-foreground">Operativa</span>
-                  <Badge variant="estado" tono={tienda.operativa ? "marca" : "aviso"}>
-                    {tienda.operativa ? "Operativa" : "No operativa"}
-                  </Badge>
-                </div>
-
-                <div className="space-y-1 border-b pb-3 text-[12.5px] text-muted-foreground">
-                  <p className="font-medium text-foreground">Suscripción</p>
-                  <p>Plan: <span className="font-semibold text-foreground">{tienda.suscripcion?.codigo_plan ?? "Sin plan"}</span></p>
-                  <p>Estado: {tienda.suscripcion?.estado ?? "Inactivo"}</p>
-                  {tienda.suscripcion?.fin_periodo_actual && (
-                    <p>
-                      Vence: {formatearFecha(tienda.suscripcion.fin_periodo_actual, tienda.zona_horaria)}
-                    </p>
-                  )}
-                </div>
-
-                {esPropietario && (
-                  <div className="pt-2">
-                    {tienda.esta_activa ? (
-                      <Button
-                        variant="danger-outline"
-                        className="w-full"
-                        onClick={() => setPanelEstado({ abierto: true, accion: "desactivar" })}
-                      >
-                        Desactivar tienda
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="default"
-                        className="w-full"
-                        onClick={() => setPanelEstado({ abierto: true, accion: "activar" })}
-                      >
-                        Activar tienda
-                      </Button>
-                    )}
-                  </div>
+              <CardContent className="space-y-2 text-[13px]">
+                <p className="text-muted-foreground">Plan: <span className="font-bold text-foreground">{tienda.suscripcion?.codigo_plan ?? "Sin plan"}</span></p>
+                <p className="text-muted-foreground">Estado: <span className="font-bold text-foreground">{tienda.suscripcion?.estado ?? "Inactivo"}</span></p>
+                {tienda.suscripcion?.fin_periodo_actual && (
+                  <p className="text-muted-foreground">Vence: <span className="font-bold text-foreground">{formatearFecha(tienda.suscripcion.fin_periodo_actual, tienda.zona_horaria)}</span></p>
+                )}
+                {puede(PERMISO.SUSCRIPCION_GESTIONAR) && (
+                  <Link href="/panel/suscripcion" className="inline-block pt-1 text-[12.5px] font-bold text-brand-text hover:underline">
+                    Administrar suscripción →
+                  </Link>
                 )}
               </CardContent>
             </Card>
+
+            {esPropietario && (
+              <Card className="border-destructive/40">
+                <CardHeader>
+                  <CardTitle className="text-[15px] text-destructive-text">{tienda.esta_activa ? "Zona de riesgo" : "Reactivar tienda"}</CardTitle>
+                  <CardDescription className="text-[12.5px]">
+                    {tienda.esta_activa
+                      ? "Al desactivar tu tienda, la vitrina deja de mostrarse y nadie puede comprar. Podrás activarla de nuevo."
+                      : "Tu tienda está desactivada. Actívala para volver a mostrar la vitrina y recibir compras."}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {tienda.esta_activa ? (
+                    <Button variant="danger-outline" className="w-full" onClick={() => setPanelEstado({ abierto: true, accion: "desactivar" })}>
+                      Desactivar tienda
+                    </Button>
+                  ) : (
+                    <Button variant="default" className="w-full" onClick={() => setPanelEstado({ abierto: true, accion: "activar" })}>
+                      Activar tienda
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       )}
