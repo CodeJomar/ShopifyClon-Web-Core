@@ -5,13 +5,14 @@ import { Check, ShoppingBag } from "lucide-react"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { SelectorUbicacion } from "@/shared/components/composed/mapa-ubicacion"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { useClaveIdempotencia } from "@/shared/hooks/use-clave-idempotencia"
 import type { Carrito } from "@/dtos/carrito"
@@ -278,6 +279,8 @@ function FormularioDatos({
       estado_provincia: principal?.estado_provincia ?? "",
       codigo_postal: principal?.codigo_postal ?? "",
       pais: principal?.pais ?? "Perú",
+      latitud: principal?.latitud ?? null,
+      longitud: principal?.longitud ?? null,
       tarifa_envio_id: tarifas[0]?.id ?? "",
     },
   })
@@ -296,7 +299,13 @@ function FormularioDatos({
     form.setValue("estado_provincia", d.estado_provincia)
     form.setValue("codigo_postal", d.codigo_postal)
     form.setValue("pais", d.pais)
+    form.setValue("latitud", d.latitud ?? null)
+    form.setValue("longitud", d.longitud ?? null)
   }
+
+  const latitud = useWatch({ control: form.control, name: "latitud" })
+  const longitud = useWatch({ control: form.control, name: "longitud" })
+  const punto = latitud !== null && longitud !== null ? { latitud, longitud } : null
 
   return (
     <form onSubmit={form.handleSubmit(onSiguiente)} noValidate className="space-y-6">
@@ -342,6 +351,14 @@ function FormularioDatos({
             <FloatingInput label="Departamento o provincia" state={estado("estado_provincia")} mensajeError={mensaje("estado_provincia")} {...form.register("estado_provincia")} />
             <FloatingInput label="Código postal" state={estado("codigo_postal")} mensajeError={mensaje("codigo_postal")} {...form.register("codigo_postal")} />
             <FloatingInput label="País" state={estado("pais")} mensajeError={mensaje("pais")} {...form.register("pais")} />
+            <SelectorUbicacion
+              valor={punto}
+              error={mensaje("latitud")}
+              alCambiar={(u) => {
+                form.setValue("latitud", u.latitud, { shouldValidate: true, shouldDirty: true })
+                form.setValue("longitud", u.longitud, { shouldDirty: true })
+              }}
+            />
 
             <label className="block space-y-1.5 text-[13px]">
               <span className="font-bold">Tarifa de envío</span>
@@ -470,6 +487,8 @@ function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsp
         estado_provincia: datos.estado_provincia,
         codigo_postal: datos.codigo_postal,
         pais: datos.pais,
+        latitud: datos.latitud ?? undefined,
+        longitud: datos.longitud ?? undefined,
       }
     : undefined
   return {

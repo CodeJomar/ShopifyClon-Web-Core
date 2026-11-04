@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Building2, Globe, Hash, Map as MapIcon, MapPin, Phone, User } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { SelectorUbicacion } from "@/shared/components/composed/mapa-ubicacion"
 import { toast } from "@/shared/components/ui/toast"
 import { crearDireccionAction, editarDireccionAction } from "../actions/cuenta.actions"
 import { direccionSchema, type DireccionValues } from "../schema"
@@ -37,13 +38,24 @@ export function DireccionForm({
       estado_provincia: inicial?.estado_provincia ?? "",
       codigo_postal: inicial?.codigo_postal ?? "",
       pais: inicial?.pais ?? "PE",
+      latitud: inicial?.latitud ?? null,
+      longitud: inicial?.longitud ?? null,
       es_principal: inicial?.es_principal ?? false,
     },
   })
+  const latitud = useWatch({ control: form.control, name: "latitud" })
+  const longitud = useWatch({ control: form.control, name: "longitud" })
+  const punto = latitud !== null && longitud !== null ? { latitud, longitud } : null
 
   const guardar = form.handleSubmit(async (valores) => {
     setError(null)
-    const datos = { ...valores, telefono: valores.telefono || undefined, direccion_linea2: valores.direccion_linea2 || undefined }
+    const datos = {
+      ...valores,
+      telefono: valores.telefono || undefined,
+      direccion_linea2: valores.direccion_linea2 || undefined,
+      latitud: valores.latitud ?? undefined,
+      longitud: valores.longitud ?? undefined,
+    }
     const res = inicial ? await editarDireccionAction(inicial.id, datos) : await crearDireccionAction(datos)
     if (!res.ok) {
       for (const [campo, mensaje] of Object.entries(res.error.validaciones ?? {})) {
@@ -74,6 +86,14 @@ export function DireccionForm({
       <FloatingInput label="Departamento o provincia" leftIcon={<MapIcon className="size-4" aria-hidden="true" />} state={estado("estado_provincia")} mensajeError={mensaje("estado_provincia")} {...form.register("estado_provincia")} />
       <FloatingInput label="Código postal" leftIcon={<Hash className="size-4" aria-hidden="true" />} state={estado("codigo_postal")} mensajeError={mensaje("codigo_postal")} {...form.register("codigo_postal")} />
       <FloatingInput label="País" leftIcon={<Globe className="size-4" aria-hidden="true" />} state={estado("pais")} mensajeError={mensaje("pais")} {...form.register("pais")} />
+      <SelectorUbicacion
+        valor={punto}
+        error={form.formState.errors.latitud?.message}
+        alCambiar={(u) => {
+          form.setValue("latitud", u.latitud, { shouldValidate: true, shouldDirty: true })
+          form.setValue("longitud", u.longitud, { shouldDirty: true })
+        }}
+      />
     </form>
   )
 }

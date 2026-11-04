@@ -22,6 +22,9 @@ export interface DireccionDto {
   estado_provincia: string
   codigo_postal: string
   pais: string
+  /** Punto de entrega guardado (A-004); las direcciones antiguas no lo tienen. */
+  latitud?: number | null
+  longitud?: number | null
   es_principal: boolean
   fecha_creacion: string
 }
@@ -36,6 +39,8 @@ export interface DireccionPayload {
   estado_provincia: string
   codigo_postal: string
   pais: string
+  latitud?: number
+  longitud?: number
   es_principal?: boolean
 }
 
