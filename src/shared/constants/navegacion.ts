@@ -8,6 +8,7 @@ import {
   Package,
   Plus,
   ReceiptText,
+  Route,
   Settings,
   Ticket,
   Store,
@@ -67,6 +68,7 @@ export const NAVEGACION: NavItem[] = [
   { id: "inventario", label: "Inventario", icon: Boxes, href: "/panel/inventario", permiso: PERMISO.INVENTARIO_AJUSTAR, migas: ["Catálogo", "Inventario"] },
   { id: "ordenes", label: "Órdenes", icon: ReceiptText, href: "/panel/ordenes", permiso: PERMISO.ORDENES_VER, migas: ["Ventas", "Órdenes"] },
   { id: "cupones", label: "Cupones", icon: Ticket, href: "/panel/cupones", permiso: PERMISO.CUPONES_GESTIONAR, migas: ["Ventas", "Cupones"] },
+  { id: "rutas", label: "Rutas", icon: Route, href: "/panel/rutas", permiso: PERMISO.ORDENES_GESTIONAR, migas: ["Ventas", "Rutas"] },
   { id: "envios", label: "Envíos", icon: Truck, href: "/panel/envios", permiso: PERMISO.ENVIOS_CONFIGURAR, migas: ["Ventas", "Envíos"] },
   { id: "personal", label: "Personal", icon: Users, href: "/panel/personal", permiso: PERMISO.PERSONAL_GESTIONAR, migas: ["Tienda", "Personal"] },
   { id: "configuracion", label: "Configuración", icon: Settings, href: "/panel/configuracion", permiso: PERMISO.TIENDA_CONFIGURAR, migas: ["Tienda", "Configuración"], oculto: true }, // vive en el menú del usuario (QW-011)
