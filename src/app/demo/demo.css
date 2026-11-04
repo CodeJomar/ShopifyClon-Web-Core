@@ -1,6 +1,6 @@
 .od-loading,.od-missing{min-height:100dvh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;color:var(--foreground);background:var(--background)}
 .od-missing a{color:var(--brand-text);text-decoration:underline}
-.od-app,.od-login-outer,.od-storefront{font-family:var(--font-dm-sans),system-ui,sans-serif;color:var(--foreground);background:var(--background);min-height:100dvh}
+.od-app,.od-login-outer,.od-storefront{font-family:var(--font-montserrat),system-ui,sans-serif;color:var(--foreground);background:var(--background);min-height:100dvh}
 .od-app *,.od-login-outer *,.od-storefront *{box-sizing:border-box}
 .od-app button,.od-login-outer button,.od-storefront button{cursor:pointer}
 .od-app :is(button,a,input,select):focus-visible,.od-login-outer :is(button,a,input):focus-visible,.od-storefront :is(button,a,input):focus-visible{outline:3px solid var(--ring);outline-offset:3px}
