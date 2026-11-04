@@ -3,8 +3,9 @@ import { DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { Toaster } from "@/shared/components/ui/toast"
 import { ConfirmProvider } from "@/shared/providers/confirm-provider"
-import { EstadoConexionModal } from "@/shared/components/composed/estado-conexion-modal"
+import { EstadoConexionModalGuard } from "@/shared/components/composed/estado-conexion-modal-guard"
 import "./globals.css";
+import "./otemu-capa-visual.css";
 
 // DM Sans: fuente de toda la interfaz y los títulos (docs/diseno-web.md §3)
 const dmSans = DM_Sans({
@@ -38,7 +39,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${jetbrainsMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="otemu-studio min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -47,7 +48,7 @@ export default function RootLayout({
         >
           <Toaster limit={3} timeout={5000}>
             <ConfirmProvider>{children}</ConfirmProvider>
-            <EstadoConexionModal />
+            <EstadoConexionModalGuard />
           </Toaster>
         </ThemeProvider>
       </body>

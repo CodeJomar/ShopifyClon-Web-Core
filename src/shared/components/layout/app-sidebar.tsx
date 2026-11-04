@@ -32,7 +32,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col overflow-hidden",
+        "otemu-sidebar flex h-full w-full flex-col overflow-hidden",
         isCollapsed ? "items-center px-0" : "px-1",
         className
       )}
@@ -51,7 +51,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
                     className="flex items-center justify-center pt-1 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
                   >
                     <Avatar className="size-12 shrink-0 border-none">
-                      <AvatarFallback className="bg-primary text-white">
+                      <AvatarFallback className="bg-primary text-primary-foreground">
                         <Store className="size-6" />
                       </AvatarFallback>
                     </Avatar>
@@ -64,7 +64,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
             <div className="flex items-center gap-3 pt-1 px-2">
               <Link href={homeHref} aria-label={nombreMarca} className="shrink-0 rounded-full outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/25">
                 <Avatar className="size-12 border-none">
-                  <AvatarFallback className="bg-primary text-white">
+                  <AvatarFallback className="bg-primary text-primary-foreground">
                     <Store className="size-6" />
                   </AvatarFallback>
                 </Avatar>

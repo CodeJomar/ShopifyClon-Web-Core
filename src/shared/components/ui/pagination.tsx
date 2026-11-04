@@ -53,7 +53,7 @@ function PaginationLink({ className, isActive, disabled, children, ...props }: P
         "inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full text-sm font-semibold tabular-nums transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-40",
         isActive
-          ? "bg-primary text-white shadow-sm  "
+          ? "bg-primary text-primary-foreground shadow-sm  "
           : "text-muted-foreground hover:bg-brand-strong/12 hover:text-brand-text   ",
         className
       )}

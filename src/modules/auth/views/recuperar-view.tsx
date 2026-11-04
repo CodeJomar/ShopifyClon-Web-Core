@@ -71,7 +71,7 @@ export function RecuperarView() {
   })
 
   return (
-    <div className="space-y-6">
+    <div className="otemu-auth-fields space-y-6">
       <div>
         <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Recupera tu contraseña</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">

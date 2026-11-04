@@ -66,7 +66,7 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="otemu-auth-fields space-y-6">
       <div>
         <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Activa tu cuenta</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Escribe el código de 6 dígitos que te enviamos por correo.</p>

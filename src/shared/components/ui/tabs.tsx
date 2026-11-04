@@ -61,8 +61,8 @@ function TabsTrigger({
 
         "hover:text-brand-text hover:bg-brand-strong/12  dark:hover:text-white",
 
-        "data-active:bg-primary data-active:text-white data-active:shadow-md dark:data-active:bg-card dark:data-active:text-black",
-        "data-active:hover:bg-primary data-active:hover:text-white  dark:data-active:hover:text-black",
+        "data-active:bg-primary data-active:text-primary-foreground data-active:shadow-md dark:data-active:bg-card dark:data-active:text-foreground",
+        "data-active:hover:bg-primary data-active:hover:text-primary-foreground dark:data-active:hover:text-foreground",
 
         className
       )}

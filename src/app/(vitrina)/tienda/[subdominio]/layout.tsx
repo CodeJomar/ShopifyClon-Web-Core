@@ -6,6 +6,7 @@ import { esErrorApi } from "@/lib/api/error-api"
 import { IconoCarrito } from "@/modules/carrito"
 import { obtenerTienda } from "@/modules/vitrina/actions/vitrina.actions"
 import { BuscadorHeader } from "@/modules/vitrina/components/buscador-header"
+import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 
 export default async function VitrinaLayout({
   children,
@@ -34,9 +35,10 @@ export default async function VitrinaLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground antialiased">
+    <div className="otemu-storefront min-h-screen flex flex-col bg-background text-foreground antialiased">
+      <div className="otemu-shop-announcement">Bienvenido a {tienda.nombre} <span aria-hidden="true">·</span> Explora nuestros productos</div>
       {/* Encabezado de la vitrina */}
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md">
+      <header className="otemu-shop-header sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md">
         <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Nombre de la tienda / Enlace a la portada */}
           <Link
@@ -49,6 +51,11 @@ export default async function VitrinaLayout({
             <span className="truncate">{tienda.nombre}</span>
           </Link>
 
+          <nav className="otemu-shop-links hidden items-center gap-4 lg:flex" aria-label="Navegación de la tienda">
+            <Link href={`/tienda/${subdominio}`}>Inicio</Link>
+            <Link href={`/tienda/${subdominio}/productos`}>Productos</Link>
+          </nav>
+
           {/* Buscador */}
           <div className="hidden sm:flex flex-1 justify-center max-w-sm px-2">
             <BuscadorHeader subdominio={subdominio} />
@@ -56,6 +63,7 @@ export default async function VitrinaLayout({
 
           {/* Acceso al carrito */}
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <IconoCarrito subdominio={subdominio} />
           </div>
         </div>
@@ -67,12 +75,12 @@ export default async function VitrinaLayout({
       </header>
 
       {/* Contenido principal */}
-      <main className="flex-1 container mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      <main className="otemu-shop-main flex-1 container mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {children}
       </main>
 
       {/* Pie de página */}
-      <footer className="border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
+      <footer className="otemu-shop-footer border-t border-border bg-card py-6 text-center text-xs text-muted-foreground">
         <div className="container mx-auto flex flex-col items-center justify-between gap-3 px-4 sm:flex-row sm:px-6 max-w-6xl">
           <p>
             Hecho con{" "}

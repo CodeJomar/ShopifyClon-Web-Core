@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 
 import { Button } from "@/shared/components/ui/button"
 import { cn } from "@/shared/utils/cn"
+import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 
 export interface ErrorLayoutProps {
   codigo: number
@@ -33,6 +34,11 @@ export function ErrorLayout({ codigo, titulo, descripcion, ilustracion, rutaInic
         embebido ? "h-full min-h-0 rounded-2xl p-4 md:p-8" : "min-h-screen p-6 md:p-12 lg:p-16"
       )}
     >
+      {!embebido && (
+        <div className="absolute right-5 top-5 z-20 md:right-8 md:top-8">
+          <ThemeToggle />
+        </div>
+      )}
       {/* Iluminación cálida muy sutil */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-1/4 top-1/4 h-[500px] w-[500px] rounded-full bg-warning/4 blur-[140px] dark:bg-warning/6" />
