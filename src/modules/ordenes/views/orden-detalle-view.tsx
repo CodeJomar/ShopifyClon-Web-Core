@@ -10,6 +10,10 @@ import { FormPanel } from "@/shared/components/composed/form-panel"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { ArrowLeft, MapPin, Truck, User } from "lucide-react"
 import { ProgresoOrden } from "../components/progreso-orden"
+import { VisorUbicacion } from "@/shared/components/composed/mapa-ubicacion"
+import { LineaTiempoEnvio } from "@/modules/rutas/components/linea-tiempo-envio"
+import { eventosEnvioAction } from "@/modules/rutas/actions/rutas.actions"
+import type { EventoEnvio } from "@/dtos/ruta"
 import { useConfirm } from "@/shared/providers/confirm-provider"
 import { toast } from "@/shared/components/ui/toast"
 import { formatearDinero } from "@/shared/utils/dinero"
@@ -51,6 +55,7 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
   const [orden, setOrden] = React.useState<OrdenDetallePanel | null>(null)
   const [pagos, setPagos] = React.useState<PagoOrden[]>([])
   const [envio, setEnvio] = React.useState<EnvioOrden | null>(null)
+  const [eventos, setEventos] = React.useState<EventoEnvio[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const [enCurso, setEnCurso] = React.useState(false)
   const [panel, setPanel] = React.useState<Panel | null>(null)
@@ -80,6 +85,20 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
       cancelado = true
     }
   }, [ordenId])
+
+  // Historial del envío: se vuelve a pedir cuando el envío cambia de estado.
+  const envioId = envio?.id
+  const envioEstado = envio?.estado
+  React.useEffect(() => {
+    if (!envioId) return
+    let cancelado = false
+    eventosEnvioAction(envioId).then((res) => {
+      if (!cancelado) setEventos(res.ok ? res.datos : [])
+    })
+    return () => {
+      cancelado = true
+    }
+  }, [envioId, envioEstado])
 
   /** Ejecuta una acción de la API: muestra el mensaje y recarga la orden. */
   const ejecutar = async (accion: () => Promise<{ ok: boolean; error?: ErrorApi }>, exito: string) => {
@@ -289,6 +308,7 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
                   {direccionTexto(orden.direccion_envio)}
                 </p>
               )}
+              <VisorUbicacion valor={puntoDe(orden.direccion_envio)} className="mt-2 h-48" />
             </CardContent>
           </Card>
 
@@ -306,6 +326,10 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
                     Abrir seguimiento →
                   </a>
                 )}
+                <div className="border-t border-border/60 pt-3">
+                  <p className="mb-2 text-[12px] font-bold text-muted-foreground">Historial</p>
+                  <LineaTiempoEnvio eventos={eventos} zonaHoraria={zonaHoraria} />
+                </div>
               </CardContent>
             </Card>
           )}
@@ -345,6 +369,13 @@ function Fila({ etiqueta, valor }: { etiqueta: string; valor: string }) {
       <dd>{valor}</dd>
     </div>
   )
+}
+
+/** Punto de entrega marcado por el comprador (A-004); las órdenes antiguas no lo tienen. */
+function puntoDe(d?: Record<string, unknown> | null): { latitud: number; longitud: number } | null {
+  const latitud = d?.latitud
+  const longitud = d?.longitud
+  return typeof latitud === "number" && typeof longitud === "number" ? { latitud, longitud } : null
 }
 
 function direccionTexto(d: Record<string, unknown>): string {
