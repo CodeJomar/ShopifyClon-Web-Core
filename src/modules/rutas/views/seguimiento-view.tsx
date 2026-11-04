@@ -98,6 +98,11 @@ export function SeguimientoView({ guiaInicial = "" }: { guiaInicial?: string }) 
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {(resultado.chofer || resultado.empresa_transporte) && (
+              <p className="text-[13px] text-muted-foreground">
+                Transporte: <span className="font-bold text-foreground">{resultado.chofer ?? resultado.empresa_transporte}</span>
+              </p>
+            )}
             {(resultado.fecha_entrega_real || resultado.fecha_entrega_estimada) && (
               <p className="text-[13px] text-muted-foreground">
                 {resultado.fecha_entrega_real

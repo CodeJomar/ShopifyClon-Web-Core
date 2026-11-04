@@ -106,6 +106,8 @@ export interface EntregaRequest {
 export interface SeguimientoPublico {
   numero_guia: string
   estado: EstadoEventoEnvio
+  empresa_transporte?: string | null
+  chofer?: string | null
   fecha_despacho?: string | null
   fecha_entrega_estimada?: string | null
   fecha_entrega_real?: string | null
