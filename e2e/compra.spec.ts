@@ -26,7 +26,7 @@ test.describe("Flujo de compra de invitado (W-015, W-016)", () => {
     await botonCheckout.click()
 
     await page.waitForURL(/\/tienda\/tienda-w006-prueba\/checkout/)
-    await expect(page.getByRole("heading", { name: "Datos de compra", level: 1 })).toBeVisible()
+    await expect(page.getByRole("heading", { name: "Finaliza tu compra", level: 1 })).toBeVisible()
 
     // 5. Llenar formulario de datos y envío
     await page.getByLabel("Correo").fill("comprador.e2e@otemu.test")

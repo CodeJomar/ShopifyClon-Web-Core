@@ -9,6 +9,8 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
+  // El modo desarrollo compila cada página la primera vez: se da más margen a las esperas.
+  expect: { timeout: 20_000 },
   reporter: "list",
   use: {
     baseURL: process.env.E2E_BASE_URL || "http://localhost:3100",
