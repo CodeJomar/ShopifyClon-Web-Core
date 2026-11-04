@@ -55,7 +55,7 @@
 .otemu-auth-pitch .otemu-auth-story h2 { color:#1c273f; font-size:clamp(40px,4.5vw,70px); font-weight:850; line-height:1.08; letter-spacing:-.072em; max-width:700px; }
 .otemu-auth-pitch .otemu-auth-story p { max-width:570px; color:#10c689; line-height:1.75; font-size:clamp(15px,1.25vw,18px); }
 .otemu-auth-pitch li { background:rgba(255,255,255,.79); border:1px solid rgba(255,255,255,.96); box-shadow:0 11px 35px -25px rgba(28,38,62,.2); border-radius:18px; backdrop-filter:blur(8px); }
-.otemu-auth-pitch li span:first-child { border-radius:12px; background:#d8fdf1; }
+.otemu-auth-pitch li > span:first-child { border-radius:12px; background:#d8fdf1; }
 .otemu-auth-pitch .otemu-auth-bottom { color:#0c996a; }
 .otemu-auth-form-side { --campo-exterior:#fcfefd; background:radial-gradient(circle at 90% 5%,#e9fef7,transparent 38%),#fcfefd; min-height:100vh; }
 .otemu-auth-card { max-width:460px; }
@@ -273,7 +273,7 @@ body { background: var(--background); color: var(--foreground); }
 .otemu-auth-pitch .otemu-auth-story h2 { color: #1e2943; }
 .otemu-auth-pitch .otemu-auth-story p { color: #0fb67e; }
 .otemu-auth-pitch li { background: rgb(255 255 255 / 0.82); border-color: rgb(255 255 255 / 0.9); }
-.otemu-auth-pitch li span:first-child { background: #def6ee; }
+.otemu-auth-pitch li > span:first-child { background: #def6ee; }
 .otemu-auth-pitch .otemu-auth-bottom { color: #0eaf79; }
 .otemu-auth-form-side { background: var(--background); }
 .otemu-auth-fields > div:first-child h1 { color: var(--foreground); }
@@ -361,7 +361,7 @@ body { background: var(--background); color: var(--foreground); }
 .dark .otemu-auth-pitch .otemu-auth-story h2 { color: var(--foreground); }
 .dark .otemu-auth-pitch .otemu-auth-story p { color: #9fe3cc; }
 .dark .otemu-auth-pitch li { background: rgba(26,35,57,0.9); border-color: #29385c; }
-.dark .otemu-auth-pitch li span:first-child { background: #253252; }
+.dark .otemu-auth-pitch li > span:first-child { background: #253252; }
 .dark .otemu-auth-pitch .otemu-auth-bottom { color: #9de3cc; }
 .dark .otemu-auth-form-side { background: var(--background); }
 .dark .otemu-auth-fields > div:first-child h1 { color: var(--foreground); }
