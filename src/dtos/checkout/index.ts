@@ -33,7 +33,7 @@ export interface CheckoutRequest {
   direccion_envio?: DireccionCheckout
   direccion_facturacion?: DireccionCheckout
   tarifa_envio_id?: string
-  pasarela: "MANUAL"
+  pasarela: "MANUAL" | "STRIPE"
   total_esperado: number
 }
 
@@ -93,4 +93,11 @@ export interface OrdenPublica {
   direccion_facturacion?: Record<string, unknown> | null
   fecha_expiracion_pago?: string | null
   pasarela: string
+}
+
+/** Respuesta de POST /vitrina/{sub}/ordenes/{token}/pagar: lo que Stripe.js necesita para confirmar el pago. */
+export interface IniciarPagoStripe {
+  client_secret: string
+  monto: Dinero | number
+  moneda: string
 }
