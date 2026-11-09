@@ -465,7 +465,9 @@ function ResumenConfirmacion({
             </div>
           </dl>
           <p className="text-[12px] text-muted-foreground">
-            Pago manual (transferencia o Yape). Verás cómo pagar en la página de tu orden.
+            {pasarela === "STRIPE"
+              ? "Pago con tarjeta. Pagarás de forma segura en la página de tu orden, justo después de confirmar."
+              : "Pago manual (transferencia o Yape). Verás cómo pagar en la página de tu orden."}
           </p>
           {datos.correo_cliente && <p className="text-[12px] text-muted-foreground">Enviaremos la información a {datos.correo_cliente}.</p>}
         </CardContent>
