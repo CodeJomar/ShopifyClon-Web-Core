@@ -9,6 +9,8 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   retries: 0,
+  // Una compra completa (producto, carrito, checkout, orden) tarda cerca de 30 s en modo desarrollo.
+  timeout: 90_000,
   // El modo desarrollo compila cada página la primera vez: se da más margen a las esperas.
   expect: { timeout: 20_000 },
   reporter: "list",
