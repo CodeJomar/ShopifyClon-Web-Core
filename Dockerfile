@@ -32,8 +32,14 @@ ENV NODE_ENV=production
 # URL de la API Spring para los rewrites de /api (se hornea en el build)
 ARG API_INTERNAL_URL=http://api-core:8080
 ENV API_INTERNAL_URL=$API_INTERNAL_URL
+# Clave pública de Stripe (modo prueba): Next la incrusta en el build, por eso es ARG y no variable de ejecución
+ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 # La API se consume por el mismo origen (/api)
 ENV NEXT_PUBLIC_API_URL=/api
+
+# El proyecto puede no tener /public: se garantiza para que el COPY del runner no falle
+RUN mkdir -p public
 
 # Compilación de producción
 RUN npm run build
