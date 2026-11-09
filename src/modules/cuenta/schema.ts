@@ -35,6 +35,9 @@ export const direccionSchema = z.object({
   estado_provincia: z.string().trim().min(1, "Escribe el departamento o provincia.").max(100, "Máximo 100 caracteres."),
   codigo_postal: z.string().trim().min(1, "Escribe el código postal.").max(20, "Máximo 20 caracteres."),
   pais: z.string().trim().min(1, "Escribe el país.").max(100, "Máximo 100 caracteres."),
+  // Punto de entrega en el mapa: sin él el pedido no tiene a dónde llegar (A-004, ENV-007).
+  latitud: z.number().min(-90).max(90).nullable().refine((v) => Boolean(v !== null), "Marca en el mapa el punto de entrega."),
+  longitud: z.number().min(-180).max(180).nullable(),
   es_principal: z.boolean(),
 })
 

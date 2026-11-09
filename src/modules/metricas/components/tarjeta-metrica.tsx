@@ -17,7 +17,7 @@ interface TarjetaMetricaProps {
 /** Tarjeta de métrica del dashboard: ícono en baldosa, monto 24/800 y ayuda de 12 px. */
 export function TarjetaMetrica({ titulo, valor, ayuda, icono, destacada = false, className }: TarjetaMetricaProps) {
   return (
-    <Card className={cn("h-full", destacada && "border-primary/40 bg-primary/8", className)}>
+    <Card className={cn("otemu-metric-card h-full", destacada && "border-primary/40 bg-primary/8", className)}>
       <CardContent className="flex h-full flex-col gap-3 p-5">
         <div className="flex items-center gap-3">
           {icono && (

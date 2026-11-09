@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Banknote, Coins, Copy, ExternalLink, Percent, Wallet } from "lucide-react"
+import { Banknote, Coins, Copy, ExternalLink, Percent, Wallet, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button, buttonVariants } from "@/shared/components/ui/button"
 import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
@@ -65,9 +65,14 @@ export function InicioView() {
   const maxImporte = Math.max(1, ...(datos?.top_productos.map((p) => p.importe) ?? [0]))
 
   return (
-    <div className="space-y-6">
+    <div className="otemu-dashboard space-y-6">
+      <section className="otemu-dashboard-intro">
+        <div className="otemu-dashboard-intro-inner">
+          <span className="otemu-eyebrow"><Sparkles aria-hidden="true" className="size-3.5" /> TU ESPACIO DE TRABAJO</span>
+          <p className="otemu-dashboard-intro-note">Una mirada clara a lo que importa: tu negocio.</p>
+        </div>
       <EncabezadoPagina
-        titulo={nombres ? `Hola, ${nombres.split(/s+/)[0]}` : "Dashboard"}
+        titulo={nombres ? `Hola, ${nombres.split(/\s+/)[0]}` : "Dashboard"}
         descripcion={`Así va ${tienda?.nombre ?? "tu tienda"}. Los montos están en ${moneda}.`}
         acciones={
           <ControlSegmentado
@@ -78,6 +83,7 @@ export function InicioView() {
           />
         }
       />
+      </section>
 
       {tienda && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-4 py-3 shadow-isla">
@@ -85,7 +91,7 @@ export function InicioView() {
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Enlace de tu tienda</p>
             <p className="truncate font-mono text-[13px] font-medium text-foreground">{enlace}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button variant="soft" size="sm" onClick={copiarEnlace} leftIcon={<Copy aria-hidden="true" />}>
               Copiar
             </Button>

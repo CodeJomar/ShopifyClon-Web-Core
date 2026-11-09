@@ -27,10 +27,10 @@ export function TarjetaProducto({ producto, subdominio, moneda = "PEN" }: Tarjet
   return (
     <Link
       href={`/tienda/${subdominio}/productos/${producto.identificador_url}`}
-      className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl transition-transform hover:-translate-y-0.5"
+      className="otemu-product-card group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xl transition-transform hover:-translate-y-0.5"
     >
       <Card className="h-full overflow-hidden border-border transition-colors hover:border-brand-strong/40">
-        <div className="relative aspect-square w-full overflow-hidden bg-muted flex items-center justify-center">
+        <div className="otemu-product-visual relative aspect-square w-full overflow-hidden bg-muted flex items-center justify-center">
           {producto.imagen_principal ? (
             <Image
               src={producto.imagen_principal}

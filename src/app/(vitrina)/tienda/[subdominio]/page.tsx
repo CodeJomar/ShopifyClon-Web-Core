@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import type { Metadata } from "next"
-import { ArrowRight, Package } from "lucide-react"
+import { ArrowRight, Package, Sparkles, ShoppingBag, ShieldCheck } from "lucide-react"
 
 import { esErrorApi } from "@/lib/api/error-api"
 import {
@@ -70,12 +70,13 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
   const productos = productosPaginados.datos
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="otemu-store-home flex flex-col gap-10">
       {/* Portada de la tienda */}
-      <section className="relative overflow-hidden rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-12">
+      <section className="otemu-store-hero relative overflow-hidden rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-12">
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-primary/18 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-64 rounded-full bg-info/12 blur-3xl" />
-        <div className="relative flex max-w-2xl flex-col gap-5">
+        <div className="otemu-store-hero-copy relative flex max-w-2xl flex-col gap-5">
+          <span className="otemu-shop-kicker"><Sparkles className="size-3.5" aria-hidden="true"/> UNA TIENDA PARA DESCUBRIR</span>
           <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-[24px] font-extrabold text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)]" aria-hidden="true">
             {tienda.nombre.trim()[0]?.toUpperCase() ?? "T"}
           </span>
@@ -83,12 +84,21 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">{tienda.nombre}</h1>
             <p className="text-[15px] text-muted-foreground sm:text-base">Descubre lo nuevo de la tienda y compra en pocos pasos.</p>
           </div>
+          <div className="otemu-shop-trust flex flex-wrap gap-4 text-sm font-medium text-foreground/70">
+            <span className="flex items-center gap-2"><ShoppingBag className="size-4 text-brand-text" /> Explora a tu ritmo</span>
+            <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-brand-text" /> Compra en pocos pasos</span>
+          </div>
           <div className="flex flex-wrap gap-3">
             <Link href={`/tienda/${subdominio}/productos`} className={buttonVariants({ variant: "default", size: "lg" })}>
               Explorar catálogo
               <ArrowRight aria-hidden="true" />
             </Link>
           </div>
+        </div>
+        <div className="otemu-store-hero-art" aria-hidden="true">
+          <div className="otemu-shop-art-orbit otemu-shop-art-orbit-one" />
+          <div className="otemu-shop-art-orbit otemu-shop-art-orbit-two" />
+          <div className="otemu-shop-art-card"><span className="otemu-shop-art-mini">OTemu</span><ShoppingBag className="size-20" strokeWidth={1.1}/><span>Tu próxima compra</span></div>
         </div>
       </section>
 

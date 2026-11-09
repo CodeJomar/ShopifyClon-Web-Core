@@ -17,6 +17,9 @@ export function crearDatosCheckoutSchema(requiereEnvio: boolean) {
     estado_provincia: obligatorioSiEnvio(100, "Escribe el departamento o provincia."),
     codigo_postal: obligatorioSiEnvio(20, "Escribe el código postal."),
     pais: obligatorioSiEnvio(60, "Escribe el país."),
+    // Punto de entrega en el mapa (ENV-007): sin él no hay a dónde llevar el pedido.
+    latitud: z.number().min(-90).max(90).nullable().refine((v) => !requiereEnvio || v !== null, "Marca en el mapa el punto de entrega."),
+    longitud: z.number().min(-180).max(180).nullable(),
     tarifa_envio_id: requiereEnvio ? z.string().min(1, "Elige una tarifa de envío.") : z.string(),
   })
 }

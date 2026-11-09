@@ -46,7 +46,7 @@ function AvatarFallback({
       data-slot="avatar-fallback"
       className={cn(
         // Ajuste corporativo: Fondo primario y texto blanco para las iniciales
-        "flex size-full items-center justify-center rounded-full bg-primary text-base font-semibold text-white group-data-[size=sm]/avatar:text-xs",
+        "flex size-full items-center justify-center rounded-full bg-primary text-base font-semibold text-primary-foreground group-data-[size=sm]/avatar:text-xs",
         className
       )}
       {...props}
@@ -59,7 +59,7 @@ function AvatarBadge({ className, ...props }: React.ComponentProps<"span">) {
     <span
       data-slot="avatar-badge"
       className={cn(
-        "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-white ring-2 ring-white select-none",
+        "absolute right-0 bottom-0 z-10 inline-flex items-center justify-center rounded-full bg-primary text-primary-foreground ring-2 ring-background select-none",
         "group-data-[size=sm]/avatar:size-2.5",
         "group-data-[size=default]/avatar:size-3.5",
         "group-data-[size=lg]/avatar:size-4",
@@ -75,7 +75,7 @@ function AvatarGroup({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="avatar-group"
       className={cn(
-        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-white",
+        "group/avatar-group flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:ring-background",
         className
       )}
       {...props}
@@ -91,7 +91,7 @@ function AvatarGroupCount({
     <div
       data-slot="avatar-group-count"
       className={cn(
-        "relative flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground ring-2 ring-white group-has-data-[size=lg]/avatar-group:size-16 group-has-data-[size=sm]/avatar-group:size-8",
+        "relative flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-muted-foreground ring-2 ring-background group-has-data-[size=lg]/avatar-group:size-16 group-has-data-[size=sm]/avatar-group:size-8",
         className
       )}
       {...props}

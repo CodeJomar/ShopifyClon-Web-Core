@@ -1,0 +1,454 @@
+/* Capa visual de OTemu (integrada desde el aporte de una compañera).
+   Solo estructura y acabados de las pantallas públicas y del panel; los colores salen de la marca de OTemu
+   (los tokens viven en globals.css y la barra lateral sigue siendo la del sistema de diseño). */
+.otemu-studio {
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+}
+.otemu-studio ::selection { background:#87f9d3; color:#192339; }
+.otemu-studio [data-slot="card"] {
+  border-radius: 19px;
+  box-shadow: 0 12px 35px -23px rgba(24,32,52,.35), 0 2px 8px rgba(26,35,57,.035);
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.otemu-studio [data-slot="card"]:hover { box-shadow:0 19px 44px -25px rgba(23,31,51,.29),0 5px 12px rgba(26,35,57,.045); }
+.otemu-studio button:not(:disabled), .otemu-studio a { -webkit-tap-highlight-color: transparent; }
+.otemu-studio :focus-visible { outline-offset: 3px; }
+.otemu-studio [data-slot="card-title"] { font-weight:800; letter-spacing:-.035em; }
+.otemu-studio [data-slot="table-header"], .otemu-studio thead { background: #f5fdfa; }
+.otemu-studio table { border-collapse:separate; border-spacing:0; }
+.otemu-studio th { color:#0fbd83; font-size:11px; font-weight:750; letter-spacing:.04em; }
+.otemu-studio tbody tr { transition:background-color .16s ease; }
+.otemu-studio tbody tr:hover { background:rgba(220,253,242,.42); }
+.otemu-page-heading { margin-bottom:6px; }
+.otemu-page-heading h1 { font-size:clamp(24px,2vw,32px)!important; letter-spacing:-.052em; font-weight:850; }
+.otemu-page-heading p { color:#10c689; line-height:1.7; }
+.otemu-app-shell { background:#f1fbf8; }
+.otemu-workspace { background:radial-gradient(ellipse 650px 270px at 92% -7%,rgba(160,250,220,.38),transparent 75%), #f3fbf8; }
+.otemu-header-holder { background:rgba(255,255,255,.75); border-bottom:1px solid #dff6ee; }
+.otemu-workspace-header { margin-bottom:0; }
+.otemu-workspace-header [data-slot="breadcrumb-link"] { color:#10c689; }
+.otemu-workspace-header [data-slot="breadcrumb-page"] { color:#202c47; font-weight:800; }
+.otemu-main-scroll { padding-top:20px; }
+.otemu-main-scroll main { max-width:1600px; width:100%; margin-right:auto; margin-left:auto; }
+.otemu-dashboard-intro {
+  position:relative; overflow:hidden;
+  background:radial-gradient(circle at 90% 25%,rgba(147,249,215,.55),transparent 25%),linear-gradient(110deg,#d7fdf0,#f0fef9 65%,#e4fef5);
+  border:1px solid #bdfbe6; border-radius:24px;
+  padding:24px 29px 27px;
+  box-shadow:0 18px 48px -30px rgba(44,60,97,.25);
+}
+.otemu-dashboard-intro::after { content:""; position:absolute; right:-58px; bottom:-115px; width:260px; height:260px; border:35px solid rgba(45,61,100,.07); border-radius:100%; pointer-events:none; }
+.otemu-dashboard-intro > * { position:relative; z-index:1; }
+.otemu-dashboard-intro .otemu-page-heading { margin-top:9px; }
+.otemu-dashboard-intro .otemu-page-heading h1 { font-size:clamp(29px,3vw,39px)!important; }
+.otemu-dashboard-intro-note { font-size:13px; color:#0fbc82; margin-top:7px; }
+.otemu-eyebrow { display:inline-flex; align-items:center; gap:7px; font-size:10px; font-weight:900; letter-spacing:.17em; color:#2e4067; }
+.otemu-metric-card { position:relative; border-color:#d8f5eb!important; overflow:hidden; }
+.otemu-metric-card::before { content:""; position:absolute; height:3px; inset:0 0 auto; background:linear-gradient(90deg,#10c186,transparent 75%); }
+.otemu-metric-card p.text-\[24px\] { font-size:29px; letter-spacing:-.05em; }
+.otemu-auth-layout { background:#fbfdfc; }
+.otemu-auth-pitch {
+  background:radial-gradient(circle at 82% 25%,rgba(138,249,212,.61),transparent 35%),radial-gradient(circle at 7% 90%,rgba(16,198,137,.18),transparent 40%),linear-gradient(145deg,#d5fdf0,#ecfef8 54%,#cefaeb);
+  border-right:1px solid #c3fce9;
+}
+.otemu-auth-pitch .otemu-auth-story h2 { color:#1c273f; font-size:clamp(40px,4.5vw,70px); font-weight:850; line-height:1.08; letter-spacing:-.072em; max-width:700px; }
+.otemu-auth-pitch .otemu-auth-story p { max-width:570px; color:#10c689; line-height:1.75; font-size:clamp(15px,1.25vw,18px); }
+.otemu-auth-pitch li { background:rgba(255,255,255,.79); border:1px solid rgba(255,255,255,.96); box-shadow:0 11px 35px -25px rgba(28,38,62,.2); border-radius:18px; backdrop-filter:blur(8px); }
+.otemu-auth-pitch li > span:first-child { border-radius:12px; background:#d8fdf1; }
+.otemu-auth-pitch .otemu-auth-bottom { color:#0c996a; }
+.otemu-auth-form-side { --campo-exterior:#fcfefd; background:radial-gradient(circle at 90% 5%,#e9fef7,transparent 38%),#fcfefd; min-height:100vh; }
+.otemu-auth-card { max-width:460px; }
+.otemu-auth-fields > div:first-child h1 { font-size:clamp(26px,2.7vw,35px); letter-spacing:-.05em; color:#1d273f; }
+.otemu-auth-fields > div:first-child p { font-size:14px; line-height:1.6; margin-top:7px; }
+.otemu-auth-fields form { gap:18px; }
+.otemu-auth-fields input:not([type="checkbox"]):not([type="radio"]) { background:#fff; border-radius:14px; min-height:49px; border-color:#d3f2e8; box-shadow:0 3px 11px rgba(25,34,55,.025); }
+.otemu-auth-fields input:focus { border-color:#0da673; box-shadow:0 0 0 4px rgba(13,166,115,.08); }
+.otemu-auth-fields form button[type="submit"] { min-height:50px; border-radius:13px; box-shadow:0 10px 19px -12px rgba(39,53,87,.55); }
+.otemu-auth-fields p.text-center { padding-top:6px; }
+.otemu-storefront { background:#fcfdfb; color:#1f2a44; }
+.otemu-shop-announcement { padding:9px 20px; text-align:center; background:#182137; color:#e9fef7; font-size:11px; letter-spacing:.075em; font-weight:650; }
+.otemu-shop-announcement span { opacity:.45; margin:0 8px; }
+.otemu-shop-header { box-shadow:0 12px 28px rgba(24,33,55,.055); border-bottom-color:#daf4eb; }
+.otemu-shop-links a { font-size:13px; font-weight:750; color:#10c689; transition:color .15s ease; }
+.otemu-shop-links a:hover { color:#2a395c; }
+.otemu-shop-main { max-width:1230px; }
+.otemu-shop-footer { background:#f3fbf8; color:#10c689; }
+.otemu-store-hero {
+  background:linear-gradient(104deg,#ebfef8 0%,#e3fcf4 55%,#cbfbeb 100%); border:1px solid #c8f7e7; min-height:345px;
+  box-shadow:0 22px 60px -36px rgba(33,45,73,.25);
+}
+.otemu-store-hero-copy { max-width:630px; z-index:2; }
+.otemu-store-hero-copy h1 { font-size:clamp(37px,4.5vw,62px); letter-spacing:-.065em; line-height:1.09; }
+.otemu-store-hero-copy p { max-width:480px; line-height:1.7; }
+.otemu-shop-kicker { display:inline-flex; width:max-content; align-items:center; gap:6px; font-size:10px; font-weight:900; letter-spacing:.14em; color:#29385b; }
+.otemu-shop-trust { font-size:12px; }
+.otemu-store-hero-art { position:absolute; width:42%; height:100%; right:0; top:0; display:grid; place-items:center; pointer-events:none; }
+.otemu-shop-art-orbit { position:absolute; border:1px solid rgba(12,147,102,.16); border-radius:50%; }
+.otemu-shop-art-orbit-one { width:330px; height:330px; }
+.otemu-shop-art-orbit-two { width:240px; height:240px; }
+.otemu-shop-art-card { width:205px; height:239px; transform:rotate(-8deg); display:flex; align-items:center; justify-content:center; flex-direction:column; gap:14px; background:#fff; color:#273658; border-radius:27px; border:7px solid #fbfefd; box-shadow:14px 23px 43px rgba(34,47,77,.16); font-size:13px; font-weight:850; letter-spacing:-.025em; }
+.otemu-shop-art-mini { align-self:flex-start; margin:0 0 0 18px; font-size:13px; color:#1e2943; }
+.otemu-product-card { border-radius:20px!important; }
+.otemu-product-card [data-slot="card"] { border-radius:18px; overflow:hidden; transition:transform .22s ease,box-shadow .22s ease; }
+.otemu-product-card:hover [data-slot="card"] { transform:translateY(-4px); box-shadow:0 22px 50px -30px rgba(25,34,55,.35); }
+.otemu-product-visual { background:linear-gradient(135deg,#ecfbf6,#e1f6ef); }
+.otemu-product-card h3 { font-size:14px; font-weight:750; line-height:1.45; }
+.otemu-storefront .rounded-full.bg-destructive { background:#c95d69; }
+.otemu-marketing { background:#fcfefd; min-height:100vh; color:#1c273f; }
+.otemu-marketing-nav { position:sticky; z-index:20; top:0; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px max(22px,calc((100vw - 1200px)/2)); border-bottom:1px solid #ddf6ee; background:rgba(255,255,255,.92); backdrop-filter:blur(18px); }
+.otemu-marketing-brand { display:flex; gap:10px; align-items:center; font-size:22px; font-weight:900; letter-spacing:-.07em; }
+.otemu-marketing-symbol { display:grid; place-items:center; height:38px; width:38px; border-radius:12px; color:#fff; background:linear-gradient(145deg,#0fbd83,#273557); box-shadow:0 9px 23px -14px #243150; }
+.otemu-marketing-actions { display:flex; gap:12px; align-items:center; }
+.otemu-marketing-actions a, .otemu-marketing-hero a, .otemu-marketing-cta a { display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-size:13px; font-weight:800; }
+.otemu-landing-btn { border-radius:12px; padding:12px 17px; background:#2d3e65; color:white; box-shadow:0 10px 28px -18px #29385a; }
+.otemu-landing-ghost { padding:12px 17px; color:#2a395d; }
+.otemu-marketing-hero { max-width:1230px; margin:auto; display:grid; grid-template-columns:1fr 1fr; align-items:center; gap:44px; padding:88px 24px 100px; }
+.otemu-marketing-kicker { display:inline-flex; gap:8px; align-items:center; width:max-content; color:#283759; background:#e2fdf4; border:1px solid #bdfbe6; font-weight:850; letter-spacing:.09em; padding:9px 13px; border-radius:999px; font-size:11px; }
+.otemu-marketing-hero h1 { max-width:670px; font-size:clamp(48px,5.4vw,80px); line-height:1.04; letter-spacing:-.082em; margin:22px 0 20px; font-weight:900; }
+.otemu-marketing-hero h1 em { color:#0c9668; font-style:normal; }
+.otemu-marketing-hero p { max-width:530px; color:#10c689; font-size:17px; line-height:1.8; }
+.otemu-marketing-hero .otemu-marketing-actions { margin-top:28px; }
+.otemu-preview-scene { position:relative; padding:26px; min-height:500px; border-radius:34px; background:radial-gradient(circle at 78% 18%,#adfbe1,transparent 40%),linear-gradient(140deg,#dffdf3,#c0fce8); box-shadow:0 40px 90px -57px rgba(34,46,75,.4); }
+.otemu-preview-window { background:#fff; position:absolute; inset:55px 26px 52px 43px; overflow:hidden; border-radius:19px; box-shadow:0 26px 45px -26px rgba(27,37,61,.45); transform:rotate(-3deg); }
+.otemu-preview-window-head { height:53px; padding:0 20px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #def6ee; font-weight:900; }
+.otemu-preview-window-head span { display:flex; align-items:center; gap:8px; }
+.otemu-preview-window-body { display:grid; grid-template-columns:115px 1fr; height:calc(100% - 53px); }
+.otemu-preview-window-sidebar { background:#1a2339; padding:24px 13px; display:flex; flex-direction:column; gap:19px; }
+.otemu-preview-window-sidebar i { width:100%; height:10px; background:#0d9e6e; border-radius:20px; }
+.otemu-preview-window-sidebar i:first-child { background:#10c689; }
+.otemu-preview-window-content { padding:25px; background:#f4fcf9; }
+.otemu-preview-stat-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:26px; }
+.otemu-preview-stat { border-radius:11px; background:#fff; padding:14px 9px; border:1px solid #def6ee; }
+.otemu-preview-stat b { display:block; font-size:18px; margin-top:9px; }
+.otemu-preview-stat small { font-size:9px; color:#10c689; }
+.otemu-preview-graph { margin-top:15px; height:142px; background:#fff; border:1px solid #def6ee; border-radius:12px; display:flex; align-items:flex-end; justify-content:space-around; padding:18px 18px 12px; gap:9px; }
+.otemu-preview-graph span { flex:1; height:var(--bar-height); border-radius:5px 5px 0 0; background:linear-gradient(180deg,#10c689,#0b8e62); }
+.otemu-preview-floating { position:absolute; bottom:24px; right:0; background:#fff; border-radius:15px; padding:15px 18px; box-shadow:0 14px 36px rgba(26,36,58,.19); font-weight:700; font-size:13px; }
+.otemu-features { max-width:1220px; margin:auto; padding:0 24px 90px; }
+.otemu-features h2 { font-size:clamp(29px,3.2vw,43px); letter-spacing:-.06em; font-weight:850; }
+.otemu-feature-grid { margin-top:29px; display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+.otemu-feature { padding:30px 26px; border:1px solid #d4f8ec; border-radius:21px; background:#fff; box-shadow:0 13px 35px -28px rgba(26,35,57,.3); }
+.otemu-feature svg { color:#2c3c62; }
+.otemu-feature h3 { font-weight:850; font-size:17px; margin-top:21px; }
+.otemu-feature p { color:#10c689; font-size:13px; line-height:1.8; margin-top:9px; }
+.otemu-marketing-cta { max-width:1170px; margin:0 auto 75px; padding:44px; display:flex; align-items:center; justify-content:space-between; gap:26px; border-radius:26px; background:linear-gradient(120deg,#192339,#202b46); color:#fff; }
+.otemu-marketing-cta h2 { font-size:29px; font-weight:850; letter-spacing:-.04em; }
+.otemu-marketing-cta p { font-size:13px; opacity:.78; margin-top:8px; }
+.otemu-marketing-cta a { background:#fff; color:#1e2a44; }
+.otemu-landing-footer { padding:24px; text-align:center; font-size:12px; color:#10c689; border-top:1px solid #d8f4eb; }
+.otemu-design-lab { --demo-accent:#2a395c; min-height:100vh; background:#e8f8f3; color:#1d2740; }
+.otemu-design-lab * { box-sizing:border-box; }
+.otemu-lab-topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 26px; background:#fff; border-bottom:1px solid #d7f3ea; }
+.otemu-lab-topbar > div { display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.otemu-lab-pill { display:inline-flex; align-items:center; gap:7px; padding:7px 10px; border:1px solid #a8fadf; border-radius:999px; color:#23304f; background:#e8fef7; font-size:10px; font-weight:850; letter-spacing:.045em; }
+.otemu-lab-subtitle { color:#10c689; font-size:12px; }
+.otemu-lab-control { display:inline-flex; align-items:center; gap:7px; background:#fff; border:1px solid #d1f2e7; border-radius:10px; padding:9px 12px; font-size:12px; font-weight:750; cursor:pointer; }
+.otemu-lab-control:focus-visible { outline:3px solid #70f8ca; }
+.otemu-lab-control[aria-pressed="true"] { border-color:#10c689; background:#e2fdf4; color:#273557; }
+.otemu-lab-stage { display:grid; grid-template-columns:324px minmax(0,1fr); min-height:calc(100vh - 74px); }
+.otemu-lab-controls { background:#fff; border-right:1px solid #d7f4ea; padding:27px 22px; display:flex; flex-direction:column; gap:21px; }
+.otemu-lab-title { font-size:23px; font-weight:900; letter-spacing:-.055em; }
+.otemu-lab-help { font-size:12px; line-height:1.7; color:#10c689; }
+.otemu-lab-field { display:flex; flex-direction:column; gap:7px; }
+.otemu-lab-field label { font-size:12px; font-weight:800; }
+.otemu-lab-field input:not([type="color"]) { width:100%; background:#fff; border:1px solid #cdf1e5; border-radius:10px; padding:11px 12px; outline:none; }
+.otemu-lab-field input:focus-visible { border-color:#2e3f66; box-shadow:0 0 0 3px #0da06f19; }
+.otemu-lab-template-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:9px; }
+.otemu-lab-template { border:1px solid #d3f2e8; background:#fff; cursor:pointer; border-radius:13px; padding:10px; text-align:left; font-size:12px; font-weight:850; }
+.otemu-lab-template[aria-pressed="true"] { border-color:#0c8f63; box-shadow:0 0 0 3px #0fba8119; }
+.otemu-lab-template-swatch { display:block; height:52px; margin-bottom:10px; border-radius:8px; background:var(--demo-swatch); }
+.otemu-lab-colors { display:flex; gap:10px; flex-wrap:wrap; }
+.otemu-lab-color { width:32px; height:32px; border-radius:100%; cursor:pointer; border:4px solid #fff; outline:2px solid transparent; background:var(--demo-swatch); }
+.otemu-lab-color[aria-pressed="true"] { outline-color:#202b46; }
+.otemu-lab-preview-pane { padding:28px; background:radial-gradient(circle at 17% 12%,#f7fefc,#e2f7f0 67%); }
+.otemu-lab-preview-toolbar { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:22px; }
+.otemu-lab-device { width:100%; max-width:1120px; overflow:hidden; margin:auto; border:1px solid #d8f4eb; border-radius:19px; background:#fff; box-shadow:0 32px 75px rgba(25,35,57,.15); transition:max-width .25s ease; }
+.otemu-lab-device.mobile { max-width:390px; }
+.otemu-demo-store-nav { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 28px; border-bottom:1px solid #ddf5ed; }
+.otemu-demo-store-nav b { font-size:19px; letter-spacing:-.045em; }
+.otemu-demo-store-nav small { font-size:11px; color:#10c689; }
+.otemu-demo-store-hero { min-height:290px; display:flex; align-items:center; padding:36px; background:linear-gradient(120deg,var(--demo-background),#f5fdfa); }
+.otemu-demo-store-hero h2 { font-size:clamp(29px,4vw,51px); max-width:500px; font-weight:900; line-height:1.08; letter-spacing:-.06em; }
+.otemu-demo-store-hero p { font-size:13px; color:#10c689; max-width:410px; line-height:1.7; margin:12px 0 22px; }
+.otemu-demo-store-hero button { padding:11px 16px; color:white; background:var(--demo-accent); border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; }
+.otemu-demo-store-section { padding:33px 35px 40px; }
+.otemu-demo-store-section h3 { font-size:20px; font-weight:850; margin-bottom:20px; }
+.otemu-demo-product-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:15px; }
+.otemu-demo-product { overflow:hidden; border:1px solid #dcf5ed; border-radius:13px; background:#fff; }
+.otemu-demo-product-art { min-height:120px; background:var(--demo-product-bg); display:grid; place-items:center; color:var(--demo-accent); }
+.otemu-demo-product-info { padding:13px; font-size:12px; font-weight:750; }
+.otemu-demo-product-info span { display:block; font-size:13px; margin-top:5px; color:#0fb67e; }
+.otemu-demo-store-bottom { padding:21px 32px; background:#f4fcf9; font-size:11px; color:#10c689; text-align:center; }
+.otemu-lab-device.mobile .otemu-demo-store-nav { padding:17px 18px; }
+.otemu-lab-device.mobile .otemu-demo-store-hero { min-height:250px; padding:25px; }
+.otemu-lab-device.mobile .otemu-demo-store-section { padding:20px 16px; }
+.otemu-lab-device.mobile .otemu-demo-product-grid { grid-template-columns:repeat(2,1fr); }
+.otemu-lab-device.mobile .otemu-demo-product:last-child { display:none; }
+@media(max-width:1120px){
+  .otemu-store-hero-art { opacity:.55; right:-8%; }
+  .otemu-store-hero-copy { max-width:75%; }
+}
+@media(max-width:900px){
+  .otemu-marketing-hero { grid-template-columns:1fr; gap:22px; padding:65px 26px; }
+  .otemu-preview-scene { min-height:400px; }
+  .otemu-feature-grid { grid-template-columns:1fr 1fr; }
+  .otemu-lab-stage { grid-template-columns:1fr; }
+  .otemu-lab-controls { border-right:0; border-bottom:1px solid #d7f4ea; }
+}
+@media(max-width:640px){
+  .otemu-auth-form-side { padding:26px 24px; }
+  .otemu-dashboard-intro { padding:22px; }
+  .otemu-main-scroll { padding-top:15px; }
+  .otemu-store-hero { min-height:300px; }
+  .otemu-store-hero-copy { max-width:100%; }
+  .otemu-store-hero-art { display:none; }
+  .otemu-shop-trust { gap:10px; }
+  .otemu-marketing-nav { padding:12px 20px; }
+  .otemu-marketing-actions .otemu-landing-ghost:first-child { display:none; }
+  .otemu-marketing-hero h1 { font-size:48px; }
+  .otemu-marketing-hero p { font-size:15px; }
+  .otemu-preview-scene { min-height:330px; padding:10px; }
+  .otemu-preview-window { inset:25px 17px 34px 17px; }
+  .otemu-preview-window-body { grid-template-columns:70px 1fr; }
+  .otemu-preview-window-sidebar { padding:25px 8px; }
+  .otemu-preview-window-content { padding:12px; }
+  .otemu-preview-stat-grid { gap:5px; }
+  .otemu-preview-stat { padding:9px 6px; }
+  .otemu-preview-stat b { font-size:12px; }
+  .otemu-preview-floating { right:10px; bottom:10px; }
+  .otemu-feature-grid { grid-template-columns:1fr; }
+  .otemu-marketing-cta { margin:0 18px 38px; padding:25px; display:block; }
+  .otemu-marketing-cta .otemu-landing-btn { margin-top:15px; }
+  .otemu-lab-topbar { flex-direction:column; align-items:flex-start; padding:16px; }
+  .otemu-lab-preview-pane { padding:14px; }
+  .otemu-lab-preview-toolbar { flex-wrap:wrap; }
+  .otemu-demo-product-grid { grid-template-columns:repeat(2,1fr); }
+  .otemu-demo-product:last-child { display:none; }
+  .otemu-demo-store-section { padding:20px 16px; }
+}
+@media(prefers-reduced-motion:reduce){
+  .otemu-studio *, .otemu-studio *::before, .otemu-studio *::after { scroll-behavior:auto!important; transition-duration:.01ms!important; animation-duration:.01ms!important; }
+}
+html { color-scheme: light; scroll-behavior: smooth; }
+html.dark { color-scheme: dark; }
+body { background: var(--background); color: var(--foreground); }
+.otemu-studio { background: var(--background); color: var(--foreground); }
+.otemu-theme-toggle { min-width: 44px; min-height: 44px; border-color: var(--border); background: var(--card); color: var(--foreground); }
+.otemu-theme-toggle:hover { background: var(--accent); color: var(--accent-foreground); }
+.otemu-studio ::selection { background: #d2f2e7; color: #1c273f; }
+.dark .otemu-studio ::selection { background: #2e3f66; color: #edfaf6; }
+.otemu-studio [data-slot="card"] {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border-color: var(--border);
+  box-shadow: var(--shadow-isla);
+}
+.otemu-studio [data-slot="card"]:hover { box-shadow: var(--shadow-isla); }
+.otemu-studio [data-slot="table-header"],
+.otemu-studio thead { background: var(--muted); }
+.otemu-studio th { color: var(--muted-foreground); }
+.otemu-studio tbody tr:hover { background: color-mix(in srgb, var(--accent) 62%, transparent); }
+.otemu-page-heading p { color: var(--muted-foreground); }
+.otemu-app-shell, .otemu-workspace { background: var(--background); }
+.otemu-workspace { background: var(--background); }
+.otemu-header-holder { background: color-mix(in srgb, var(--card) 94%, transparent); border-bottom-color: var(--border); }
+.otemu-workspace-header [data-slot="breadcrumb-link"] { color: var(--muted-foreground); }
+.otemu-workspace-header [data-slot="breadcrumb-page"] { color: var(--foreground); font-weight: 750; }
+.otemu-dashboard-intro {
+  background: linear-gradient(112deg, #e3f7f0 0%, #ecf9f5 64%, #dff6ee 100%);
+  border-color: #cbf0e4;
+  box-shadow: var(--shadow-isla);
+}
+.otemu-dashboard-intro-note { color: #0eb07a; }
+.otemu-eyebrow { color: #0eaf79; }
+.otemu-metric-card { border-color: var(--border) !important; }
+.otemu-metric-card::before { background: linear-gradient(90deg, #10c689, transparent 78%); }
+.otemu-auth-layout { background: var(--background); }
+.otemu-auth-pitch {
+  background: radial-gradient(circle at 82% 25%, rgba(167,230,209,0.36), transparent 35%),
+    linear-gradient(145deg, #dff6ee 0%, #eaf9f4 55%, #ddf5ed 100%);
+  border-right-color: var(--border);
+}
+.otemu-auth-pitch .otemu-auth-story h2 { color: #1e2943; }
+.otemu-auth-pitch .otemu-auth-story p { color: #0fb67e; }
+.otemu-auth-pitch li { background: rgb(255 255 255 / 0.82); border-color: rgb(255 255 255 / 0.9); }
+.otemu-auth-pitch li > span:first-child { background: #def6ee; }
+.otemu-auth-pitch .otemu-auth-bottom { color: #0eaf79; }
+.otemu-auth-form-side { background: var(--background); }
+.otemu-auth-fields > div:first-child h1 { color: var(--foreground); }
+.otemu-auth-fields input:not([type="checkbox"]):not([type="radio"]) {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--input);
+  box-shadow: none;
+}
+.otemu-auth-fields input:focus { border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 20%, transparent); }
+.otemu-auth-fields input::placeholder { color: var(--muted-foreground); opacity: 1; }
+.otemu-auth-fields form button[type="submit"] { box-shadow: none; }
+.otemu-storefront { background: var(--background); color: var(--foreground); }
+.otemu-shop-announcement { background: #dff6ee; color: #283658; }
+.otemu-shop-header { background: var(--card); border-bottom-color: var(--border); box-shadow: 0 8px 24px rgba(28,38,62,0.045); }
+.otemu-shop-links a { color: var(--muted-foreground); }
+.otemu-shop-links a:hover { color: var(--brand-text); }
+.otemu-shop-footer { background: var(--secondary); color: var(--muted-foreground); }
+.otemu-store-hero { background: linear-gradient(110deg, #e6f8f2 0%, #e2f6ef 58%, #d8f4eb 100%); border-color: var(--border); box-shadow: var(--shadow-isla); }
+.otemu-shop-kicker { color: #0eb07a; }
+.otemu-shop-art-card { background: var(--card); color: var(--brand-text); border-color: var(--background); box-shadow: var(--shadow-isla); }
+.otemu-shop-art-mini { color: var(--foreground); }
+.otemu-product-visual { background: var(--secondary); }
+.otemu-marketing { background: var(--background); color: var(--foreground); }
+.otemu-marketing-nav { background: color-mix(in srgb, var(--card) 94%, transparent); border-bottom-color: var(--border); }
+.otemu-marketing-brand { color: var(--foreground); }
+.otemu-marketing-symbol { background: #0fbd83; box-shadow: none; }
+.otemu-landing-btn { background: #0fbd83; color: #ffffff; box-shadow: none; }
+.otemu-landing-btn:hover { background: #0d9f6e; }
+.otemu-landing-ghost { color: var(--foreground); }
+.otemu-landing-ghost:hover { color: var(--brand-text); background: var(--accent); border-radius: 10px; }
+.otemu-marketing-kicker { color: #0d9d6d; background: #e0f6ef; border-color: #c9efe2; }
+.otemu-marketing-hero h1 em { color: #10c287; }
+.otemu-marketing-hero p { color: var(--muted-foreground); }
+.otemu-preview-scene { background: linear-gradient(140deg, #def6ee, #d5f3e9); box-shadow: var(--shadow-isla); }
+.otemu-preview-window { background: var(--card); }
+.otemu-preview-window-head { border-bottom-color: var(--border); color: var(--foreground); }
+.otemu-preview-window-sidebar { background: #2b3b60; }
+.otemu-preview-window-sidebar i { background: #10c689; }
+.otemu-preview-window-sidebar i:first-child { background: #9ee3cc; }
+.otemu-preview-window-content { background: var(--secondary); color: var(--foreground); }
+.otemu-preview-stat, .otemu-preview-graph, .otemu-preview-floating { background: var(--card); border-color: var(--border); color: var(--foreground); }
+.otemu-preview-stat small { color: var(--muted-foreground); }
+.otemu-preview-graph span { background: linear-gradient(180deg, #10c689, #10c689); }
+.otemu-feature { background: var(--card); border-color: var(--border); box-shadow: var(--shadow-isla); }
+.otemu-feature svg { color: var(--brand-text); }
+.otemu-feature p { color: var(--muted-foreground); }
+.otemu-marketing-cta { background: #dff6ee; color: #212e4b; }
+.otemu-marketing-cta p { color: #0eae79; opacity: 1; }
+.otemu-marketing-cta a { background: #0fbd83; color: #ffffff; }
+.otemu-landing-footer { color: var(--muted-foreground); border-top-color: var(--border); }
+.otemu-design-lab { background: var(--background); color: var(--foreground); }
+.otemu-lab-topbar { background: var(--card); border-bottom-color: var(--border); color: var(--foreground); }
+.otemu-lab-pill { color: #0d9d6d; background: #e0f6ef; border-color: #c9efe2; }
+.otemu-lab-subtitle, .otemu-lab-help { color: var(--muted-foreground); }
+.otemu-lab-control { background: var(--card); color: var(--foreground); border-color: var(--border); }
+.otemu-lab-control:hover { background: var(--accent); }
+.otemu-lab-control[aria-pressed="true"] { border-color: var(--brand-strong); background: var(--accent); color: var(--brand-text); }
+.otemu-lab-controls { background: var(--card); border-right-color: var(--border); }
+.otemu-lab-field label { color: var(--foreground); }
+.otemu-lab-field input:not([type="color"]) { background: var(--background); color: var(--foreground); border-color: var(--input); }
+.otemu-lab-field input::placeholder { color: var(--muted-foreground); }
+.otemu-lab-template { background: var(--card); color: var(--foreground); border-color: var(--border); }
+.otemu-lab-template[aria-pressed="true"] { border-color: var(--brand-strong); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-strong) 16%, transparent); }
+.otemu-lab-color { border-color: var(--card); }
+.otemu-lab-color[aria-pressed="true"] { outline-color: var(--foreground); }
+.otemu-lab-preview-pane { background: var(--background); }
+.otemu-lab-device { background: #ffffff; color: #1a243b; }
+.otemu-lab-device .otemu-demo-store-nav,
+.otemu-lab-device .otemu-demo-store-section,
+.otemu-lab-device .otemu-demo-store-bottom { color: #1c273f; }
+.otemu-lab-device .otemu-demo-store-hero h2 { color: #182136; }
+.otemu-lab-device .otemu-demo-store-hero p { color: #10c488; }
+.otemu-lab-device .otemu-shop-kicker { color: #10c689; }
+.otemu-lab-device .otemu-demo-store-nav small { color: #10c689; }
+.dark .otemu-studio [data-slot="card"] { background-color: var(--card); color: var(--card-foreground); border-color: var(--border); }
+.dark .otemu-workspace { background: var(--background); }
+.dark .otemu-header-holder { background: color-mix(in srgb, var(--card) 94%, transparent); border-bottom-color: var(--border); }
+.dark .otemu-workspace-header [data-slot="breadcrumb-page"] { color: var(--foreground); }
+.dark .otemu-dashboard-intro { background: linear-gradient(112deg, #1c263e 0%, #182137 64%, #1e2942 100%); border-color: #29385c; }
+.dark .otemu-dashboard-intro-note, .dark .otemu-eyebrow { color: #9be2ca; }
+.dark .otemu-metric-card { border-color: var(--border) !important; }
+.dark .otemu-auth-layout { background: var(--background); }
+.dark .otemu-auth-pitch { background: linear-gradient(145deg, #1c263e 0%, #182135 58%, #1c273f 100%); border-right-color: var(--border); }
+.dark .otemu-auth-pitch .otemu-auth-story h2 { color: var(--foreground); }
+.dark .otemu-auth-pitch .otemu-auth-story p { color: #9fe3cc; }
+.dark .otemu-auth-pitch li { background: rgba(26,35,57,0.9); border-color: #29385c; }
+.dark .otemu-auth-pitch li > span:first-child { background: #253252; }
+.dark .otemu-auth-pitch .otemu-auth-bottom { color: #9de3cc; }
+.dark .otemu-auth-form-side { background: var(--background); }
+.dark .otemu-auth-fields > div:first-child h1 { color: var(--foreground); }
+.dark .otemu-auth-fields input:not([type="checkbox"]):not([type="radio"]) { background: var(--card); color: var(--foreground); border-color: var(--input); }
+.dark .otemu-storefront { background: var(--background); color: var(--foreground); }
+.dark .otemu-shop-announcement { background: #1d2841; color: #d1f2e7; }
+.dark .otemu-shop-header { background: var(--card); border-bottom-color: var(--border); }
+.dark .otemu-shop-links a { color: var(--muted-foreground); }
+.dark .otemu-shop-footer { background: var(--secondary); color: var(--muted-foreground); }
+.dark .otemu-store-hero { background: linear-gradient(110deg, #1d273f 0%, #1b243b 58%, #202b46 100%); border-color: var(--border); }
+.dark .otemu-shop-kicker { color: #9be2ca; }
+.dark .otemu-shop-art-card { background: var(--card); color: var(--brand-text); border-color: var(--border); }
+.dark .otemu-shop-art-mini { color: var(--foreground); }
+.dark .otemu-product-visual { background: var(--secondary); }
+.dark .otemu-marketing { background: var(--background); color: var(--foreground); }
+.dark .otemu-marketing-nav { background: color-mix(in srgb, var(--card) 94%, transparent); border-bottom-color: var(--border); }
+.dark .otemu-marketing-brand { color: var(--foreground); }
+.dark .otemu-marketing-symbol { background: #0fbd83; }
+.dark .otemu-landing-btn, .dark .otemu-marketing-cta a { background: #10c689; color: #131929; }
+.dark .otemu-landing-ghost { color: var(--foreground); }
+.dark .otemu-marketing-kicker, .dark .otemu-lab-pill { color: #b2e9d6; background: #202c47; border-color: #2e3e65; }
+.dark .otemu-marketing-hero h1 em { color: #8fdec4; }
+.dark .otemu-marketing-hero p { color: var(--muted-foreground); }
+.dark .otemu-preview-scene { background: linear-gradient(140deg, #1e2942, #1b243b); }
+.dark .otemu-preview-window { background: var(--card); }
+.dark .otemu-preview-window-head { border-bottom-color: var(--border); color: var(--foreground); }
+.dark .otemu-preview-window-sidebar { background: #1c273f; }
+.dark .otemu-preview-window-sidebar i { background: #0eac77; }
+.dark .otemu-preview-window-sidebar i:first-child { background: #91dfc5; }
+.dark .otemu-preview-window-content { background: var(--secondary); color: var(--foreground); }
+.dark .otemu-preview-stat, .dark .otemu-preview-graph, .dark .otemu-preview-floating { background: var(--card); border-color: var(--border); color: var(--foreground); }
+.dark .otemu-preview-stat small { color: var(--muted-foreground); }
+.dark .otemu-preview-graph span { background: linear-gradient(180deg, #91dfc5, #10c689); }
+.dark .otemu-feature { background: var(--card); border-color: var(--border); }
+.dark .otemu-feature p { color: var(--muted-foreground); }
+.dark .otemu-marketing-cta { background: #1c273f; color: var(--foreground); }
+.dark .otemu-marketing-cta p { color: #9fe3cc; }
+.dark .otemu-landing-footer { border-top-color: var(--border); color: var(--muted-foreground); }
+.dark .otemu-design-lab { background: var(--background); color: var(--foreground); }
+.dark .otemu-lab-topbar, .dark .otemu-lab-controls { background: var(--card); border-color: var(--border); color: var(--foreground); }
+.dark .otemu-lab-control { background: var(--card); border-color: var(--border); color: var(--foreground); }
+.dark .otemu-lab-control[aria-pressed="true"] { background: var(--accent); color: var(--accent-foreground); }
+.dark .otemu-lab-field label { color: var(--foreground); }
+.dark .otemu-lab-field input:not([type="color"]) { background: var(--background); color: var(--foreground); border-color: var(--input); }
+.dark .otemu-lab-template { background: var(--card); border-color: var(--border); color: var(--foreground); }
+.dark .otemu-lab-preview-pane { background: var(--background); }
+.dark .otemu-lab-device {
+  background: #f6fdfb;
+  color: #1b253c;
+  border-color: #bcecdc;
+  box-shadow: 0 18px 44px -28px rgba(0, 0, 0, 0.35);
+}
+.dark .otemu-lab-device .otemu-demo-store-nav,
+.dark .otemu-lab-device .otemu-demo-store-section,
+.dark .otemu-lab-device .otemu-demo-store-bottom { color: #1b253c; }
+.dark .otemu-lab-device .otemu-demo-store-hero {
+  background: linear-gradient(120deg, color-mix(in srgb, var(--demo-background) 86%, white), #f6fdfb);
+}
+.dark .otemu-lab-device .otemu-demo-store-hero h2 { color: #192237; }
+.dark .otemu-lab-device .otemu-demo-store-hero p { color: #10c186; }
+.dark .otemu-lab-device .otemu-shop-kicker { color: #10c689; }
+.dark .otemu-lab-device .otemu-demo-store-nav small,
+.dark .otemu-lab-device .otemu-demo-store-bottom { color: #10c689; }
+.dark .otemu-lab-device .otemu-demo-product-info span { color: #0ea875; }
+.otemu-studio :where(a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 3px;
+}
+.otemu-studio :where(input, select, textarea) { color: var(--foreground); }
+.otemu-studio :where(input, select, textarea)::placeholder { color: var(--muted-foreground); opacity: 1; }
+.otemu-studio :where(button, [role="button"]):disabled { cursor: not-allowed; opacity: 0.58; }
+.otemu-studio :where(a, button, input, select, textarea) { accent-color: var(--brand-strong); }
+.otemu-studio :where(button, a) { -webkit-tap-highlight-color: transparent; }
+@media (prefers-contrast: more) {
+  .otemu-studio { --border: #86dcbf; --muted-foreground: #0c9165; }
+  .dark .otemu-studio { --border: #657468; --muted-foreground: #bdecdc; }
+  .otemu-studio :where(a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])):focus-visible { outline-width: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+@media (forced-colors: active) {
+  .otemu-theme-toggle, .otemu-studio button, .otemu-studio a { forced-color-adjust: auto; }
+  .otemu-studio :where(a, button, input, select, textarea):focus-visible { outline: 2px solid Highlight; }
+}
+
+/* Acciones de marca: siempre con los tokens del sistema */
+.otemu-landing-btn, .otemu-marketing-cta a, .otemu-landing-btn:hover { background: var(--primary); color: var(--primary-foreground); text-shadow: 0 1px 2px rgb(0 0 0 / .14); }
+.otemu-marketing-symbol { background: var(--primary); }
+.otemu-storefront .rounded-full.bg-destructive { background: var(--destructive); }

@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: var(--font-dm-sans);
-  --font-mono: var(--font-jetbrains-mono);
-  --font-heading: var(--font-dm-sans);
+  --font-sans: var(--font-montserrat);
+  --font-mono: var(--font-montserrat);
+  --font-heading: var(--font-montserrat);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -234,4 +234,13 @@ input[type="search"]::-webkit-search-results-decoration {
   -webkit-appearance: none;
   appearance: none;
   display: none;
+}
+
+/* Impresión de la guía de remisión (A-004): solo la hoja, sin menú, encabezado ni botones. */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  .otemu-rail, .otemu-header-holder, .no-imprimir { display: none !important; }
+  .otemu-app-shell, .otemu-workspace, .otemu-main-scroll { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; }
+  body { background: #fff !important; }
+  .hoja-guia { max-width: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
 }

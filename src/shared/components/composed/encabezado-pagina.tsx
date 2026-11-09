@@ -12,7 +12,7 @@ interface EncabezadoPaginaProps {
 /** Cabecera estándar de cada pantalla del panel: título 18/800, descripción 13 y acciones a la derecha. */
 export function EncabezadoPagina({ titulo, descripcion, acciones, className }: EncabezadoPaginaProps) {
   return (
-    <div className={cn("flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between", className)}>
+    <div className={cn("otemu-page-heading flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between", className)}>
       <div className="min-w-0">
         <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">{titulo}</h1>
         {descripcion && <p className="mt-1 text-[13px] text-muted-foreground">{descripcion}</p>}

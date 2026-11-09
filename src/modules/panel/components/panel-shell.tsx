@@ -92,9 +92,9 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   )
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="otemu-app-shell flex h-screen overflow-hidden bg-background">
       {!isMobile && (
-        <aside className={cn("sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
+        <aside className={cn("otemu-rail sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
           {/* Divisor vertical: arranca a la altura del divisor del encabezado (76 px), queda centrado entre el menú (12 px) y el main (24 px) y deja aire abajo */}
           <div aria-hidden="true" className="absolute -right-1 top-[76px] bottom-10 w-px bg-brand-strong/12" />
@@ -102,16 +102,16 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
       )}
       {isMobile && (
         <Sheet open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-          <SheetContent side="left" className="w-[280px] p-3">
+          <SheetContent side="left" className="otemu-mobile-rail w-[280px] p-3">
             <SheetTitle className="sr-only">Menú del panel</SheetTitle>
             {menu}
           </SheetContent>
         </Sheet>
       )}
 
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <div className="otemu-workspace flex min-h-0 min-w-0 flex-1 flex-col">
         {/* Encabezado fijo: solo se desplaza el contenido de abajo */}
-        <div className="shrink-0 px-4 sm:px-6">
+        <div className="otemu-header-holder shrink-0 px-4 sm:px-6">
         <WorkspaceHeader
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleSidebar}
@@ -124,7 +124,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
         />
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
+        <div className="otemu-main-scroll flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-4 sm:px-6 sm:pb-6">
 
         {!esRutaPlataforma && tienda && !tienda.operativa && (
           <Alert variant="warning" className="mt-1 sm:mt-3">

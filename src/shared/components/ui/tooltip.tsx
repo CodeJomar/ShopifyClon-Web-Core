@@ -41,7 +41,7 @@ function TooltipContent({
           data-slot="tooltip-content"
           className={cn(
             // Cuerpo tipo píldora corporativa
-            "relative z-50 flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-white shadow-md select-none",
+            "relative z-50 flex items-center justify-center rounded-full bg-primary px-4 py-1.5 text-xs font-bold text-primary-foreground shadow-md select-none",
 
             // Pico / Punta de la gota hacia la izquierda (apuntando al sidebar)
             "before:content-[''] before:absolute before:-left-1.5 before:top-1/2 before:-translate-y-1/2",

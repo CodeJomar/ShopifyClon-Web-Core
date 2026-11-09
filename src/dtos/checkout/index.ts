@@ -20,6 +20,9 @@ export interface DireccionCheckout {
   estado_provincia: string
   codigo_postal: string
   pais: string
+  /** Punto de entrega marcado en el mapa (A-004, ENV-007: obligatorio si hay envío). */
+  latitud?: number
+  longitud?: number
 }
 
 /** Cuerpo de POST /vitrina/{sub}/checkout. `total_esperado` es el total que la API devolvió en el carrito. */

@@ -18,6 +18,7 @@ export function SidebarNavItem({
   return (
     <button
       type="button"
+      data-active={isActive ? "true" : "false"}
       className={cn(
         // Respeto estricto a la regla de curva: rounded-full con altura fija y padding horizontal seguro
         "flex w-full items-center gap-3 rounded-full text-sm font-medium transition-all duration-150 outline-none select-none cursor-pointer",

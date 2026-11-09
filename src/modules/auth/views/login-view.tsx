@@ -63,9 +63,9 @@ export function LoginView({ correo, siguiente }: LoginViewProps) {
   const bloqueado = espera.restan > 0
 
   return (
-    <div className="space-y-6">
+    <div className="otemu-auth-fields space-y-6">
       <div>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Inicia sesión</h1>
+        <h1 className="text-[29px] font-extrabold tracking-tight text-foreground">Inicia sesión</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Entra a tu cuenta de OTemu.</p>
       </div>
 

@@ -44,9 +44,9 @@ export function RegistroView() {
   const mensaje = (nombre: keyof RegistroValues) => form.formState.errors[nombre]?.message
 
   return (
-    <div className="space-y-6">
+    <div className="otemu-auth-fields space-y-6">
       <div>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Crea tu cuenta</h1>
+        <h1 className="text-[29px] font-extrabold tracking-tight text-foreground">Crea tu cuenta</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Después te enviaremos un código para activarla.</p>
       </div>
 
