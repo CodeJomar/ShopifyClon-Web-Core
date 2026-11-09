@@ -3,18 +3,20 @@ import type { NextConfig } from "next";
 const esProduccion = process.env.NODE_ENV === "production";
 
 /**
- * Política de contenido: solo se carga lo que sirve el propio sitio. 'unsafe-inline' en scripts y estilos lo exige Next.js
+ * Política de contenido: solo se carga lo que sirve el propio sitio, más Stripe (su script, su formulario de tarjeta en un iframe
+ * y su API) para el pago con tarjeta. 'unsafe-inline' en scripts y estilos lo exige Next.js
  * (hidratación y estilos en línea); el resto es estricto: sin plugins, sin marcos de otros sitios, formularios y base solo
  * del mismo origen. Las imágenes permiten https porque pueden venir de direcciones externas.
  * En desarrollo no se aplica (el recargado en caliente usa eval y una conexión local).
  */
 const politicaContenido = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  "script-src 'self' 'unsafe-inline' https://js.stripe.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://api.stripe.com https://*.stripe.com",
+  "frame-src https://js.stripe.com https://hooks.stripe.com https://*.stripe.com",
   "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
@@ -26,7 +28,7 @@ const cabecerasSeguridad = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), payment=()" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), payment=(self \"https://js.stripe.com\")" },
   { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   ...(esProduccion
     ? [

@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { SelectorUbicacion } from "@/shared/components/composed/mapa-ubicacion"
@@ -41,6 +42,7 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
   const [datos, setDatos] = React.useState<DatosCheckoutValues | null>(null)
   const [aviso, setAviso] = React.useState<string | null>(null)
   const [enviando, setEnviando] = React.useState(false)
+  const [pasarela, setPasarela] = React.useState<"MANUAL" | "STRIPE">("MANUAL")
   // Cotización del carrito con la tarifa elegida (costo de envío y total con envío de la API).
   const [cotizacion, setCotizacion] = React.useState<Carrito | null>(null)
   const [cotizando, setCotizando] = React.useState(false)
@@ -98,8 +100,8 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
     setEnviando(true)
     const totalEsperado = Number(totalVigente)
     // Misma clave mientras el contenido no cambie (doble clic o reintento); nueva si cambian el total, las líneas o los datos.
-    const clave = obtener(JSON.stringify({ total: totalEsperado, lineas: carrito.items.map((l) => [l.variante_id, l.cantidad]), datos }))
-    const res = await crearOrdenAction(subdominio, clave, construirPayload(datos, carrito, totalEsperado))
+    const clave = obtener(JSON.stringify({ pasarela, total: totalEsperado, lineas: carrito.items.map((l) => [l.variante_id, l.cantidad]), datos }))
+    const res = await crearOrdenAction(subdominio, clave, construirPayload(datos, carrito, totalEsperado, pasarela))
     setEnviando(false)
 
     if (res.ok) {
@@ -232,6 +234,8 @@ export function CheckoutView({ subdominio }: { subdominio: string }) {
           datos={datos}
           tarifa={tarifas.find((t) => t.id === datos.tarifa_envio_id) ?? null}
           enviando={enviando}
+          pasarela={pasarela}
+          onPasarela={setPasarela}
           onVolver={() => setDatos(null)}
           onConfirmar={confirmar}
         />
@@ -399,6 +403,8 @@ function ResumenConfirmacion({
   datos,
   tarifa,
   enviando,
+  pasarela,
+  onPasarela,
   onVolver,
   onConfirmar,
 }: {
@@ -407,6 +413,8 @@ function ResumenConfirmacion({
   datos: DatosCheckoutValues
   tarifa: TarifaEnvioVitrina | null
   enviando: boolean
+  pasarela: "MANUAL" | "STRIPE"
+  onPasarela: (p: "MANUAL" | "STRIPE") => void
   onVolver: () => void
   onConfirmar: () => void
 }) {
@@ -457,9 +465,23 @@ function ResumenConfirmacion({
             </div>
           </dl>
           <p className="text-[12px] text-muted-foreground">
-            Pago manual (transferencia o Yape). Verás cómo pagar en la página de tu orden.
+            {pasarela === "STRIPE"
+              ? "Pago con tarjeta. Pagarás de forma segura en la página de tu orden, justo después de confirmar."
+              : "Pago manual (transferencia o Yape). Verás cómo pagar en la página de tu orden."}
           </p>
           {datos.correo_cliente && <p className="text-[12px] text-muted-foreground">Enviaremos la información a {datos.correo_cliente}.</p>}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Método de pago</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup aria-label="Método de pago" value={pasarela} onValueChange={(v) => onPasarela(v as "MANUAL" | "STRIPE")}>
+            <OpcionPago valor="STRIPE" titulo="Tarjeta (Stripe)" detalle="Pagas en la página de tu orden al confirmar. La orden vence en 30 minutos si no se paga." />
+            <OpcionPago valor="MANUAL" titulo="Transferencia o Yape" detalle="La tienda confirma tu pago manualmente." />
+          </RadioGroup>
         </CardContent>
       </Card>
 
@@ -475,8 +497,21 @@ function ResumenConfirmacion({
   )
 }
 
+/** Una forma de pago elegible: tarjeta con borde y fondo de marca cuando está marcada. */
+function OpcionPago({ valor, titulo, detalle }: { valor: "MANUAL" | "STRIPE"; titulo: string; detalle: string }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border-[1.8px] border-input p-3.5 text-[13px] transition-colors hover:border-border-hover has-data-checked:border-primary has-data-checked:bg-primary/8">
+      <RadioGroupItem value={valor} className="mt-0.5" />
+      <span>
+        <span className="block font-bold text-foreground">{titulo}</span>
+        <span className="block text-muted-foreground">{detalle}</span>
+      </span>
+    </label>
+  )
+}
+
 /** Construye el cuerpo de la API a partir del formulario y del carrito. Sin cálculos: el total viene de la API. */
-function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsperado: number): CheckoutRequest {
+function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsperado: number, pasarela: "MANUAL" | "STRIPE"): CheckoutRequest {
   const direccion: DireccionCheckout | undefined = carrito.requiere_envio
     ? {
         nombre_contacto: datos.direccion_nombre_contacto,
@@ -497,7 +532,7 @@ function construirPayload(datos: DatosCheckoutValues, carrito: Carrito, totalEsp
     telefono_cliente: datos.telefono_cliente || undefined,
     direccion_envio: direccion,
     tarifa_envio_id: carrito.requiere_envio ? datos.tarifa_envio_id : undefined,
-    pasarela: "MANUAL",
+    pasarela,
     total_esperado: totalEsperado,
   }
 }

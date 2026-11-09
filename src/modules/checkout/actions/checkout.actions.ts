@@ -1,7 +1,7 @@
 import { api, peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import type { RespuestaApi } from "@/dtos/core/respuesta-api.dto"
-import type { CheckoutRequest, OrdenCreada, OrdenPublica, TarifaEnvioVitrina } from "@/dtos/checkout"
+import type { CheckoutRequest, IniciarPagoStripe, OrdenCreada, OrdenPublica, TarifaEnvioVitrina } from "@/dtos/checkout"
 import type { DireccionDto, PerfilCuentaDto } from "@/dtos/cuenta"
 
 // Checkout de la vitrina. La web no calcula montos: el total que envía es el que devolvió la API en el carrito.
@@ -18,6 +18,15 @@ export const crearOrdenAction = (subdominio: string, claveIdempotencia: string, 
       url: `/vitrina/${encodeURIComponent(subdominio)}/checkout`,
       data: datos,
       headers: { "Idempotency-Key": claveIdempotencia },
+    }),
+  )
+
+/** Inicia el pago en línea (solo órdenes con pasarela STRIPE pendientes): devuelve el secreto del intento de Stripe. */
+export const iniciarPagoStripeAction = (subdominio: string, tokenAcceso: string) =>
+  resultado(
+    peticionApi<IniciarPagoStripe>({
+      method: "POST",
+      url: `/vitrina/${encodeURIComponent(subdominio)}/ordenes/${encodeURIComponent(tokenAcceso)}/pagar`,
     }),
   )
 

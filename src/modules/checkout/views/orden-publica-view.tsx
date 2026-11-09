@@ -10,6 +10,7 @@ import { formatearFecha } from "@/shared/utils/fechas"
 import type { OrdenPublica } from "@/dtos/checkout"
 import type { ErrorApi } from "@/lib/api/error-api"
 import { ordenPublicaAction } from "../actions/checkout.actions"
+import { PagoStripe } from "../components/pago-stripe"
 
 const ESTADO_PAGO: Record<string, string> = {
   PENDIENTE: "Pago pendiente",
@@ -64,6 +65,19 @@ export function OrdenPublicaView({
     } else setError(res.error)
   }
 
+  // Tras pagar con tarjeta, el webhook de la API marca la orden: se consulta unos segundos hasta verla pagada.
+  const esperarPago = async (): Promise<boolean> => {
+    for (let i = 0; i < 12; i++) {
+      const res = await cargar()
+      if (res.ok) {
+        setOrden(res.datos)
+        if (res.datos.estado_pago !== "PENDIENTE") return true
+      }
+      await new Promise((r) => setTimeout(r, 1500))
+    }
+    return false
+  }
+
   if (cargando && !orden) return <p className="text-[13px] text-muted-foreground">Cargando tu orden…</p>
 
   if (error || !orden) {
@@ -103,7 +117,9 @@ export function OrdenPublicaView({
         </CardContent>
       </Card>
 
-      {pagoPendiente && (
+      {pagoPendiente && orden.pasarela === "STRIPE" && <PagoStripe subdominio={subdominio} token={token} alPagar={esperarPago} />}
+
+      {pagoPendiente && orden.pasarela !== "STRIPE" && (
         <Alert>
           <AlertTitle>Cómo pagar</AlertTitle>
           <AlertDescription>
