@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { loadStripe } from "@stripe/stripe-js"
+import { loadStripe, type Appearance } from "@stripe/stripe-js"
+import { useTheme } from "next-themes"
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
@@ -21,6 +22,11 @@ export function PagoStripe({ subdominio, token, alPagar }: { subdominio: string;
   const [secreto, setSecreto] = React.useState<string | null>(null)
   const [iniciando, setIniciando] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
+  const { resolvedTheme } = useTheme()
+  const apariencia: Appearance = {
+    theme: resolvedTheme === "dark" ? "night" : "stripe",
+    variables: { colorPrimary: "#00A36C", colorDanger: "#E91E63", borderRadius: "12px", fontFamily: "Montserrat, system-ui, sans-serif" },
+  }
 
   if (!stripePromise) {
     return (
@@ -56,7 +62,7 @@ export function PagoStripe({ subdominio, token, alPagar }: { subdominio: string;
             {iniciando ? "Preparando el pago…" : "Pagar con tarjeta"}
           </Button>
         ) : (
-          <Elements stripe={stripePromise} options={{ clientSecret: secreto, locale: "es" }}>
+          <Elements stripe={stripePromise} options={{ clientSecret: secreto, locale: "es", appearance: apariencia }}>
             <FormularioTarjeta alPagar={alPagar} />
           </Elements>
         )}

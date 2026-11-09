@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
+import { RadioGroup, RadioGroupItem } from "@/shared/components/ui/radio-group"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { SelectorUbicacion } from "@/shared/components/composed/mapa-ubicacion"
@@ -474,21 +475,11 @@ function ResumenConfirmacion({
         <CardHeader>
           <CardTitle>Método de pago</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2 text-[13px]">
-          <label className="flex cursor-pointer items-start gap-2">
-            <input type="radio" name="pasarela" checked={pasarela === "STRIPE"} onChange={() => onPasarela("STRIPE")} className="mt-1" />
-            <span>
-              <span className="font-bold">Tarjeta (Stripe)</span>
-              <span className="block text-muted-foreground">Pagas en la página de tu orden al confirmar. La orden vence en 30 minutos si no se paga.</span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-2">
-            <input type="radio" name="pasarela" checked={pasarela === "MANUAL"} onChange={() => onPasarela("MANUAL")} className="mt-1" />
-            <span>
-              <span className="font-bold">Transferencia o Yape</span>
-              <span className="block text-muted-foreground">La tienda confirma tu pago manualmente.</span>
-            </span>
-          </label>
+        <CardContent>
+          <RadioGroup aria-label="Método de pago" value={pasarela} onValueChange={(v) => onPasarela(v as "MANUAL" | "STRIPE")}>
+            <OpcionPago valor="STRIPE" titulo="Tarjeta (Stripe)" detalle="Pagas en la página de tu orden al confirmar. La orden vence en 30 minutos si no se paga." />
+            <OpcionPago valor="MANUAL" titulo="Transferencia o Yape" detalle="La tienda confirma tu pago manualmente." />
+          </RadioGroup>
         </CardContent>
       </Card>
 
@@ -501,6 +492,19 @@ function ResumenConfirmacion({
         </Button>
       </div>
     </div>
+  )
+}
+
+/** Una forma de pago elegible: tarjeta con borde y fondo de marca cuando está marcada. */
+function OpcionPago({ valor, titulo, detalle }: { valor: "MANUAL" | "STRIPE"; titulo: string; detalle: string }) {
+  return (
+    <label className="flex cursor-pointer items-start gap-3 rounded-xl border-[1.8px] border-input p-3.5 text-[13px] transition-colors hover:border-border-hover has-data-checked:border-primary has-data-checked:bg-primary/8">
+      <RadioGroupItem value={valor} className="mt-0.5" />
+      <span>
+        <span className="block font-bold text-foreground">{titulo}</span>
+        <span className="block text-muted-foreground">{detalle}</span>
+      </span>
+    </label>
   )
 }
 
