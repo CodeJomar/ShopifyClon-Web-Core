@@ -13,6 +13,7 @@
     "@base-ui/react": "^1.7.0",
     "@hookform/resolvers": "^5.9.1",
     "@shadcn/react": "^0.3.1",
+    "@stomp/stompjs": "^7.5.0",
     "@stripe/react-stripe-js": "^7.0.1",
     "@stripe/stripe-js": "^10.2.1",
     "axios": "^1.21.0",

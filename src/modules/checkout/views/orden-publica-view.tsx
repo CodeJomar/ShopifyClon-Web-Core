@@ -11,6 +11,9 @@ import type { OrdenPublica } from "@/dtos/checkout"
 import type { ErrorApi } from "@/lib/api/error-api"
 import { ordenPublicaAction } from "../actions/checkout.actions"
 import { PagoStripe } from "../components/pago-stripe"
+import { abrirCanal, type EstadoConexion } from "@/lib/tiempo-real/canal"
+import { IndicadorEnVivo } from "@/shared/components/composed/indicador-en-vivo"
+import type { NotificacionOrdenComprador } from "@/dtos/tiempo-real"
 
 const ESTADO_PAGO: Record<string, string> = {
   PENDIENTE: "Pago pendiente",
@@ -41,6 +44,25 @@ export function OrdenPublicaView({
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
   const cargar = React.useCallback(() => ordenPublicaAction(subdominio, token), [subdominio, token])
+  const [estadoEnVivo, setEstadoEnVivo] = React.useState<EstadoConexion>("conectando")
+  // Quien espera el pago (esperarPago) se entera por el socket sin esperar a la siguiente consulta.
+  const alNotificar = React.useRef<((n: NotificacionOrdenComprador) => void) | null>(null)
+
+  // Tiempo real (W-022): socket anónimo a /topic/ordenes/{token}. Cada evento vuelve a leer la orden por la API (la fuente de
+  // verdad) en vez de armarla con el mensaje. Si el socket no conecta, queda la consulta (ver esperarPago).
+  React.useEffect(() => {
+    const canal = abrirCanal<NotificacionOrdenComprador>({
+      destino: `/topic/ordenes/${token}`,
+      alCambiarEstado: setEstadoEnVivo,
+      alMensaje: (n) => {
+        alNotificar.current?.(n)
+        void cargar().then((res) => {
+          if (res.ok) setOrden(res.datos)
+        })
+      },
+    })
+    return () => canal.cerrar()
+  }, [token, cargar])
 
   React.useEffect(() => {
     let cancelado = false
@@ -65,18 +87,35 @@ export function OrdenPublicaView({
     } else setError(res.error)
   }
 
-  // Tras pagar con tarjeta, el webhook de la API marca la orden: se consulta unos segundos hasta verla pagada.
-  const esperarPago = async (): Promise<boolean> => {
-    for (let i = 0; i < 12; i++) {
-      const res = await cargar()
-      if (res.ok) {
-        setOrden(res.datos)
-        if (res.datos.estado_pago !== "PENDIENTE") return true
+  // Tras pagar con tarjeta, el webhook de la API marca la orden. Se espera el aviso del socket (llega al instante) y, como
+  // respaldo por si el socket no conecta o se cae, se consulta cada 5 s hasta unos 60 s.
+  const esperarPago = (): Promise<boolean> =>
+    new Promise((resolver) => {
+      let terminado = false
+      const terminar = (pagada: boolean) => {
+        if (terminado) return
+        terminado = true
+        clearInterval(intervalo)
+        alNotificar.current = null
+        resolver(pagada)
       }
-      await new Promise((r) => setTimeout(r, 1500))
-    }
-    return false
-  }
+      const consultar = async () => {
+        const res = await cargar()
+        if (res.ok) {
+          setOrden(res.datos)
+          if (res.datos.estado_pago !== "PENDIENTE") terminar(true)
+        }
+      }
+      alNotificar.current = (n) => {
+        if (n.tipo === "ORDEN_PAGADA") void consultar()
+      }
+      let intentos = 0
+      const intervalo = setInterval(() => {
+        if (++intentos >= 12) return terminar(false)
+        void consultar()
+      }, 5_000)
+      void consultar()
+    })
 
   if (cargando && !orden) return <p className="text-[13px] text-muted-foreground">Cargando tu orden…</p>
 
@@ -95,7 +134,10 @@ export function OrdenPublicaView({
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-[12px] font-bold text-muted-foreground">Orden</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[12px] font-bold text-muted-foreground">Orden</p>
+          <IndicadorEnVivo estado={estadoEnVivo} />
+        </div>
         <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">{orden.numero_orden}</h1>
         <p className="mt-1 text-[13px] text-muted-foreground">Hecha el {formatearFecha(orden.fecha_creacion)}</p>
       </div>

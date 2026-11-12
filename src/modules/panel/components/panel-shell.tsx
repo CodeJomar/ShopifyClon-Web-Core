@@ -22,6 +22,7 @@ import { PERMISO, ROL } from "@/shared/constants/permisos"
 import { cerrarSesionAction } from "@/modules/auth"
 import { cn } from "@/shared/utils/cn"
 import { usePanel } from "../hooks/use-panel"
+import { TiempoRealPanelProvider } from "../context/tiempo-real"
 
 const ETIQUETA_ROL: Record<string, string> = {
   [ROL.PROPIETARIO]: "Propietario",
@@ -76,6 +77,8 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const nombreCorto = [abreviar(nombres), abreviar(apellidos)].filter(Boolean).join(" ")
   const permiso = permisoDeRuta(pathname)
   const permitida = esRutaPlataforma ? esAdministradorPlataforma : (!permiso || puede(permiso))
+  // Tiempo real (W-022): solo en el panel de una tienda y para quien puede ver sus órdenes.
+  const tiempoRealActivo = !esRutaPlataforma && pathname.startsWith("/panel") && Boolean(tienda) && puede(PERMISO.ORDENES_VER)
 
   const cerrarSesion = async () => {
     await cerrarSesionAction()
@@ -92,6 +95,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   )
 
   return (
+    <TiempoRealPanelProvider tiendaId={tienda?.id} activo={tiempoRealActivo}>
     <div className="otemu-app-shell flex h-screen overflow-hidden bg-background">
       {!isMobile && (
         <aside className={cn("otemu-rail sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
@@ -172,5 +176,6 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
         </div>
       </div>
     </div>
+    </TiempoRealPanelProvider>
   )
 }
