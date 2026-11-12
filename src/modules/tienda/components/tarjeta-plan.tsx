@@ -66,7 +66,7 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
         ) : (
           <li>Hasta {plan.limite_productos.toLocaleString("es-PE")} productos</li>
         )}
-        {plan.limite_personal == null ? <li>Personas ilimitadas en el equipo</li> : <li>Hasta {plan.limite_personal} personas en el equipo</li>}
+        {plan.limite_personal == null ? <li>Personas ilimitadas en el equipo</li> : plan.limite_personal === 0 ? <li>Solo tú administras la tienda</li> : <li>Hasta {plan.limite_personal} personas en el equipo</li>}
         <li>Comisión de {(plan.porcentaje_comision * 100).toLocaleString("es-PE", { maximumFractionDigits: 2 })} % por venta</li>
       </ul>
     </Card>
