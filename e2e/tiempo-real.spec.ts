@@ -73,3 +73,51 @@ test.describe("Tiempo real (W-022)", () => {
     await contextoComprador.close()
   })
 })
+
+test.describe("Tiempo real: el ticket del WebSocket (W-022-C1)", () => {
+  test.setTimeout(240_000)
+
+  /** Comerciante con tienda y la sesión iniciada en un contexto nuevo, listo para abrir el panel. */
+  async function comercianteConTienda(browser: import("@playwright/test").Browser, baseURL: string | undefined) {
+    const contexto = await browser.newContext({ baseURL })
+    const cuenta = await crearCuentaActiva(contexto.request, "tr")
+    const login = await contexto.request.post("/api/auth/login", { data: { correo_electronico: cuenta.correo, contrasena: cuenta.contrasena } })
+    expect(login.ok(), "login").toBeTruthy()
+    await crearTiendaConProducto(contexto.request)
+    return contexto
+  }
+
+  test("un fallo transitorio al pedir el ticket (502) no cierra el canal: reintenta y conecta", async ({ browser, baseURL }) => {
+    const contexto = await comercianteConTienda(browser, baseURL)
+    const panel = await contexto.newPage()
+    let pedidos = 0
+    await panel.route("**/api/auth/ws-ticket", (ruta) => {
+      pedidos++
+      // Los dos primeros intentos fallan como si el proxy no pudiera hablar con la API.
+      if (pedidos <= 2) return ruta.fulfill({ status: 502, contentType: "application/json", body: JSON.stringify({ exito: false, codigo: "WEB-001", mensaje: "No pudimos conectar con el servidor" }) })
+      return ruta.continue()
+    })
+    await panel.goto("/panel/ordenes")
+    await expect(panel.getByRole("heading", { name: "Órdenes", level: 1 })).toBeVisible({ timeout: 60_000 })
+    await expect(panel.getByText("Reconectando…")).toBeVisible({ timeout: 20_000 })
+    await expect(panel.getByText("En vivo")).toBeVisible({ timeout: 30_000 })
+    expect(pedidos, "se pidió un ticket nuevo en cada intento").toBeGreaterThanOrEqual(3)
+    await contexto.close()
+  })
+
+  test("sin sesión (401) el canal se cierra y no sigue pidiendo tickets", async ({ browser, baseURL }) => {
+    const contexto = await comercianteConTienda(browser, baseURL)
+    const panel = await contexto.newPage()
+    let pedidos = 0
+    await panel.route("**/api/auth/ws-ticket", (ruta) => {
+      pedidos++
+      return ruta.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ exito: false, codigo: "SEG-007", mensaje: "Tu sesión terminó" }) })
+    })
+    await panel.goto("/panel/ordenes")
+    await expect(panel.getByRole("heading", { name: "Órdenes", level: 1 })).toBeVisible({ timeout: 60_000 })
+    await expect(panel.getByText("Sin conexión en vivo")).toBeVisible({ timeout: 20_000 })
+    await panel.waitForTimeout(6_000)
+    expect(pedidos, "no reintenta con una sesión revocada").toBe(1)
+    await contexto.close()
+  })
+})
