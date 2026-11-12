@@ -7,7 +7,7 @@ import { Menu, Search, ShoppingBag, Store } from "lucide-react"
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 import { cn } from "@/shared/utils/cn"
-import { useCarritoEjemplo } from "@/modules/mercado/carrito-mock"
+import { useCarrito } from "@/modules/carrito-global/carrito"
 import { useAcceso } from "@/modules/acceso/acceso"
 import { MenuCuenta, useEnlacesCuenta } from "./menu-cuenta"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "./estilos"
@@ -32,7 +32,7 @@ export function Logo({ className }: { className?: string }) {
 /** Cabecera de la zona pública: logo, navegación, búsqueda del mercado, tema y acceso. */
 export function CabeceraPublica() {
   const ruta = usePathname()
-  const { cantidadTotal, listo } = useCarritoEjemplo()
+  const { cantidadTotal, listo } = useCarrito()
   const { acceso } = useAcceso()
   const enlacesCuenta = useEnlacesCuenta()
   const activo = (href: string) => (href === "/mercado" ? ruta === "/mercado" || ruta.startsWith("/mercado/tienda/") : ruta.startsWith(href))

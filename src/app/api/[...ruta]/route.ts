@@ -4,16 +4,19 @@ import { randomUUID } from "node:crypto"
 import { NextResponse, type NextRequest } from "next/server"
 import {
   borrarCarrito,
+  borrarCarritoGlobal,
   borrarSesion,
   borrarTienda,
   carritosDeLaPeticion,
   esSubdominioValido,
   fijarCarrito,
+  fijarCarritoGlobal,
   fijarSesion,
   fijarTienda,
   leerTienda,
   leerToken,
   leerTokenCarrito,
+  leerTokenCarritoGlobal,
 } from "@/lib/sesion/cookies"
 import { CODIGO_CONEXION, MENSAJE_CONEXION, respuestaError } from "@/lib/sesion/respuestas"
 
@@ -77,7 +80,11 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
   // Carrito de la vitrina: el token sale de la cookie de esa tienda (nunca del navegador).
   const infoCarrito = infoRutaCarrito(ruta)
   const tokenCarrito = infoCarrito ? leerTokenCarrito(request, infoCarrito.subdominio) : undefined
+  // Carrito global (B4/B5): `carrito/**` y `checkout`. El token sale de la cookie global y nunca del navegador.
+  const esGlobal = esRutaCarritoGlobal(ruta)
+  const tokenGlobal = esGlobal ? leerTokenCarritoGlobal(request) : undefined
   if (tokenCarrito) cabeceras.set("X-Carrito-Token", tokenCarrito)
+  if (tokenGlobal) cabeceras.set("X-Carrito-Token", tokenGlobal)
   cabeceras.set("X-Correlacion-Id", idCorrelacion)
   // IP real del visitante para el limitador de la API (A-002). Solo se confía si llega con el secreto compartido.
   const ipCliente = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
@@ -119,6 +126,7 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
   }
 
   if (infoCarrito) actualizarCookieCarrito(respuesta, infoCarrito, respuestaApi.status, bytes)
+  if (esGlobal) actualizarCookieCarritoGlobal(respuesta, ruta[0] === "checkout", respuestaApi.status, bytes)
 
   const rutaTexto = ruta.join("/")
   const esLogin = (rutaTexto === RUTA_LOGIN || rutaTexto === RUTA_LOGIN_VERIFICAR) && request.method === "POST"
@@ -153,6 +161,23 @@ function infoRutaCarrito(ruta: string[]): { subdominio: string; checkout: boolea
   if (ruta[2] === "carrito") return { subdominio: ruta[1], checkout: false }
   if (ruta[2] === "checkout" && ruta.length === 3) return { subdominio: ruta[1], checkout: true }
   return null
+}
+
+/** `carrito`, `carrito/…` o `checkout` (sin subdominio): el carrito global de varias tiendas. */
+function esRutaCarritoGlobal(ruta: string[]): boolean {
+  return ruta[0] === "carrito" || (ruta[0] === "checkout" && ruta.length === 1)
+}
+
+// Cookie global: se fija con el token del carrito que entrega la API; se borra tras un checkout exitoso o si el carrito ya no sirve.
+function actualizarCookieCarritoGlobal(respuesta: NextResponse, checkout: boolean, estado: number, bytes: ArrayBuffer) {
+  if (checkout && estado >= 200 && estado < 300) return borrarCarritoGlobal(respuesta)
+  if (estado >= 200 && estado < 300) {
+    const datos = cuerpoJson(bytes)?.datos as { token?: unknown } | undefined
+    if (typeof datos?.token === "string") fijarCarritoGlobal(respuesta, datos.token)
+    return
+  }
+  const codigo = cuerpoJson(bytes)?.codigo
+  if (typeof codigo === "string" && (codigo === "CAR-008" || (estado === 404 && codigo.startsWith("CAR-")))) borrarCarritoGlobal(respuesta)
 }
 
 function cuerpoJson(bytes: ArrayBuffer): Record<string, unknown> | null {
@@ -198,7 +223,28 @@ const TIMEOUT_VINCULAR_MS = 5_000
 const MAX_CARRITOS_VINCULAR = 10
 
 /** Fusiona los carritos anónimos del navegador con la cuenta recién autenticada (CAR-007). Mejor esfuerzo: no bloquea el login. */
-async function vincularCarritos(request: NextRequest, token: string): Promise<void> {
+async function vincularCarritos(request: NextRequest, token: string): Promise<string | undefined> {
+  let tokenGlobalNuevo: string | undefined
+  const global = leerTokenCarritoGlobal(request)
+  if (global) {
+    const destinoGlobal = urlDestino(["carrito", "vincular"], "")
+    if (destinoGlobal) {
+      try {
+        const res = await fetch(destinoGlobal, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "X-Carrito-Token": global, "X-Correlacion-Id": randomUUID() },
+          cache: "no-store",
+          redirect: "manual",
+          signal: AbortSignal.timeout(TIMEOUT_VINCULAR_MS),
+        })
+        // Al fusionar con el carrito de la cuenta, la API puede devolver otro token: es el que vale desde ahora.
+        const datos = res.ok ? (cuerpoJson(await res.arrayBuffer())?.datos as { token?: unknown } | undefined) : undefined
+        if (typeof datos?.token === "string") tokenGlobalNuevo = datos.token
+      } catch {
+        // Mejor esfuerzo, igual que los carritos por tienda.
+      }
+    }
+  }
   for (const carrito of carritosDeLaPeticion(request).slice(0, MAX_CARRITOS_VINCULAR)) {
     const destino = urlDestino(["vitrina", carrito.subdominio, "carrito", "vincular"], "")
     if (!destino) continue
@@ -214,6 +260,7 @@ async function vincularCarritos(request: NextRequest, token: string): Promise<vo
       // Sin efecto en el login: el carrito anónimo sigue en su cookie.
     }
   }
+  return tokenGlobalNuevo
 }
 
 // En el login la API devuelve el token en el cuerpo: se guarda en cookie y se quita antes de responder.
@@ -253,7 +300,8 @@ async function sesionDesdeLogin(
   } else {
     borrarTienda(salida)
   }
-  await vincularCarritos(request, token)
+  const tokenGlobalNuevo = await vincularCarritos(request, token)
+  if (tokenGlobalNuevo) fijarCarritoGlobal(salida, tokenGlobalNuevo)
   return salida
 }
 

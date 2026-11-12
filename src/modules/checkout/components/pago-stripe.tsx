@@ -7,18 +7,19 @@ import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
-import { iniciarPagoStripeAction } from "../actions/checkout.actions"
 
 const clavePublica = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 // Se crea una sola vez; con la clave vacía no se carga Stripe.js y el bloque avisa de que falta configurarlo.
 const stripePromise = clavePublica ? loadStripe(clavePublica) : null
 
 /**
- * Pago con tarjeta de una orden con pasarela STRIPE. La web no calcula montos: pide a la API el intento de pago
+ * Pago con tarjeta de una orden (o de un pedido de varias tiendas) con pasarela STRIPE; `iniciar` pide el intento a la API. La web no calcula montos: pide a la API el intento de pago
  * (POST …/pagar) y Stripe.js lo confirma con el `client_secret`. Quien marca la orden como pagada es el webhook de la API;
  * aquí solo se espera a que `alPagar` la vea en `PAGADO`.
  */
-export function PagoStripe({ subdominio, token, alPagar }: { subdominio: string; token: string; alPagar: () => Promise<boolean> }) {
+type IniciarPago = () => Promise<{ ok: true; datos: { client_secret: string } } | { ok: false; error: { message: string } }>
+
+export function PagoStripe({ iniciar: iniciarPago, alPagar }: { iniciar: IniciarPago; alPagar: () => Promise<boolean> }) {
   const [secreto, setSecreto] = React.useState<string | null>(null)
   const [iniciando, setIniciando] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
@@ -40,7 +41,7 @@ export function PagoStripe({ subdominio, token, alPagar }: { subdominio: string;
   const iniciar = async () => {
     setError(null)
     setIniciando(true)
-    const res = await iniciarPagoStripeAction(subdominio, token)
+    const res = await iniciarPago()
     setIniciando(false)
     if (res.ok) setSecreto(res.datos.client_secret)
     else setError(res.error.message)

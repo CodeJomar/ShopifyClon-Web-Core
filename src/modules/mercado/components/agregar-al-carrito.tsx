@@ -5,38 +5,34 @@ import Link from "next/link"
 import { Minus, Plus, ShoppingBag } from "lucide-react"
 import { toast } from "@/shared/components/ui/toast"
 import { claseBotonMarca } from "@/shared/components/marketing/estilos"
-import { useCarritoEjemplo } from "../carrito-mock"
 import { formatearDinero } from "@/shared/utils/dinero"
-import type { ProductoMercado } from "@/dtos/mercado"
+import { useCarrito } from "@/modules/carrito-global/carrito"
 import type { VarianteVitrina } from "@/dtos/vitrina"
 
-/** Selector de cantidad y botón «Agregar al carrito» del detalle de producto. */
-export function AgregarAlCarrito({ producto: base, variantes = [] }: { producto: ProductoMercado; variantes?: VarianteVitrina[] }) {
-  const { agregar } = useCarritoEjemplo()
+/** Selector de opción y cantidad, y botón «Agregar al carrito» del detalle de producto (carrito global de la API). */
+export function AgregarAlCarrito({ titulo, moneda, variantes }: { titulo: string; moneda: string; variantes: VarianteVitrina[] }) {
+  const { agregar } = useCarrito()
   const [cantidad, setCantidad] = React.useState(1)
   const [agregado, setAgregado] = React.useState(false)
+  const [enviando, setEnviando] = React.useState(false)
   const [varianteId, setVarianteId] = React.useState(variantes.find((v) => v.disponible)?.id ?? variantes[0]?.id)
   const variante = variantes.find((v) => v.id === varianteId)
-  // Con varias variantes el carrito guarda la elegida: su id, su precio y su título.
-  const producto: ProductoMercado = variante
-    ? {
-        ...base,
-        id: variante.id,
-        titulo: variantes.length > 1 ? `${base.titulo} · ${variante.titulo}` : base.titulo,
-        precio_desde: Number(variante.precio),
-        precio_comparacion_desde: variante.precio_comparacion == null ? null : Number(variante.precio_comparacion),
-        hay_stock: variante.disponible,
-        es_digital: !variante.requiere_envio,
-      }
-    : base
 
-  const confirmar = () => {
-    agregar(producto, cantidad)
+  const confirmar = async () => {
+    if (!variante) return
+    setEnviando(true)
+    const error = await agregar(variante.id, cantidad)
+    setEnviando(false)
+    if (error) {
+      // CAR-009: el carrito es de una sola moneda; INV-*: sin stock suficiente.
+      toast.add({ type: "error", title: "No pudimos agregarlo", description: error.message })
+      return
+    }
     setAgregado(true)
-    toast.add({ type: "success", title: "Agregado al carrito", description: `${cantidad} × ${producto.titulo}` })
+    toast.add({ type: "success", title: "Agregado al carrito", description: `${cantidad} × ${titulo}` })
   }
 
-  if (!producto.hay_stock) {
+  if (!variante?.disponible && !variantes.some((v) => v.disponible)) {
     return <p className="rounded-xl bg-secondary px-4 py-3 text-[14px] font-semibold text-muted-foreground">Este producto está agotado por ahora.</p>
   }
 
@@ -58,7 +54,7 @@ export function AgregarAlCarrito({ producto: base, variantes = [] }: { producto:
                   (v.id === varianteId ? "border-primary bg-primary/10 text-foreground" : "border-input text-foreground hover:border-primary")
                 }
               >
-                {v.titulo} · {formatearDinero(Number(v.precio), base.moneda)}
+                {v.titulo} · {formatearDinero(Number(v.precio), moneda)}
               </button>
             ))}
           </div>
@@ -88,8 +84,8 @@ export function AgregarAlCarrito({ producto: base, variantes = [] }: { producto:
             <Plus className="size-4" aria-hidden="true" />
           </button>
         </div>
-        <button type="button" onClick={confirmar} className={claseBotonMarca + " flex-1 sm:flex-none sm:min-w-52"}>
-          <ShoppingBag aria-hidden="true" /> Agregar al carrito
+        <button type="button" onClick={confirmar} disabled={enviando || !variante?.disponible} className={claseBotonMarca + " flex-1 disabled:opacity-60 sm:min-w-52 sm:flex-none"}>
+          <ShoppingBag aria-hidden="true" /> {enviando ? "Agregando…" : "Agregar al carrito"}
         </button>
       </div>
       {agregado && (

@@ -83,7 +83,7 @@ export default async function DetalleProducto({ params }: Props) {
           <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted-foreground">{detalle.descripcion}</p>
 
           <div className="mt-8">
-            <AgregarAlCarrito producto={producto} variantes={variantes} />
+            <AgregarAlCarrito titulo={detalle.titulo} moneda={moneda} variantes={variantes} />
           </div>
 
           <ul className="mt-8 space-y-3 rounded-2xl border border-island-border bg-card p-5 text-[14px] font-medium text-foreground">

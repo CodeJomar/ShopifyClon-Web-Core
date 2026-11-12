@@ -9,7 +9,7 @@ import { formatearDinero } from "@/shared/utils/dinero"
 import { formatearFecha } from "@/shared/utils/fechas"
 import type { OrdenPublica } from "@/dtos/checkout"
 import type { ErrorApi } from "@/lib/api/error-api"
-import { ordenPublicaAction } from "../actions/checkout.actions"
+import { iniciarPagoStripeAction, ordenPublicaAction } from "../actions/checkout.actions"
 import { PagoStripe } from "../components/pago-stripe"
 import { abrirCanal, type EstadoConexion } from "@/lib/tiempo-real/canal"
 import { IndicadorEnVivo } from "@/shared/components/composed/indicador-en-vivo"
@@ -159,7 +159,7 @@ export function OrdenPublicaView({
         </CardContent>
       </Card>
 
-      {pagoPendiente && orden.pasarela === "STRIPE" && <PagoStripe subdominio={subdominio} token={token} alPagar={esperarPago} />}
+      {pagoPendiente && orden.pasarela === "STRIPE" && <PagoStripe iniciar={() => iniciarPagoStripeAction(subdominio, token)} alPagar={esperarPago} />}
 
       {pagoPendiente && orden.pasarela !== "STRIPE" && (
         <Alert>

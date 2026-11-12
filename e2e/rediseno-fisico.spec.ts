@@ -1,0 +1,36 @@
+import { test, expect } from "@playwright/test"
+import { crearCuentaActiva } from "./soporte/tienda-de-pruebas"
+
+test("compra con producto físico: elige el envío de la tienda y el pedido aparece en Mis pedidos", async ({ browser, baseURL }) => {
+  test.setTimeout(240_000)
+  const ctx = await browser.newContext({ baseURL })
+  const page = await ctx.newPage()
+  const cuenta = await crearCuentaActiva(ctx.request, "fz")
+  await page.goto("/login")
+  await page.getByLabel("Correo electrónico").fill(cuenta.correo)
+  await page.getByLabel("Contraseña", { exact: true }).fill(cuenta.contrasena)
+  await page.getByRole("button", { name: "Iniciar sesión" }).click()
+  await page.waitForURL(/\/mercado/, { timeout: 60_000 })
+
+  // Un producto físico con stock de la API real (necesita tarifa de envío en su tienda).
+  const lista = await ctx.request.get("/api/mercado/productos?tamano=48")
+  const fisicos = ((await lista.json()).datos.datos as { identificador_url: string; es_digital: boolean; hay_stock: boolean; tienda: { subdominio: string } }[]).filter((p) => !p.es_digital && p.hay_stock)
+  test.skip(fisicos.length === 0, "no hay productos físicos en el mercado de prueba")
+  await page.goto(`/mercado/tienda/${fisicos[0].tienda.subdominio}/${fisicos[0].identificador_url}`)
+  await page.getByRole("button", { name: "Agregar al carrito" }).click()
+  await expect(page.getByText("Agregado al carrito")).toBeVisible()
+  await page.goto("/checkout")
+  await page.getByLabel("Nombre y apellido").fill("Ana Compradora")
+  await page.getByLabel("Correo electrónico").fill("ana@otemu.test")
+  await page.getByLabel("Dirección", { exact: true }).fill("Av. Larco 123")
+  await page.getByLabel("Ciudad").fill("Lima")
+  await page.getByLabel("Departamento o provincia").fill("Lima")
+  await page.getByLabel("Código postal").fill("15074")
+  await page.getByRole("application", { name: /Mapa/ }).click()
+  await expect(page.getByRole("radio").first()).toBeVisible({ timeout: 20_000 })
+  await page.getByRole("button", { name: /^Continuar al pago de/ }).click()
+  await page.waitForURL(/\/mis-pedidos\/.+/, { timeout: 60_000 })
+  await expect(page.getByRole("heading", { level: 1, name: /^Pedido P-/ })).toBeVisible()
+  await page.goto("/mis-pedidos")
+  await expect(page.getByText(/^Pedido P-/).first()).toBeVisible({ timeout: 20_000 })
+})

@@ -82,3 +82,19 @@ export function borrarCarrito(respuesta: NextResponse, subdominio: string) {
   if (!esSubdominioValido(subdominio)) return
   respuesta.cookies.set(nombreCookieCarrito(subdominio), "", { ...base, maxAge: 0 })
 }
+
+/** Carrito global (B4): un solo token para productos de todas las tiendas. httpOnly, como el resto. */
+export const COOKIE_CARRITO_GLOBAL = "otemu_carrito"
+
+export function leerTokenCarritoGlobal(request: NextRequest): string | undefined {
+  return request.cookies.get(COOKIE_CARRITO_GLOBAL)?.value || undefined
+}
+
+export function fijarCarritoGlobal(respuesta: NextResponse, token: string) {
+  const expira = new Date(Date.now() + DIAS_CARRITO * 24 * 60 * 60 * 1000)
+  respuesta.cookies.set(COOKIE_CARRITO_GLOBAL, token, { ...base, expires: expira })
+}
+
+export function borrarCarritoGlobal(respuesta: NextResponse) {
+  respuesta.cookies.set(COOKIE_CARRITO_GLOBAL, "", { ...base, maxAge: 0 })
+}

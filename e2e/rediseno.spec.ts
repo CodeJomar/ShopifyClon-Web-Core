@@ -17,10 +17,10 @@ test.describe("Rediseño: zona pública y perfiles", () => {
     await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible()
   })
 
-  test("mercado: agrega productos de tres tiendas reales y paga una sola vez", async ({ page, request }) => {
+  test("mercado: agrega productos de tres tiendas reales y crea un solo pedido para pagar con tarjeta", async ({ page, request }) => {
     // Datos reales del mercado (B1): un producto disponible de tres tiendas distintas.
     const lista = await request.get("/api/mercado/productos?tamano=48&orden=recientes")
-    const productos = ((await lista.json()).datos.datos as { titulo: string; identificador_url: string; hay_stock: boolean; tienda: { nombre: string; subdominio: string } }[]).filter((p) => p.hay_stock)
+    const productos = ((await lista.json()).datos.datos as { titulo: string; identificador_url: string; hay_stock: boolean; es_digital: boolean; tienda: { nombre: string; subdominio: string } }[]).filter((p) => p.hay_stock && p.es_digital)
     const elegidos: typeof productos = []
     for (const p of productos) if (!elegidos.some((e) => e.tienda.subdominio === p.tienda.subdominio) && elegidos.length < 3) elegidos.push(p)
     expect(elegidos.length, "el mercado debe tener productos de al menos tres tiendas").toBe(3)
@@ -42,16 +42,16 @@ test.describe("Rediseño: zona pública y perfiles", () => {
 
     await page.getByLabel("Nombre y apellido").fill("Ana Compradora")
     await page.getByLabel("Correo electrónico").fill("ana@otemu.test")
-    const direccion = page.getByLabel("Dirección", { exact: true })
-    if (await direccion.isVisible()) {
-      await direccion.fill("Av. Larco 123, Miraflores")
-      await page.getByRole("application", { name: /Mapa/ }).click()
-    }
     await expect(page.getByText("Tarjeta: un solo pago")).toBeVisible()
-    await page.getByRole("button", { name: /^Pagar S\// }).click()
+    await page.getByRole("button", { name: /^Continuar al pago de/ }).click()
 
-    await page.waitForURL(/\/mis-pedidos\//)
-    await expect(page.getByText("Pago recibido: un solo pago para todo el pedido")).toBeVisible()
+    // Un solo pedido con una orden por tienda; el pago con tarjeta es uno solo por el total.
+    await page.waitForURL(/\/mis-pedidos\/.+/, { timeout: 60_000 })
+    await expect(page.getByRole("heading", { level: 1, name: /^Pedido P-/ })).toBeVisible()
+    await expect(page.getByText("Falta pagar con tarjeta")).toBeVisible()
+    await page.getByRole("button", { name: "Pagar con tarjeta" }).click()
+    // La API crea un único intento de pago por el total del pedido y Stripe muestra su formulario.
+    await expect(page.locator('iframe[name^="__privateStripeFrame"]').first()).toBeAttached({ timeout: 30_000 })
     for (const p of elegidos) await expect(page.getByRole("link", { name: p.tienda.nombre })).toBeVisible()
   })
 
