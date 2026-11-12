@@ -8,6 +8,7 @@ import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { toast } from "@/shared/components/ui/toast"
+import { fechaLima } from "@/shared/utils/fechas"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { FloatingTextarea } from "@/shared/components/composed/floating-textarea"
@@ -34,7 +35,7 @@ function aSeleccion(ruta: RutaDetalle): EnvioDisponible[] {
 /** Crear o editar una ruta (solo en borrador): datos del reparto y paradas en el orden de visita. */
 export function RutaForm({ inicial }: { inicial?: RutaDetalle }) {
   const router = useRouter()
-  const [fecha, setFecha] = React.useState(() => inicial?.fecha ?? new Date().toLocaleDateString("sv-SE"))
+  const [fecha, setFecha] = React.useState(() => inicial?.fecha ?? fechaLima())
   const [chofer, setChofer] = React.useState(inicial?.chofer ?? "")
   const [placa, setPlaca] = React.useState(inicial?.placa ?? "")
   const [nota, setNota] = React.useState(inicial?.nota ?? "")

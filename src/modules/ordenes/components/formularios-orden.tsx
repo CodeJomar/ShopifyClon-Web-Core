@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { diaLima } from "@/shared/utils/fechas"
 import type { EnvioOrden, MotivoCancelacion } from "@/dtos/ordenes"
 import type { ErrorApi } from "@/lib/api/error-api"
 import {
@@ -89,7 +90,7 @@ export function EnvioForm({
     empresa_transporte: envio?.empresa_transporte ?? "",
     numero_guia: envio?.numero_guia ?? "",
     url_seguimiento: envio?.url_seguimiento ?? "",
-    fecha_entrega_estimada: envio?.fecha_entrega_estimada ? envio.fecha_entrega_estimada.slice(0, 10) : "",
+    fecha_entrega_estimada: envio?.fecha_entrega_estimada ? diaLima(envio.fecha_entrega_estimada) : "",
   })
   const [mensaje, setMensaje] = React.useState<string | null>(null)
   const set = (campo: keyof DatosEnvio) => (e: React.ChangeEvent<HTMLInputElement>) => setDatos((d) => ({ ...d, [campo]: e.target.value }))
