@@ -1,18 +1,24 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/shared/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
-import { toast } from "@/shared/components/ui/toast"
 import { CampoContrasena } from "@/modules/auth/components/campo-contrasena"
+import { cerrarSesionAction } from "@/modules/auth"
 import { cambiarContrasenaAction } from "../actions/cuenta.actions"
 import { cambiarContrasenaSchema, type CambiarContrasenaValues } from "../schema"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-/** Cambio de contraseña. USR-010 (actual incorrecta o nueva igual a la anterior) se pinta en el campo de la actual. */
+/**
+ * Cambio de contraseña. USR-010 (actual incorrecta o nueva igual a la anterior) se pinta en el campo de la actual y
+ * USR-015 (contraseña demasiado común) en el de la nueva. Al cambiarla la API cierra TODAS las sesiones (A-007): la web
+ * borra la suya y lleva al login con un aviso, en vez de dejar que la siguiente acción dé un 401 sin explicación.
+ */
 export function ContrasenaForm() {
+  const router = useRouter()
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const form = useForm<CambiarContrasenaValues>({
     resolver: zodResolver(cambiarContrasenaSchema),
@@ -31,14 +37,19 @@ export function ContrasenaForm() {
         form.setError("contrasena_actual", { message: res.error.message })
         form.resetField("contrasena_nueva")
         form.resetField("confirmar")
+      } else if (res.error.codigo === "USR-015") {
+        // Error de negocio (no viene en `validaciones`): se muestra junto al campo de la contraseña nueva.
+        form.setError("contrasena_nueva", { message: res.error.message })
+        form.resetField("confirmar")
       } else {
         setError(res.error)
         form.reset()
       }
       return
     }
-    toast.add({ type: "success", title: "Contraseña actualizada", description: "Usa la nueva la próxima vez que inicies sesión." })
     form.reset()
+    await cerrarSesionAction()
+    router.replace("/login?aviso=contrasena")
   })
 
   const estado = (campo: keyof CambiarContrasenaValues) => (form.formState.errors[campo] ? "error" : "default") as "error" | "default"
@@ -73,6 +84,7 @@ export function ContrasenaForm() {
         mensajeError={form.formState.errors.confirmar?.message}
         {...form.register("confirmar")}
       />
+      <p className="text-[12px] text-muted-foreground">Al cambiarla se cerrará tu sesión en todos los dispositivos.</p>
       <Button type="submit" variant="soft" loading={form.formState.isSubmitting}>
         Cambiar contraseña
       </Button>

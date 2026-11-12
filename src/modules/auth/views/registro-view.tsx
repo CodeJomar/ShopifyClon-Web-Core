@@ -36,6 +36,11 @@ export function RegistroView() {
     for (const [campo, mensaje] of Object.entries(e.validaciones ?? {})) {
       form.setError(campo as keyof RegistroValues, { message: mensaje })
     }
+    // USR-015 (contraseña demasiado común o con el nombre del correo) es un error de negocio: va junto al campo, no en la alerta.
+    if (e.codigo === "USR-015") {
+      form.setError("contrasena", { message: e.message })
+      return
+    }
     setError(e)
     form.resetField("contrasena")
   })

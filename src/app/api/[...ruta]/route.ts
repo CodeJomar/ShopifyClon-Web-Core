@@ -22,6 +22,8 @@ export const dynamic = "force-dynamic"
 
 const TIMEOUT_MS = 15_000
 const RUTA_LOGIN = "auth/login"
+// Segundo paso del login con dos pasos activo (A-007): responde como un login normal y es quien crea la sesión.
+const RUTA_LOGIN_VERIFICAR = "auth/login/verificar"
 // El token del carrito no se acepta del navegador: sale solo de la cookie httpOnly de la tienda (W-015).
 const CABECERAS_PERMITIDAS = ["content-type", "accept", "idempotency-key"] as const
 // Cabeceras de la API que el navegador necesita además del cuerpo.
@@ -119,7 +121,7 @@ async function reenviar(request: NextRequest, ctx: Contexto): Promise<NextRespon
   if (infoCarrito) actualizarCookieCarrito(respuesta, infoCarrito, respuestaApi.status, bytes)
 
   const rutaTexto = ruta.join("/")
-  const esLogin = rutaTexto === RUTA_LOGIN && request.method === "POST"
+  const esLogin = (rutaTexto === RUTA_LOGIN || rutaTexto === RUTA_LOGIN_VERIFICAR) && request.method === "POST"
 
   if (esLogin && respuestaApi.status === 200) {
     return await sesionDesdeLogin(request, respuesta, bytes, idCorrelacion)
@@ -228,6 +230,10 @@ async function sesionDesdeLogin(
     return respuestaError(502, CODIGO_CONEXION, MENSAJE_CONEXION, { idCorrelacion })
   }
   const datos = cuerpo.datos ?? {}
+  // Cuenta con dos pasos (A-007): la API aún no da token, solo avisa de que mandó un código al correo. No se crea sesión.
+  if (datos.requiere_segundo_factor === true && typeof datos.token !== "string") {
+    return NextResponse.json(cuerpo, { status: 200, headers: { "X-Correlacion-Id": idCorrelacion } })
+  }
   const token = typeof datos.token === "string" ? datos.token : undefined
   const expiraEn = typeof datos.expira_en === "string" ? datos.expira_en : undefined
   if (!token || !expiraEn) return respuestaError(502, CODIGO_CONEXION, MENSAJE_CONEXION, { idCorrelacion })

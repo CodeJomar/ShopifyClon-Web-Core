@@ -13,6 +13,14 @@ export const actualizarPerfilAction = (datos: { nombres: string; apellidos: stri
 export const cambiarContrasenaAction = (datos: { contrasena_actual: string; contrasena_nueva: string }) =>
   resultado(peticionApi<void>({ method: "PUT", url: "/cuenta/contrasena", data: datos }))
 
+/** Activa o desactiva la verificación en dos pasos (A-007). Pide la contraseña actual; devuelve el perfil. */
+export const cambiarDosPasosAction = (datos: { activo: boolean; contrasena_actual: string }) =>
+  resultado(peticionApi<PerfilCuentaDto>({ method: "PUT", url: "/cuenta/dos-pasos", data: datos }))
+
+/** Invalida TODAS las sesiones de la cuenta en el servidor, incluida la de este navegador (A-007). */
+export const cerrarSesionesAction = () =>
+  resultado(peticionApi<void>({ method: "POST", url: "/cuenta/cerrar-sesiones" }))
+
 export const direccionesAction = () =>
   resultado(peticionApi<DireccionDto[]>({ method: "GET", url: "/cuenta/direcciones" }))
 

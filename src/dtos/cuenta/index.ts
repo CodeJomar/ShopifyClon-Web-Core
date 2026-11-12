@@ -8,6 +8,8 @@ export interface PerfilCuentaDto {
   apellidos: string
   telefono?: string | null
   es_administrador_plataforma: boolean
+  /** Verificación en dos pasos (A-007): al iniciar sesión se pide además un código enviado al correo. */
+  dos_pasos_activo?: boolean
   fecha_creacion: string
 }
 
