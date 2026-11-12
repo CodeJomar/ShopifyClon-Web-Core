@@ -213,9 +213,9 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
             <h1 className="font-mono text-[20px] font-extrabold tracking-tight text-foreground">{orden.numero_orden}</h1>
             <p className="text-[12.5px] text-muted-foreground">Hecha el {formatearFecha(orden.fecha_creacion, zonaHoraria)}</p>
             <div className="flex flex-wrap gap-1.5">
-              <Badge variant="estado" tono={ETIQUETA_ESTADO[orden.estado].tono}>{ETIQUETA_ESTADO[orden.estado].texto}</Badge>
-              <Badge variant="estado" tono={ETIQUETA_PAGO[orden.estado_pago].tono}>{ETIQUETA_PAGO[orden.estado_pago].texto}</Badge>
-              <Badge variant="estado" tono={ETIQUETA_PREPARACION[orden.estado_preparacion].tono}>{ETIQUETA_PREPARACION[orden.estado_preparacion].texto}</Badge>
+              <Badge variant="estado" className="ring-1 ring-border/70" tono={ETIQUETA_ESTADO[orden.estado].tono}>{ETIQUETA_ESTADO[orden.estado].texto}</Badge>
+              <Badge variant="estado" className="ring-1 ring-border/70" tono={ETIQUETA_PAGO[orden.estado_pago].tono}>{ETIQUETA_PAGO[orden.estado_pago].texto}</Badge>
+              <Badge variant="estado" className="ring-1 ring-border/70" tono={ETIQUETA_PREPARACION[orden.estado_preparacion].tono}>{ETIQUETA_PREPARACION[orden.estado_preparacion].texto}</Badge>
             </div>
           </div>
           {Object.values(mostrar).some(Boolean) && <div className="flex flex-wrap items-center gap-2">{botonesAccion}</div>}

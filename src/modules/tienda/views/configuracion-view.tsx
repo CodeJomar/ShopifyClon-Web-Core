@@ -132,7 +132,7 @@ export function ConfiguracionView() {
                 <p className="text-muted-foreground">Plan: <span className="font-bold text-foreground">{tienda.suscripcion?.codigo_plan ?? "Sin plan"}</span></p>
                 <p className="text-muted-foreground">Estado: <span className="font-bold text-foreground">{tienda.suscripcion?.estado ?? "Inactivo"}</span></p>
                 {tienda.suscripcion?.fin_periodo_actual && (
-                  <p className="text-muted-foreground">Vence: <span className="font-bold text-foreground">{formatearFecha(tienda.suscripcion.fin_periodo_actual, tienda.zona_horaria)}</span></p>
+                  <p className="text-muted-foreground">Vence: <span className="font-bold text-foreground">{new Date(tienda.suscripcion.fin_periodo_actual).getFullYear() >= 3000 ? "Nunca (plan gratuito)" : formatearFecha(tienda.suscripcion.fin_periodo_actual, tienda.zona_horaria)}</span></p>
                 )}
                 {puede(PERMISO.SUSCRIPCION_GESTIONAR) && (
                   <Link href="/panel/suscripcion" className="inline-block pt-1 text-[12.5px] font-bold text-brand-text hover:underline">

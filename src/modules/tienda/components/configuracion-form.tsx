@@ -142,7 +142,7 @@ export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: Config
                 href={`/tienda/${tienda.subdominio}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-[12px] font-medium text-primary hover:underline"
+                className="inline-flex items-center gap-1.5 text-[12px] font-bold text-brand-text hover:underline"
               >
                 <span>Ver vitrina pública</span>
                 <ExternalLink className="size-3.5" aria-hidden="true" />

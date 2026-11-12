@@ -122,7 +122,7 @@ export function ComisionesView() {
                     <TableCell className="text-right font-medium text-[13px]">
                       {formatearDinero(item.total_ventas_historico, "USD")}
                     </TableCell>
-                    <TableCell className="text-right font-semibold text-[13px] text-primary">
+                    <TableCell className="text-right font-semibold text-[13px] text-brand-text">
                       {formatearDinero(item.total_comisiones, "USD")}
                     </TableCell>
                   </TableRow>

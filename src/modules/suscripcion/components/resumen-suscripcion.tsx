@@ -49,11 +49,13 @@ export function ResumenSuscripcion({
   const [ahora] = React.useState(() => Date.now())
   const inicioMs = new Date(suscripcion.inicio_periodo).getTime()
   const finMs = new Date(suscripcion.fin_periodo).getTime()
+  // El plan gratuito no vence: la API lo guarda con un fin de periodo en el año 9999.
+  const sinVencimiento = new Date(suscripcion.fin_periodo).getFullYear() >= 3000
   const diasRestantes = Math.max(0, Math.ceil((finMs - ahora) / 86_400_000))
   const avancePeriodo = finMs > inicioMs ? Math.min(100, Math.max(0, Math.round(((ahora - inicioMs) / (finMs - inicioMs)) * 100))) : 0
   const puedePagar = esPropietario && (suscripcion.estado === "PRUEBA" || suscripcion.estado === "VENCIDA")
   const puedeCambiarPlan = esPropietario && (suscripcion.estado === "ACTIVA" || suscripcion.estado === "PRUEBA")
-  const puedeCancelar = esPropietario && (suscripcion.estado === "ACTIVA" || suscripcion.estado === "PRUEBA") && !suscripcion.cancelar_al_finalizar_periodo
+  const puedeCancelar = esPropietario && !sinVencimiento && (suscripcion.estado === "ACTIVA" || suscripcion.estado === "PRUEBA") && !suscripcion.cancelar_al_finalizar_periodo
   const puedeRevertir = esPropietario && suscripcion.cancelar_al_finalizar_periodo
 
   return (
@@ -109,6 +111,11 @@ export function ResumenSuscripcion({
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
+          {sinVencimiento ? (
+            <p className="rounded-xl bg-primary/10 px-4 py-3 text-[13.5px] font-semibold text-foreground">
+              Este plan no se cobra ni vence. Cuando necesites más productos o un equipo, puedes pasar a un plan de pago.
+            </p>
+          ) : (
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-[12.5px]">
               <span className="font-bold text-foreground">{diasRestantes === 0 ? "El periodo termina hoy" : `Quedan ${diasRestantes} ${diasRestantes === 1 ? "día" : "días"} del periodo`}</span>
@@ -118,15 +125,18 @@ export function ResumenSuscripcion({
               <div className={`h-full rounded-full transition-all ${diasRestantes <= 3 ? "bg-warning" : "bg-primary"}`} style={{ width: `${avancePeriodo}%` }} />
             </div>
           </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <div className="rounded-xl border bg-muted/20 p-3.5">
               <p className="text-[11.5px] font-medium text-muted-foreground">Precio pactado</p>
               <p className="mt-1 text-[17px] font-extrabold text-foreground">
-                {formatearDinero(suscripcion.precio_pactado, suscripcion.moneda)}
-                <span className="text-[12px] font-normal text-muted-foreground">
-                  {" "}/ {suscripcion.ciclo === "ANUAL" ? "año" : "mes"}
-                </span>
+                {sinVencimiento ? "Gratis" : formatearDinero(suscripcion.precio_pactado, suscripcion.moneda)}
+                {!sinVencimiento && (
+                  <span className="text-[12px] font-normal text-muted-foreground">
+                    {" "}/ {suscripcion.ciclo === "ANUAL" ? "año" : "mes"}
+                  </span>
+                )}
               </p>
             </div>
 
@@ -138,9 +148,9 @@ export function ResumenSuscripcion({
             </div>
 
             <div className="rounded-xl border bg-muted/20 p-3.5">
-              <p className="text-[11.5px] font-medium text-muted-foreground">Fin de periodo</p>
+              <p className="text-[11.5px] font-medium text-muted-foreground">{sinVencimiento ? "Vigencia" : "Fin de periodo"}</p>
               <p className="mt-1 text-[13.5px] font-bold text-foreground">
-                {formatearFecha(suscripcion.fin_periodo, zonaHoraria)}
+                {sinVencimiento ? "Sin vencimiento" : formatearFecha(suscripcion.fin_periodo, zonaHoraria)}
               </p>
             </div>
 
@@ -153,13 +163,15 @@ export function ResumenSuscripcion({
               </div>
             ) : (
               <div className="rounded-xl border bg-muted/20 p-3.5">
-                <p className="text-[11.5px] font-medium text-muted-foreground">Renovación</p>
+                <p className="text-[11.5px] font-medium text-muted-foreground">{sinVencimiento ? "Cobros" : "Renovación"}</p>
                 <p className="mt-1 flex items-center gap-1.5 text-[13.5px] font-bold text-foreground">
-                  {suscripcion.cancelar_al_finalizar_periodo ? (
+                  {sinVencimiento ? (
+                    <span>Ninguno</span>
+                  ) : suscripcion.cancelar_al_finalizar_periodo ? (
                     <span className="text-destructive-text">No se renovará</span>
                   ) : (
                     <>
-                      <CheckCircle2 className="size-3.5 text-primary" aria-hidden="true" />
+                      <CheckCircle2 className="size-3.5 text-brand-text" aria-hidden="true" />
                       <span>Automática</span>
                     </>
                   )}
@@ -178,7 +190,7 @@ export function ResumenSuscripcion({
               )}
               {puedeCambiarPlan && (
                 <Button variant="neutral" onClick={onCambiarPlan}>
-                  Cambiar de plan
+                  {sinVencimiento ? "Mejorar plan" : "Cambiar de plan"}
                 </Button>
               )}
               {puedeCancelar && (
