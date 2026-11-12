@@ -5,6 +5,7 @@ export const metadata = {
   description: "Crea tu cuenta de OTemu.",
 }
 
-export default function RegistroPage() {
-  return <RegistroView />
+export default async function RegistroPage({ searchParams }: { searchParams: Promise<{ siguiente?: string | string[] }> }) {
+  const { siguiente } = await searchParams
+  return <RegistroView siguiente={Array.isArray(siguiente) ? siguiente[0] : siguiente} />
 }

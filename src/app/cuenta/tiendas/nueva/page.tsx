@@ -5,10 +5,11 @@ export const metadata = {
   description: "Elige un plan y crea tu tienda en OTemu.",
 }
 
-export default function CrearTiendaPage() {
+export default async function CrearTiendaPage({ searchParams }: { searchParams: Promise<{ plan?: string | string[] }> }) {
+  const { plan } = await searchParams
   return (
     <div className="max-w-4xl">
-      <CrearTiendaView />
+      <CrearTiendaView planInicial={Array.isArray(plan) ? plan[0] : plan} />
     </div>
   )
 }

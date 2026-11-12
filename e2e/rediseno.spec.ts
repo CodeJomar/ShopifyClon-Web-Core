@@ -75,4 +75,31 @@ test.describe("Rediseño: zona pública y perfiles", () => {
     await expect(page.getByRole("button", { name: "Administrar" })).toBeVisible()
     await contexto.close()
   })
+
+  test("vender: desde los planes, un comprador abre su tienda gratuita y queda como propietario", async ({ browser, baseURL }) => {
+    const contexto = await browser.newContext({ baseURL })
+    const page = await contexto.newPage()
+    const cuenta = await crearCuentaActiva(contexto.request, "vd")
+
+    await page.goto("/planes")
+    await page.getByRole("link", { name: "Crear mi tienda gratis" }).click()
+    // Sin sesión, la zona de cuenta lleva al login y, al entrar, de vuelta a la creación de la tienda con el plan elegido.
+    await page.waitForURL(/\/login\?siguiente=/)
+    await page.getByLabel("Correo electrónico").fill(cuenta.correo)
+    await page.getByLabel("Contraseña", { exact: true }).fill(cuenta.contrasena)
+    await page.getByRole("button", { name: "Iniciar sesión" }).click()
+    await page.waitForURL(/\/cuenta\/tiendas\/nueva\?plan=GRATIS/, { timeout: 60_000 })
+
+    await expect(page.getByRole("radio", { name: /Gratuito/ })).toHaveAttribute("aria-checked", "true", { timeout: 20_000 })
+    await page.getByRole("button", { name: "Continuar" }).click()
+    const sufijo = Date.now().toString(36)
+    await page.getByLabel("Nombre de la tienda").fill(`Tienda Vender ${sufijo}`)
+    await page.getByLabel("Subdominio").fill(`vd-${sufijo}`)
+    await page.getByRole("button", { name: "Crear tienda" }).click()
+    await page.waitForURL(/\/panel/, { timeout: 40_000 })
+
+    await page.goto("/propietario")
+    await expect(page.getByRole("heading", { name: "Panel general", level: 1 })).toBeVisible({ timeout: 40_000 })
+    await contexto.close()
+  })
 })

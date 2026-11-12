@@ -182,7 +182,7 @@ export default async function Portada() {
                 ))}
               </ul>
               <div className="mt-7 flex flex-wrap gap-3">
-                <Link href="/registro" className={claseBotonMarca}>
+                <Link prefetch={false} href={`/cuenta/tiendas/nueva?plan=${gratis.codigo}`} className={claseBotonMarca}>
                   Crear mi tienda
                 </Link>
                 <Link href="/planes" className={claseBotonContorno}>

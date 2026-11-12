@@ -46,21 +46,21 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
           <p className="text-[15px] font-extrabold text-foreground">{plan.nombre}</p>
           <p className="text-[12.5px] text-muted-foreground">{plan.descripcion}</p>
         </div>
-        {destacada && <Badge variant="estado" tono="marca">Recomendado</Badge>}
+        {destacada && <Badge variant="estado" tono="marca">Para empezar</Badge>}
         {seleccionada && (
-          <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-sobre-marca">
             <Check className="size-3.5" />
           </span>
         )}
       </div>
 
       <p className="text-[22px] font-extrabold text-foreground">
-        {formatearDinero(plan.precio_mensual, plan.moneda)}
-        <span className="text-[12.5px] font-medium text-muted-foreground"> / mes</span>
+        {plan.es_gratuito ? "Gratis" : formatearDinero(plan.precio_mensual, plan.moneda)}
+        <span className="text-[12.5px] font-medium text-muted-foreground">{plan.es_gratuito ? " sin vencimiento" : " / mes"}</span>
       </p>
 
       <ul className="space-y-1 text-[12.5px] text-muted-foreground">
-        <li>{plan.dias_prueba} días de prueba gratis</li>
+        {plan.dias_prueba > 0 && <li>{plan.dias_prueba} días de prueba gratis</li>}
         {plan.limite_productos == null ? (
           <li>Productos ilimitados</li>
         ) : (

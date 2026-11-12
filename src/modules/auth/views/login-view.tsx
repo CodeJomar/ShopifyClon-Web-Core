@@ -54,7 +54,10 @@ export function LoginView({ correo, siguiente, aviso }: LoginViewProps) {
     toast.add({ type: "success", title: "Sesión iniciada", description: "Bienvenido de nuevo." })
     // Sin "siguiente", según lo que sea la persona (rediseño): administrador → administración; propietario → panel general;
     // comprador → el mercado. Todos pueden comprar, por eso nadie queda obligado a crear una tienda.
-    router.replace(siguiente ? destinoSeguro(siguiente) : destinoSegunPerfil({ esAdministrador: Boolean(datos.usuario.es_administrador_plataforma), tiendas: datos.tiendas.length }))
+    // Con `siguiente` se navega recargando: si la persona llegó desde un enlace precargado sin sesión, el caché del router guarda la
+    // redirección al login y un `replace` la repetiría.
+    if (siguiente) return window.location.assign(destinoSeguro(siguiente))
+    router.replace(destinoSegunPerfil({ esAdministrador: Boolean(datos.usuario.es_administrador_plataforma), tiendas: datos.tiendas.length }))
   }
 
   const verificar = async (e: React.FormEvent) => {
@@ -217,7 +220,7 @@ export function LoginView({ correo, siguiente, aviso }: LoginViewProps) {
 
       <p className="text-center text-[13px] text-muted-foreground">
         ¿No tienes cuenta?{" "}
-        <Link href="/registro" className="font-bold text-brand-text hover:underline">
+        <Link href={siguiente ? `/registro?siguiente=${encodeURIComponent(siguiente)}` : "/registro"} className="font-bold text-brand-text hover:underline">
           Regístrate
         </Link>
       </p>

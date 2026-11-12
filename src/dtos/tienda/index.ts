@@ -14,6 +14,8 @@ export interface PlanDto {
   limite_personal: number | null | undefined
   /** Fracción: 0.02 = 2 %. */
   porcentaje_comision: number
+  /** Plan sin costo ni vencimiento (B3); solo uno por persona. */
+  es_gratuito?: boolean
   dias_prueba: number
 }
 

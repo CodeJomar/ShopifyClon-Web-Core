@@ -52,7 +52,7 @@ export default async function Planes() {
                   </li>
                 ))}
               </ul>
-              <Link href={`/registro?plan=${plan.codigo}`} className={cn(plan.es_gratuito ? claseBotonMarca : claseBotonContorno, "mt-8 w-full")}>
+              <Link prefetch={false} href={`/cuenta/tiendas/nueva?plan=${plan.codigo}`} className={cn(plan.es_gratuito ? claseBotonMarca : claseBotonContorno, "mt-8 w-full")}>
                 {plan.precio_mensual === 0 ? "Crear mi tienda gratis" : `Elegir ${plan.nombre}`}
               </Link>
             </div>

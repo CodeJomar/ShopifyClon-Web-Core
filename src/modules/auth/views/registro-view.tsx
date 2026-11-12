@@ -15,7 +15,8 @@ import { registroAction } from "../actions/auth.actions"
 import { registroSchema, type RegistroValues } from "../schema"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-export function RegistroView() {
+export function RegistroView({ siguiente }: { siguiente?: string }) {
+  const cola = siguiente ? `&siguiente=${encodeURIComponent(siguiente)}` : ""
   const router = useRouter()
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
@@ -29,7 +30,7 @@ export function RegistroView() {
     const res = await registroAction({ ...valores, telefono: valores.telefono || undefined })
     if (res.ok) {
       toast.add({ type: "success", title: "Cuenta creada", description: "Revisa tu correo y escribe el código de 6 dígitos." })
-      router.push(`/activar-cuenta?correo=${encodeURIComponent(valores.correo_electronico)}`)
+      router.push(`/activar-cuenta?correo=${encodeURIComponent(valores.correo_electronico)}${cola}`)
       return
     }
     const e = res.error
@@ -52,7 +53,7 @@ export function RegistroView() {
     <div className="otemu-auth-fields space-y-6">
       <div>
         <h1 className="text-[29px] font-extrabold tracking-tight text-foreground">Crea tu cuenta</h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">Después te enviaremos un código para activarla.</p>
+        <p className="mt-1 text-[13px] text-muted-foreground">Con ella compras en todas las tiendas. Después te enviaremos un código para activarla.</p>
       </div>
 
       {error && (
@@ -88,7 +89,7 @@ export function RegistroView() {
 
       <p className="text-center text-[13px] text-muted-foreground">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-bold text-brand-text hover:underline">
+        <Link href={siguiente ? `/login?siguiente=${encodeURIComponent(siguiente)}` : "/login"} className="font-bold text-brand-text hover:underline">
           Inicia sesión
         </Link>
       </p>

@@ -19,7 +19,7 @@ import { crearTiendaSchema, type CrearTiendaValues } from "../schema"
 import type { PlanDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
+export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: string; planInicial?: string }) {
   const router = useRouter()
   const [planes, setPlanes] = React.useState<PlanDto[] | null>(null)
   const [errorPlanes, setErrorPlanes] = React.useState<ErrorApi | null>(null)
@@ -35,13 +35,14 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
       if (cancelado) return
       if (!res.ok) return setErrorPlanes(res.error)
       setPlanes(res.datos)
-      // Preselección: BASICO si existe; si no, el primero.
-      setCodigoPlan((actual) => actual || res.datos.find((p) => p.codigo === "BASICO")?.codigo || res.datos[0]?.codigo || "")
+      // Preselección: el plan que traía el enlace; si no, el gratuito (B3); si no, el primero.
+      const elegido = res.datos.find((p) => p.codigo === planInicial) ?? res.datos.find((p) => p.es_gratuito) ?? res.datos[0]
+      setCodigoPlan((actual) => actual || elegido?.codigo || "")
     })
     return () => {
       cancelado = true
     }
-  }, [])
+  }, [planInicial])
 
   // El correo de contacto se prellena con el correo de la cuenta (si la persona no lo cambió antes).
   React.useEffect(() => {
@@ -99,7 +100,12 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
     if (!res.ok) {
       const e = res.error
       if (e.codigo === "TIE-001") form.setError("subdominio", { message: e.message })
-      else setError(e)
+      else if (e.codigo === "SUS-018") {
+        // Ya tiene su tienda gratuita: se vuelve al paso de planes para que elija uno de pago.
+        setError({ ...e, message: "Ya tienes una tienda en el plan gratuito. Elige un plan de pago para abrir otra." })
+        setCodigoPlan((actual) => planes?.find((p) => !p.es_gratuito && p.codigo !== actual)?.codigo ?? actual)
+        setPaso(1)
+      } else setError(e)
       return
     }
     const activa = await fijarTiendaAction(res.datos.id)
@@ -108,7 +114,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
     toast.add({
       type: "success",
       title: "Tu tienda está lista",
-      description: plan ? `Tienes ${plan.dias_prueba} días de prueba.` : undefined,
+      description: plan && plan.dias_prueba > 0 ? `Tienes ${plan.dias_prueba} días de prueba.` : undefined,
     })
     router.replace("/panel")
   })
@@ -132,7 +138,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
           {paso === 1 ? "Elige tu plan" : "Datos de tu tienda"}
         </h1>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          {paso === 1 ? "Empiezas con prueba gratis; puedes cambiar de plan después." : "Así te encontrarán tus clientes."}
+          {paso === 1 ? "Tu primera tienda puede ser gratis y sin tarjeta; cambias de plan cuando crezcas." : "Así te encontrarán tus clientes."}
         </p>
       </div>
 
@@ -160,7 +166,7 @@ export function CrearTiendaView({ correoPerfil }: { correoPerfil?: string }) {
                   plan={plan}
                   seleccionada={plan.codigo === codigoPlan}
                   enfoque={plan.codigo === codigoPlan}
-                  destacada={plan.codigo === "BASICO"}
+                  destacada={plan.es_gratuito}
                   onSeleccionar={() => elegirPlan(plan.codigo)}
                   onTecla={teclaPlan}
                 />

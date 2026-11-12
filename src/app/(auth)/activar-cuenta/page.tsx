@@ -8,8 +8,9 @@ export const metadata = {
 export default async function ActivarCuentaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ correo?: string | string[] }>
+  searchParams: Promise<{ correo?: string | string[]; siguiente?: string | string[] }>
 }) {
-  const { correo } = await searchParams
-  return <ActivarCuentaView correo={Array.isArray(correo) ? correo[0] : correo} />
+  const { correo, siguiente } = await searchParams
+  const uno = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v)
+  return <ActivarCuentaView correo={uno(correo)} siguiente={uno(siguiente)} />
 }

@@ -16,7 +16,7 @@ import { activarAction, reenviarActivacionAction } from "../actions/auth.actions
 import { codigoSchema, recuperarSolicitarSchema, type RecuperarSolicitarValues } from "../schema"
 import type { ErrorApi } from "@/lib/api/error-api"
 
-export function ActivarCuentaView({ correo }: { correo?: string }) {
+export function ActivarCuentaView({ correo, siguiente }: { correo?: string; siguiente?: string }) {
   const router = useRouter()
   const [codigo, setCodigo] = React.useState("")
   const [errorCodigo, setErrorCodigo] = React.useState<string | undefined>()
@@ -44,7 +44,7 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
     setEnviando(false)
     if (res.ok) {
       toast.add({ type: "success", title: "Cuenta activada", description: "Ya puedes iniciar sesión." })
-      router.replace(`/login?correo=${encodeURIComponent(valores.correo_electronico)}`)
+      router.replace(`/login?correo=${encodeURIComponent(valores.correo_electronico)}${siguiente ? `&siguiente=${encodeURIComponent(siguiente)}` : ""}`)
       return
     }
     setError(res.error)
