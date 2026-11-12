@@ -1,4 +1,5 @@
 import { Client } from "@stomp/stompjs"
+import type { ResultadoTicket } from "./ticket"
 
 /** Estado de la conexión de un canal: `reconectando` incluye el primer intento tras una caída; `cerrado` es definitivo. */
 export type EstadoConexion = "conectando" | "conectado" | "reconectando" | "cerrado"
@@ -7,10 +8,11 @@ interface OpcionesCanal<T> {
   /** Destino STOMP, p. ej. `/topic/tienda/{id}/ordenes` o `/topic/ordenes/{token}`. */
   destino: string
   /**
-   * Pide un ticket nuevo antes de CADA conexión y reconexión (el panel). Si devuelve `null` no hay sesión: el canal se cierra y
-   * no reconecta. Sin esta función la conexión es anónima (el comprador, que solo recibe su orden).
+   * Pide un ticket nuevo antes de CADA conexión y reconexión (el panel). Con `sin-sesion` (401) el canal se cierra y no reconecta;
+   * con `error` (429, 502, corte de red…) reintenta con el mismo retardo creciente. Sin esta función la conexión es anónima
+   * (el comprador, que solo recibe su orden).
    */
-  obtenerTicket?: () => Promise<string | null>
+  obtenerTicket?: () => Promise<ResultadoTicket>
   alMensaje: (mensaje: T) => void
   alCambiarEstado?: (estado: EstadoConexion) => void
 }
@@ -33,6 +35,7 @@ export function abrirCanal<T>({ destino, obtenerTicket, alMensaje, alCambiarEsta
 
   let cerrado = false
   let retardo = RETARDO_INICIAL_MS
+  let reintentoTicket: ReturnType<typeof setTimeout> | undefined
   const avisar = (estado: EstadoConexion) => {
     if (!cerrado || estado === "cerrado") alCambiarEstado?.(estado)
   }
@@ -44,21 +47,33 @@ export function abrirCanal<T>({ destino, obtenerTicket, alMensaje, alCambiarEsta
     heartbeatOutgoing: HEARTBEAT_MS,
     beforeConnect: async (c) => {
       if (obtenerTicket) {
-        let ticket: string | null = null
+        let resultado: ResultadoTicket
         try {
-          ticket = await obtenerTicket()
+          resultado = await obtenerTicket()
         } catch {
-          ticket = null
+          resultado = { tipo: "error" }
         }
         if (cerrado) return
-        if (!ticket) {
-          // Sesión revocada o caducada: no se reconecta con un ticket viejo.
+        if (resultado.tipo === "sin-sesion") {
+          // Sesión revocada o caducada (401): no se reconecta con un ticket viejo.
           cerrado = true
           avisar("cerrado")
           await c.deactivate()
           return
         }
-        c.connectHeaders = { "X-Ws-Ticket": ticket }
+        if (resultado.tipo === "error") {
+          // Fallo transitorio al pedir el ticket (429, 502, corte de red…): se cancela este intento (aún no hay socket, así que
+          // deactivate() termina al instante) y se vuelve a activar tras el retardo creciente, sin cerrar el canal.
+          avisar("reconectando")
+          const espera = retardo
+          retardo = Math.min(retardo * 2, RETARDO_MAXIMO_MS)
+          await c.deactivate()
+          reintentoTicket = setTimeout(() => {
+            if (!cerrado) c.activate()
+          }, espera)
+          return
+        }
+        c.connectHeaders = { "X-Ws-Ticket": resultado.ticket }
       }
       c.reconnectDelay = retardo
       retardo = Math.min(retardo * 2, RETARDO_MAXIMO_MS)
@@ -84,6 +99,7 @@ export function abrirCanal<T>({ destino, obtenerTicket, alMensaje, alCambiarEsta
   return {
     cerrar: () => {
       cerrado = true
+      if (reintentoTicket) clearTimeout(reintentoTicket)
       void cliente.deactivate()
       avisar("cerrado")
     },
