@@ -10,7 +10,7 @@ import type { MiTiendaDto } from "@/dtos/tienda"
 /**
  * Qué es la persona que navega, derivado de lo que tiene (decisión D1 del rediseño): todo usuario es comprador; es propietario si
  * tiene al menos una tienda; es administrador si la API lo marca. Se lee de la API real (`/cuenta/perfil` y `/cuenta/tiendas`);
- * cuando el backend ofrezca el campo `acceso` (B2) saldrá de ahí.
+ * el campo `acceso` (B2) manda sobre lo derivado de las tiendas.
  */
 export type Acceso =
   | { estado: "cargando" }
@@ -44,8 +44,8 @@ export function AccesoProvider({ children }: { children: React.ReactNode }) {
         nombres: perfil.datos.nombres,
         apellidos: perfil.datos.apellidos,
         correo: perfil.datos.correo_electronico,
-        esAdministrador: Boolean(perfil.datos.es_administrador_plataforma),
-        esPropietario: tiendas.length > 0,
+        esAdministrador: Boolean(perfil.datos.acceso?.es_administrador_plataforma ?? perfil.datos.es_administrador_plataforma),
+        esPropietario: perfil.datos.acceso?.es_propietario ?? tiendas.length > 0,
         tiendas,
       })
     })()

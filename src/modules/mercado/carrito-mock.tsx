@@ -85,10 +85,10 @@ export function useCarritoEjemplo(): ValorCarrito {
 export function agruparPorTienda(lineas: LineaCarrito[]) {
   const grupos = new Map<string, { tienda: ProductoMercado["tienda"]; lineas: LineaCarrito[]; subtotal: number }>()
   for (const l of lineas) {
-    const g = grupos.get(l.producto.tienda.id) ?? { tienda: l.producto.tienda, lineas: [], subtotal: 0 }
+    const g = grupos.get(l.producto.tienda.subdominio) ?? { tienda: l.producto.tienda, lineas: [], subtotal: 0 }
     g.lineas.push(l)
-    g.subtotal += l.producto.precio * l.cantidad
-    grupos.set(l.producto.tienda.id, g)
+    g.subtotal += l.producto.precio_desde * l.cantidad
+    grupos.set(l.producto.tienda.subdominio, g)
   }
   return [...grupos.values()]
 }

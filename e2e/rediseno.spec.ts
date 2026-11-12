@@ -17,34 +17,42 @@ test.describe("Rediseño: zona pública y perfiles", () => {
     await expect(page.getByRole("link", { name: "Iniciar sesión" }).first()).toBeVisible()
   })
 
-  test("mercado: busca, agrega productos de tres tiendas y paga una sola vez", async ({ page }) => {
+  test("mercado: agrega productos de tres tiendas reales y paga una sola vez", async ({ page, request }) => {
+    // Datos reales del mercado (B1): un producto disponible de tres tiendas distintas.
+    const lista = await request.get("/api/mercado/productos?tamano=48&orden=recientes")
+    const productos = ((await lista.json()).datos.datos as { titulo: string; identificador_url: string; hay_stock: boolean; tienda: { nombre: string; subdominio: string } }[]).filter((p) => p.hay_stock)
+    const elegidos: typeof productos = []
+    for (const p of productos) if (!elegidos.some((e) => e.tienda.subdominio === p.tienda.subdominio) && elegidos.length < 3) elegidos.push(p)
+    expect(elegidos.length, "el mercado debe tener productos de al menos tres tiendas").toBe(3)
+
     await page.goto("/mercado")
-    await page.getByPlaceholder("Buscar productos o tiendas").fill("café")
+    await page.getByPlaceholder("Buscar productos o tiendas").fill(elegidos[0].titulo)
     await page.getByRole("button", { name: "Buscar" }).click()
     await expect(page.getByRole("heading", { level: 1, name: /Resultados para/ })).toBeVisible()
 
-    for (const ruta of ["cafe-andino/cafe-de-altura-250g", "casa-quinua/set-ceramica-4-tazas", "taller-textil-cusco/chalina-alpaca-baby"]) {
-      await page.goto(`/mercado/tienda/${ruta}`)
+    for (const p of elegidos) {
+      await page.goto(`/mercado/tienda/${p.tienda.subdominio}/${p.identificador_url}`)
       await page.getByRole("button", { name: "Agregar al carrito" }).click()
       await expect(page.getByText("Agregado al carrito")).toBeVisible()
     }
 
     await page.goto("/carrito")
-    await expect(page.getByRole("region", { name: "Productos de Café Andino" })).toBeVisible()
-    await expect(page.getByRole("region", { name: "Productos de Casa Quinua" })).toBeVisible()
-    await expect(page.getByRole("region", { name: "Productos de Taller Textil Cusco" })).toBeVisible()
+    for (const p of elegidos) await expect(page.getByRole("region", { name: `Productos de ${p.tienda.nombre}` })).toBeVisible()
     await page.getByRole("link", { name: "Continuar con la compra" }).click()
 
     await page.getByLabel("Nombre y apellido").fill("Ana Compradora")
     await page.getByLabel("Correo electrónico").fill("ana@otemu.test")
-    await page.getByLabel("Dirección", { exact: true }).fill("Av. Larco 123, Miraflores")
-    await page.getByRole("application", { name: /Mapa/ }).click()
+    const direccion = page.getByLabel("Dirección", { exact: true })
+    if (await direccion.isVisible()) {
+      await direccion.fill("Av. Larco 123, Miraflores")
+      await page.getByRole("application", { name: /Mapa/ }).click()
+    }
     await expect(page.getByText("Tarjeta: un solo pago")).toBeVisible()
     await page.getByRole("button", { name: /^Pagar S\// }).click()
 
     await page.waitForURL(/\/mis-pedidos\//)
     await expect(page.getByText("Pago recibido: un solo pago para todo el pedido")).toBeVisible()
-    for (const tienda of ["Café Andino", "Casa Quinua", "Taller Textil Cusco"]) await expect(page.getByRole("link", { name: tienda })).toBeVisible()
+    for (const p of elegidos) await expect(page.getByRole("link", { name: p.tienda.nombre })).toBeVisible()
   })
 
   test("perfiles: el comprador entra al mercado y, al abrir una tienda, ve su panel general", async ({ browser, baseURL }) => {

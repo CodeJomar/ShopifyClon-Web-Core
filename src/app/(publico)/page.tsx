@@ -4,9 +4,13 @@ import { claseBotonContorno, claseBotonHero, claseBotonMarca, claseContenedor } 
 import { ReciboDividido } from "@/shared/components/marketing/recibo-dividido"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { TarjetaTienda } from "@/modules/mercado/components/tarjeta-tienda"
+import { incluyePlan } from "@/modules/mercado/planes"
 import { listarCategorias, listarPlanes, obtenerDestacados } from "@/modules/mercado/datos"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
+
+// Datos vivos del mercado: no se prerenderiza al compilar.
+export const dynamic = "force-dynamic"
 
 export const metadata = {
   title: "OTemu | Compra en muchas tiendas, paga una sola vez",
@@ -21,7 +25,7 @@ const PASOS_VENDER = [
 
 export default async function Portada() {
   const [{ productos, tiendas }, categorias, planes] = await Promise.all([obtenerDestacados(), listarCategorias(), listarPlanes()])
-  const gratis = planes.find((p) => p.limite_tiendas === 1 && p.precio_mensual === 0) ?? planes[0]
+  const gratis = planes.find((p) => p.es_gratuito) ?? planes[0] ?? { codigo: "GRATIS", nombre: "Gratuito", descripcion: "", precio_mensual: 0, precio_anual: 0, moneda: "USD", limite_productos: 20, limite_personal: 0, porcentaje_comision: 0.05, dias_prueba: 0, es_gratuito: true }
 
   return (
     <>
@@ -93,13 +97,13 @@ export default async function Portada() {
         </div>
         <ul className="mt-5 flex flex-wrap gap-2" aria-label="Categorías">
           {categorias.map((c) => (
-            <li key={c.id}>
+            <li key={c.slug}>
               <Link
-                href={`/mercado?categoria=${c.id}`}
+                href={`/mercado?categoria=${c.slug}`}
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] font-semibold text-foreground outline-none transition-colors hover:border-primary hover:bg-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/40"
               >
                 {c.nombre}
-                <span className="text-[12px] font-medium text-muted-foreground">{c.total_productos}</span>
+                <span className="text-[12px] font-medium text-muted-foreground">{c.cantidad_productos}</span>
               </Link>
             </li>
           ))}
@@ -125,7 +129,7 @@ export default async function Portada() {
         </div>
         <ul className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tiendas.map((t) => (
-            <li key={t.id}>
+            <li key={t.subdominio}>
               <TarjetaTienda tienda={t} />
             </li>
           ))}
@@ -170,7 +174,7 @@ export default async function Portada() {
                 <span className="ml-1.5 text-[15px] font-semibold text-muted-foreground">al mes, sin vencimiento</span>
               </p>
               <ul className="mt-6 space-y-2.5">
-                {gratis.incluye.map((x) => (
+                {incluyePlan(gratis).map((x) => (
                   <li key={x} className="flex items-start gap-2.5 text-[14px] font-medium text-foreground">
                     <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
                     {x}

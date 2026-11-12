@@ -67,7 +67,7 @@ export function crearPedido(
     const envio = calcularEnvio(g.lineas)
     return {
       tienda: g.tienda,
-      lineas: g.lineas.map((l) => ({ titulo: l.producto.titulo, cantidad: l.cantidad, precio: l.producto.precio, es_digital: l.producto.es_digital })),
+      lineas: g.lineas.map((l) => ({ titulo: l.producto.titulo, cantidad: l.cantidad, precio: l.producto.precio_desde, es_digital: l.producto.es_digital })),
       subtotal: g.subtotal,
       envio,
       total: g.subtotal + envio,

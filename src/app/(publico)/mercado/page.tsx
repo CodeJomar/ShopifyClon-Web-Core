@@ -23,7 +23,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
   const categoria = uno(sp.categoria) || undefined
   const orden = (ORDENES.find((o) => o.valor === uno(sp.orden))?.valor ?? "recientes") as OrdenProductos
   const [resultado, categorias] = await Promise.all([
-    listarProductos({ q, categoria, orden, pagina: Number(uno(sp.pagina)) || 1, por_pagina: 12 }),
+    listarProductos({ q, categoria, orden, pagina: Math.max(0, (Number(uno(sp.pagina)) || 1) - 1), tamano: 12 }),
     listarCategorias(),
   ])
 
@@ -34,7 +34,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
     const texto = p.toString()
     return texto ? `/mercado?${texto}` : "/mercado"
   }
-  const categoriaActual = categorias.find((c) => c.id === categoria)
+  const categoriaActual = categorias.find((c) => c.slug === categoria)
   const hayFiltros = Boolean(q || categoria)
 
   return (
@@ -68,12 +68,12 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
         </form>
 
         <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Categorías">
-          {[{ id: "", nombre: "Todas" }, ...categorias].map((c) => {
-            const activa = (categoria ?? "") === c.id
+          {[{ slug: "", nombre: "Todas" }, ...categorias].map((c) => {
+            const activa = (categoria ?? "") === c.slug
             return (
               <Link
-                key={c.id || "todas"}
-                href={enlace({ categoria: c.id || undefined, pagina: undefined })}
+                key={c.slug || "todas"}
+                href={enlace({ categoria: c.slug || undefined, pagina: undefined })}
                 aria-current={activa ? "true" : undefined}
                 className={cn(
                   "rounded-full border px-4 py-2 text-[13.5px] font-semibold outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40",
@@ -125,16 +125,16 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
 
       {resultado.total_paginas > 1 && (
         <nav aria-label="Paginación" className="mt-10 flex items-center justify-center gap-2">
-          {resultado.pagina > 1 && (
-            <Link href={enlace({ pagina: String(resultado.pagina - 1) })} className={cn(claseBotonContorno, "h-10 px-3")} aria-label="Página anterior">
+          {(resultado.pagina_actual + 1) > 1 && (
+            <Link href={enlace({ pagina: String((resultado.pagina_actual + 1) - 1) })} className={cn(claseBotonContorno, "h-10 px-3")} aria-label="Página anterior">
               <ChevronLeft aria-hidden="true" />
             </Link>
           )}
           <p className="px-3 text-[14px] font-semibold text-muted-foreground">
-            Página {resultado.pagina} de {resultado.total_paginas}
+            Página {(resultado.pagina_actual + 1)} de {resultado.total_paginas}
           </p>
-          {resultado.pagina < resultado.total_paginas && (
-            <Link href={enlace({ pagina: String(resultado.pagina + 1) })} className={cn(claseBotonContorno, "h-10 px-3")} aria-label="Página siguiente">
+          {(resultado.pagina_actual + 1) < resultado.total_paginas && (
+            <Link href={enlace({ pagina: String((resultado.pagina_actual + 1) + 1) })} className={cn(claseBotonContorno, "h-10 px-3")} aria-label="Página siguiente">
               <ChevronRight aria-hidden="true" />
             </Link>
           )}

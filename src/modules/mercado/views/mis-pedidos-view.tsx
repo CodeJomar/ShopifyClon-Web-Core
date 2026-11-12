@@ -52,7 +52,7 @@ export function MisPedidosView() {
                 </div>
                 <ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2.5 border-t border-border/60 pt-4">
                   {p.ordenes.map((o) => (
-                    <li key={o.tienda.id} className="flex items-center gap-2.5">
+                    <li key={o.tienda.subdominio} className="flex items-center gap-2.5">
                       <AvatarTienda tienda={o.tienda} className="size-8 rounded-lg text-[13px]" />
                       <span className="text-[13.5px] font-bold text-foreground">{o.tienda.nombre}</span>
                       <EstadoDespacho estado={o.estado} />

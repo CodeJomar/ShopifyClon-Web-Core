@@ -1,64 +1,61 @@
-// Acceso a los datos del mercado. HOY entrega mocks (`./mock`); cuando el backend ofrezca B1 (`/mercado/...`) solo cambia este archivo:
-// las pantallas dependen de estas funciones y de los tipos de `@/dtos/mercado`.
+// Acceso a los datos del mercado público desde el servidor (páginas de Next). Llama directo a la API (`API_INTERNAL_URL`): son
+// rutas públicas, sin sesión ni cookies. Devuelve `null`/listas vacías si la API no responde, para que las pantallas muestren su
+// estado vacío en vez de romperse.
 import type {
   CategoriaMercado,
+  DestacadosMercado,
   FiltrosProductos,
-  PaginaProductos,
+  PaginaMercado,
   PlanMercado,
   ProductoMercado,
   TiendaMercado,
 } from "@/dtos/mercado"
-import { CATEGORIAS, PLANES, PRODUCTOS, TIENDAS } from "./mock"
+import type { ProductoDetalleVitrina } from "@/dtos/vitrina"
 
-const sinTildes = (texto: string) => texto.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
+const base = () => `${(process.env.API_INTERNAL_URL ?? "http://localhost:8080").replace(/\/$/, "")}/api/v1`
 
-export async function listarProductos(filtros: FiltrosProductos = {}): Promise<PaginaProductos> {
-  const { q, categoria, tienda, orden = "recientes", pagina = 1, por_pagina = 12 } = filtros
-  let lista = PRODUCTOS.filter((x) => {
-    if (categoria && x.categoria_id !== categoria) return false
-    if (tienda && x.tienda.subdominio !== tienda) return false
-    if (q) {
-      const buscado = sinTildes(q)
-      if (!sinTildes(`${x.titulo} ${x.descripcion} ${x.tienda.nombre}`).includes(buscado)) return false
-    }
-    return true
-  })
-  if (orden === "precio_asc") lista = [...lista].sort((a, b) => a.precio - b.precio)
-  if (orden === "precio_desc") lista = [...lista].sort((a, b) => b.precio - a.precio)
-  const total = lista.length
-  const total_paginas = Math.max(1, Math.ceil(total / por_pagina))
-  const actual = Math.min(Math.max(1, pagina), total_paginas)
-  return { datos: lista.slice((actual - 1) * por_pagina, actual * por_pagina), total, pagina: actual, por_pagina, total_paginas }
-}
-
-export async function listarTiendas(q?: string): Promise<TiendaMercado[]> {
-  if (!q) return TIENDAS
-  const buscado = sinTildes(q)
-  return TIENDAS.filter((x) => sinTildes(`${x.nombre} ${x.descripcion} ${x.ciudad}`).includes(buscado))
-}
-
-export async function obtenerTienda(subdominio: string): Promise<TiendaMercado | null> {
-  return TIENDAS.find((x) => x.subdominio === subdominio) ?? null
-}
-
-export async function obtenerProducto(subdominio: string, slug: string): Promise<ProductoMercado | null> {
-  return PRODUCTOS.find((x) => x.tienda.subdominio === subdominio && x.slug === slug) ?? null
-}
-
-export async function listarCategorias(): Promise<CategoriaMercado[]> {
-  return CATEGORIAS
-}
-
-/** Productos y tiendas para la portada: lo más reciente y las tiendas con más productos. */
-export async function obtenerDestacados(): Promise<{ productos: ProductoMercado[]; tiendas: TiendaMercado[] }> {
-  return {
-    productos: PRODUCTOS.filter((x) => x.disponible).slice(0, 8),
-    tiendas: [...TIENDAS].sort((a, b) => b.total_productos - a.total_productos),
+async function leer<T>(ruta: string, params: Record<string, string | number | undefined> = {}): Promise<T | null> {
+  const url = new URL(`${base()}${ruta}`)
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== "") url.searchParams.set(k, String(v))
+  try {
+    const res = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(8_000) })
+    if (!res.ok) return null
+    return ((await res.json()) as { datos: T }).datos
+  } catch {
+    return null
   }
 }
 
-export async function listarPlanes(): Promise<PlanMercado[]> {
-  return PLANES
+const PAGINA_VACIA = <T,>(): PaginaMercado<T> => ({ datos: [], total: 0, pagina_actual: 0, tamano_pagina: 24, total_paginas: 0 })
+
+export async function listarProductos(filtros: FiltrosProductos = {}): Promise<PaginaMercado<ProductoMercado>> {
+  return (await leer<PaginaMercado<ProductoMercado>>("/mercado/productos", { tamano: 12, ...filtros })) ?? PAGINA_VACIA()
 }
 
-export { CATEGORIAS }
+export async function listarTiendas(q?: string): Promise<TiendaMercado[]> {
+  const pagina = await leer<PaginaMercado<TiendaMercado>>("/mercado/tiendas", { q, tamano: 48 })
+  return pagina?.datos ?? []
+}
+
+export async function obtenerTienda(subdominio: string): Promise<TiendaMercado | null> {
+  return leer<TiendaMercado>(`/mercado/tiendas/${encodeURIComponent(subdominio)}`)
+}
+
+export async function listarCategorias(): Promise<CategoriaMercado[]> {
+  return (await leer<CategoriaMercado[]>("/mercado/categorias")) ?? []
+}
+
+export async function obtenerDestacados(): Promise<DestacadosMercado> {
+  return (await leer<DestacadosMercado>("/mercado/destacados")) ?? { tiendas: [], productos: [], resumen: { tiendas: 0, productos: 0 } }
+}
+
+/** Detalle de un producto: sale de la vitrina de su tienda (descripción, variantes e imágenes). */
+export async function obtenerProducto(subdominio: string, slug: string): Promise<ProductoDetalleVitrina | null> {
+  return leer<ProductoDetalleVitrina>(`/vitrina/${encodeURIComponent(subdominio)}/productos/${encodeURIComponent(slug)}`)
+}
+
+/** Planes para quien quiere vender; el gratuito va primero. */
+export async function listarPlanes(): Promise<PlanMercado[]> {
+  const planes = (await leer<PlanMercado[]>("/planes")) ?? []
+  return [...planes].sort((a, b) => Number(Boolean(b.es_gratuito)) - Number(Boolean(a.es_gratuito)) || a.precio_mensual - b.precio_mensual)
+}

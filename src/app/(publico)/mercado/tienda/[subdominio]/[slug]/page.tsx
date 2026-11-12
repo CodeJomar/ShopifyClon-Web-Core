@@ -1,31 +1,54 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { Download, MapPin, PackageCheck, Star, Truck } from "lucide-react"
+import { Download, PackageCheck, Truck } from "lucide-react"
 import { AgregarAlCarrito } from "@/modules/mercado/components/agregar-al-carrito"
 import { ImagenProducto } from "@/modules/mercado/components/imagen-producto"
 import { AvatarTienda } from "@/modules/mercado/components/tarjeta-tienda"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
-import { CATEGORIAS, listarProductos, obtenerProducto } from "@/modules/mercado/datos"
+import { listarProductos, obtenerProducto, obtenerTienda } from "@/modules/mercado/datos"
 import { claseContenedor } from "@/shared/components/marketing/estilos"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
+import { tonoDe } from "@/modules/mercado/tono"
+import type { ProductoMercado } from "@/dtos/mercado"
 
 type Props = { params: Promise<{ subdominio: string; slug: string }> }
 
 export async function generateMetadata({ params }: Props) {
   const { subdominio, slug } = await params
   const producto = await obtenerProducto(subdominio, slug)
-  return { title: producto ? `${producto.titulo} | ${producto.tienda.nombre}` : "Producto | OTemu", description: producto?.descripcion }
+  return { title: producto ? `${producto.titulo} | OTemu` : "Producto | OTemu", description: producto?.descripcion ?? undefined }
 }
 
 export default async function DetalleProducto({ params }: Props) {
   const { subdominio, slug } = await params
-  const producto = await obtenerProducto(subdominio, slug)
-  if (!producto) notFound()
-  const categoria = CATEGORIAS.find((c) => c.id === producto.categoria_id)
-  const { datos: otros } = await listarProductos({ tienda: subdominio, por_pagina: 5 })
-  const masDeLaTienda = otros.filter((p) => p.id !== producto.id).slice(0, 4)
-  const rebaja = producto.precio_comparacion && producto.precio_comparacion > producto.precio ? producto.precio_comparacion : null
+  const [detalle, tienda] = await Promise.all([obtenerProducto(subdominio, slug), obtenerTienda(subdominio)])
+  if (!detalle || !tienda) notFound()
+  const { datos: otros } = await listarProductos({ tienda: subdominio, tamano: 5 })
+  const masDeLaTienda = otros.filter((p) => p.identificador_url !== detalle.identificador_url).slice(0, 4)
+
+  const variantes = detalle.variantes
+  const base = variantes.find((v) => v.disponible) ?? variantes[0]
+  const aNumero = (x: number | string | null | undefined) => (x == null ? null : Number(x))
+  const precio = aNumero(base?.precio) ?? 0
+  const comparacion = aNumero(base?.precio_comparacion)
+  const rebaja = comparacion && comparacion > precio ? comparacion : null
+  const esDigital = variantes.length > 0 && variantes.every((v) => !v.requiere_envio)
+  const imagen = [...detalle.imagenes].sort((a, b) => a.posicion - b.posicion)[0]
+  const moneda = tienda.moneda
+  const productoBase: ProductoMercado = {
+    id: base?.id ?? slug,
+    titulo: detalle.titulo,
+    identificador_url: detalle.identificador_url,
+    precio_desde: precio,
+    precio_comparacion_desde: comparacion,
+    moneda,
+    imagen_url: imagen?.url_imagen,
+    es_digital: esDigital,
+    hay_stock: variantes.some((v) => v.disponible),
+    tienda: { nombre: tienda.nombre, subdominio: tienda.subdominio, logo_url: tienda.logo_url },
+  }
+  const producto = { ...productoBase, tienda: productoBase.tienda }
 
   return (
     <div className={cn(claseContenedor, "py-8 sm:py-12")}>
@@ -37,7 +60,7 @@ export default async function DetalleProducto({ params }: Props) {
 
       <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
         <div className="aspect-square overflow-hidden rounded-[28px] border border-island-border shadow-isla">
-          <ImagenProducto tono={producto.tienda.tono} icono={categoria?.icono ?? "arte"} titulo={producto.titulo} />
+          <ImagenProducto tono={tonoDe(subdominio)} src={imagen?.url_imagen} titulo={imagen?.texto_alternativo ?? producto.titulo} />
         </div>
 
         <div className="flex flex-col">
@@ -50,21 +73,17 @@ export default async function DetalleProducto({ params }: Props) {
           </Link>
 
           <h1 className="mt-4 text-balance text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[38px]">{producto.titulo}</h1>
-          <p className="mt-2 flex items-center gap-1.5 text-[14px] font-semibold text-muted-foreground">
-            <Star aria-hidden="true" className="size-4 fill-warning text-warning" />
-            {producto.calificacion.toFixed(1)} <span className="font-medium">({producto.resenas} reseñas)</span>
-          </p>
 
           <p className="mt-6 flex flex-wrap items-baseline gap-3">
-            <span className="text-[38px] font-extrabold leading-none tracking-tight text-foreground">{formatearDinero(producto.precio, producto.moneda)}</span>
-            {rebaja && <span className="text-[17px] font-medium text-muted-foreground line-through">{formatearDinero(rebaja, producto.moneda)}</span>}
-            {rebaja && <span className="rounded-full bg-tono-peligro-bg px-2.5 py-1 text-[12px] font-extrabold text-tono-peligro-fg">-{Math.round((1 - producto.precio / rebaja) * 100)}%</span>}
+            <span className="text-[38px] font-extrabold leading-none tracking-tight text-foreground">{formatearDinero(precio, moneda)}</span>
+            {rebaja && <span className="text-[17px] font-medium text-muted-foreground line-through">{formatearDinero(rebaja, moneda)}</span>}
+            {rebaja && <span className="rounded-full bg-tono-peligro-bg px-2.5 py-1 text-[12px] font-extrabold text-tono-peligro-fg">-{Math.round((1 - precio / rebaja) * 100)}%</span>}
           </p>
 
-          <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted-foreground">{producto.descripcion}</p>
+          <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted-foreground">{detalle.descripcion}</p>
 
           <div className="mt-8">
-            <AgregarAlCarrito producto={producto} />
+            <AgregarAlCarrito producto={producto} variantes={variantes} />
           </div>
 
           <ul className="mt-8 space-y-3 rounded-2xl border border-island-border bg-card p-5 text-[14px] font-medium text-foreground">
@@ -72,12 +91,6 @@ export default async function DetalleProducto({ params }: Props) {
               {producto.es_digital ? <Download aria-hidden="true" className="size-5 text-brand-text" /> : <Truck aria-hidden="true" className="size-5 text-brand-text" />}
               {producto.es_digital ? "Producto digital: lo recibes por correo, sin envío." : "Lo despacha la tienda y puedes seguir el envío en tu pedido."}
             </li>
-            {!producto.es_digital && (
-              <li className="flex items-center gap-3">
-                <MapPin aria-hidden="true" className="size-5 text-brand-text" />
-                Despacha desde {producto.despacha_desde}.
-              </li>
-            )}
             <li className="flex items-center gap-3">
               <PackageCheck aria-hidden="true" className="size-5 text-brand-text" />
               Pagas una sola vez aunque agregues productos de otras tiendas.

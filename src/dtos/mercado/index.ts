@@ -1,46 +1,35 @@
-// Contrato del mercado público (propuesta B1 de docs/rediseno/01-necesidades-backend.md, snake_case).
-// Mientras el backend no lo ofrezca, `src/modules/mercado/datos/` los entrega desde mocks con esta misma forma.
-
-export type IconoCategoria = "cafe" | "hogar" | "moda" | "tecnologia" | "belleza" | "arte"
+// Contrato del mercado público (B1 del backend, `GET /mercado/...`, snake_case). Son los nombres reales que entrega la API.
+import type { PlanDto } from "@/dtos/tienda"
 
 export interface CategoriaMercado {
-  id: string
   nombre: string
-  icono: IconoCategoria
-  total_productos: number
+  slug: string
+  cantidad_productos: number
 }
 
-/** Tienda visible en el mercado (activa, operativa y con al menos un producto publicado). */
+/** Tienda visible en el mercado: operativa, con `visible_en_mercado` y al menos un producto publicado con imagen. */
 export interface TiendaMercado {
-  id: string
   nombre: string
   subdominio: string
-  descripcion: string
-  ciudad: string
-  /** Matiz 0–360 con el que se pinta su avatar y la portada mientras no haya imagen. */
-  tono: number
-  total_productos: number
-  /** Desde cuándo vende en OTemu (año). */
-  desde: number
+  descripcion?: string | null
+  logo_url?: string | null
+  moneda: string
+  cantidad_productos: number
+  /** Solo en el detalle de la tienda. */
+  categorias?: CategoriaMercado[]
 }
 
 export interface ProductoMercado {
   id: string
-  slug: string
   titulo: string
-  descripcion: string
-  precio: number
-  precio_comparacion?: number | null
+  identificador_url: string
+  precio_desde: number
+  precio_comparacion_desde?: number | null
   moneda: string
-  categoria_id: string
+  imagen_url?: string | null
   es_digital: boolean
-  disponible: boolean
-  /** Promedio 0–5 y cantidad de reseñas (mock: el backend aún no tiene reseñas). */
-  calificacion: number
-  resenas: number
-  tienda: Pick<TiendaMercado, "id" | "nombre" | "subdominio" | "tono">
-  /** Ciudad desde la que despacha la tienda. */
-  despacha_desde: string
+  hay_stock: boolean
+  tienda: Pick<TiendaMercado, "nombre" | "subdominio"> & { logo_url?: string | null }
 }
 
 export type OrdenProductos = "recientes" | "precio_asc" | "precio_desc"
@@ -49,28 +38,27 @@ export interface FiltrosProductos {
   q?: string
   categoria?: string
   tienda?: string
+  precio_min?: number
+  precio_max?: number
   orden?: OrdenProductos
+  /** Empieza en 0, como toda la API. */
   pagina?: number
-  por_pagina?: number
+  tamano?: number
 }
 
-export interface PaginaProductos {
-  datos: ProductoMercado[]
+export interface PaginaMercado<T> {
+  datos: T[]
   total: number
-  pagina: number
-  por_pagina: number
+  pagina_actual: number
+  tamano_pagina: number
   total_paginas: number
 }
 
-/** Plan de suscripción para quien quiere vender (GET /planes). */
-export interface PlanMercado {
-  codigo: string
-  nombre: string
-  precio_mensual: number
-  moneda: string
-  limite_tiendas: number
-  limite_productos: number | null
-  comision: number
-  destacado: boolean
-  incluye: string[]
+export interface DestacadosMercado {
+  tiendas: TiendaMercado[]
+  productos: ProductoMercado[]
+  resumen: { tiendas: number; productos: number }
 }
+
+/** Plan de suscripción para quien quiere vender (GET /planes); desde B3 trae `es_gratuito`. */
+export type PlanMercado = PlanDto & { es_gratuito?: boolean }

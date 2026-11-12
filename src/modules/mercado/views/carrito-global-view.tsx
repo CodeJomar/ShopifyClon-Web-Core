@@ -5,7 +5,7 @@ import { Minus, Plus, ShieldCheck, ShoppingBag, Trash2 } from "lucide-react"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
-import { CATEGORIAS } from "../datos"
+import { tonoDe } from "../tono"
 import { ImagenProducto } from "../components/imagen-producto"
 import { AvatarTienda } from "../components/tarjeta-tienda"
 import { agruparPorTienda, useCarritoEjemplo } from "../carrito-mock"
@@ -47,7 +47,7 @@ export function CarritoGlobalView() {
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
         <div className="space-y-5">
           {grupos.map((g) => (
-            <section key={g.tienda.id} aria-label={`Productos de ${g.tienda.nombre}`} className="overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla">
+            <section key={g.tienda.subdominio} aria-label={`Productos de ${g.tienda.nombre}`} className="overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla">
               <header className="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
                 <Link href={`/mercado/tienda/${g.tienda.subdominio}`} className="flex items-center gap-3 rounded-lg outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/40">
                   <AvatarTienda tienda={g.tienda} className="size-10 rounded-xl text-[16px]" />
@@ -61,13 +61,13 @@ export function CarritoGlobalView() {
                 {g.lineas.map((l) => (
                   <li key={l.producto.id} className="flex gap-4 px-5 py-4">
                     <div className="size-20 shrink-0 overflow-hidden rounded-2xl">
-                      <ImagenProducto tono={l.producto.tienda.tono} icono={CATEGORIAS.find((c) => c.id === l.producto.categoria_id)?.icono ?? "arte"} titulo={l.producto.titulo} />
+                      <ImagenProducto tono={tonoDe(l.producto.tienda.subdominio)} src={l.producto.imagen_url} titulo={l.producto.titulo} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <Link href={`/mercado/tienda/${l.producto.tienda.subdominio}/${l.producto.slug}`} className="line-clamp-2 text-[14.5px] font-bold leading-snug text-foreground hover:text-brand-text">
+                      <Link href={`/mercado/tienda/${l.producto.tienda.subdominio}/${l.producto.identificador_url}`} className="line-clamp-2 text-[14.5px] font-bold leading-snug text-foreground hover:text-brand-text">
                         {l.producto.titulo}
                       </Link>
-                      <p className="mt-0.5 text-[13px] font-medium text-muted-foreground">{formatearDinero(l.producto.precio, "PEN")} c/u</p>
+                      <p className="mt-0.5 text-[13px] font-medium text-muted-foreground">{formatearDinero(l.producto.precio_desde, "PEN")} c/u</p>
                       <div className="mt-2.5 flex flex-wrap items-center gap-3">
                         <div className="flex h-9 items-center rounded-lg border-[1.8px] border-input" role="group" aria-label={`Cantidad de ${l.producto.titulo}`}>
                           <button type="button" aria-label="Una unidad menos" disabled={l.cantidad <= 1} onClick={() => cambiarCantidad(l.producto.id, l.cantidad - 1)} className="flex size-9 items-center justify-center rounded-l-lg outline-none hover:bg-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:opacity-40">
@@ -83,7 +83,7 @@ export function CarritoGlobalView() {
                         </button>
                       </div>
                     </div>
-                    <p className="text-[15px] font-extrabold tracking-tight text-foreground">{formatearDinero(l.producto.precio * l.cantidad, "PEN")}</p>
+                    <p className="text-[15px] font-extrabold tracking-tight text-foreground">{formatearDinero(l.producto.precio_desde * l.cantidad, "PEN")}</p>
                   </li>
                 ))}
               </ul>
@@ -96,7 +96,7 @@ export function CarritoGlobalView() {
             <h2 className="text-[18px] font-extrabold tracking-tight text-foreground">Resumen</h2>
             <dl className="mt-4 space-y-2.5 text-[14px]">
               {grupos.map((g) => (
-                <div key={g.tienda.id} className="flex justify-between gap-3">
+                <div key={g.tienda.subdominio} className="flex justify-between gap-3">
                   <dt className="truncate font-medium text-muted-foreground">{g.tienda.nombre}</dt>
                   <dd className="font-bold text-foreground">{formatearDinero(g.subtotal, "PEN")}</dd>
                 </div>

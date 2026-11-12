@@ -3,6 +3,9 @@ import { listarTiendas } from "@/modules/mercado/datos"
 import { claseContenedor } from "@/shared/components/marketing/estilos"
 import { cn } from "@/shared/utils/cn"
 
+// Datos vivos del mercado: no se prerenderiza al compilar.
+export const dynamic = "force-dynamic"
+
 export const metadata = { title: "Tiendas | OTemu", description: "Las tiendas independientes que venden en OTemu." }
 
 export default async function Tiendas() {
@@ -15,7 +18,7 @@ export default async function Tiendas() {
       </p>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {tiendas.map((t) => (
-          <li key={t.id}>
+          <li key={t.subdominio}>
             <TarjetaTienda tienda={t} />
           </li>
         ))}

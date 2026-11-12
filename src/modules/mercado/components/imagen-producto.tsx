@@ -1,7 +1,10 @@
+"use client"
+
+import * as React from "react"
 import type { CSSProperties } from "react"
 import { Coffee, Headphones, House, Palette, Shirt, Sparkles, type LucideIcon } from "lucide-react"
 import { cn } from "@/shared/utils/cn"
-import type { IconoCategoria } from "@/dtos/mercado"
+export type IconoCategoria = "cafe" | "hogar" | "moda" | "tecnologia" | "belleza" | "arte"
 
 const ICONOS: Record<IconoCategoria, LucideIcon> = {
   cafe: Coffee,
@@ -18,21 +21,29 @@ const ICONOS: Record<IconoCategoria, LucideIcon> = {
  */
 export function ImagenProducto({
   tono,
-  icono,
+  icono = "arte",
   titulo,
   src,
   className,
 }: {
   tono: number
-  icono: IconoCategoria
+  icono?: IconoCategoria
   titulo: string
   src?: string | null
   className?: string
 }) {
   const Icono = ICONOS[icono]
-  if (src) {
+  const [fallo, setFallo] = React.useState<string | null>(null)
+  const [cargada, setCargada] = React.useState<string | null>(null)
+  // Un servidor de imágenes que no responde no dispara `onError`: tras unos segundos sin carga se muestra la imagen generada.
+  React.useEffect(() => {
+    if (!src || cargada === src) return
+    const t = setTimeout(() => setFallo(src), 6000)
+    return () => clearTimeout(t)
+  }, [src, cargada])
+  if (src && fallo !== src) {
     // eslint-disable-next-line @next/next/no-img-element -- imágenes de tiendas externas, tamaño libre
-    return <img src={src} alt={titulo} className={cn("size-full object-cover", className)} />
+    return <img src={src} alt={titulo} loading="lazy" onLoad={() => setCargada(src)} onError={() => setFallo(src)} className={cn("size-full object-cover", className)} />
   }
   return (
     <div

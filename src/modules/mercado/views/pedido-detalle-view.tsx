@@ -64,7 +64,7 @@ export function PedidoDetalleView({ id }: { id: string }) {
 
       <ul className="mt-8 space-y-5">
         {pedido.ordenes.map((o) => (
-          <li key={o.tienda.id} className="overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla">
+          <li key={o.tienda.subdominio} className="overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 px-6 py-4">
               <Link href={`/mercado/tienda/${o.tienda.subdominio}`} className="flex items-center gap-3 rounded-lg outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/40">
                 <AvatarTienda tienda={o.tienda} className="size-10 rounded-xl text-[16px]" />

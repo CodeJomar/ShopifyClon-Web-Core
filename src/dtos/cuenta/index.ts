@@ -11,6 +11,16 @@ export interface PerfilCuentaDto {
   /** Verificación en dos pasos (A-007): al iniciar sesión se pide además un código enviado al correo. */
   dos_pasos_activo?: boolean
   fecha_creacion: string
+  /** Qué es la persona (B2): comprador siempre; propietario si tiene tienda; administrador si la plataforma lo marca. */
+  acceso?: AccesoPerfilDto
+}
+
+export interface AccesoPerfilDto {
+  es_comprador: boolean
+  es_propietario: boolean
+  es_administrador_plataforma: boolean
+  permisos_plataforma: string[]
+  tiendas: { tienda_id: string; nombre: string; subdominio: string; rol: string; es_propietario_de_la_tienda: boolean; permisos: string[] }[]
 }
 
 /** Elemento de GET /cuenta/direcciones. */

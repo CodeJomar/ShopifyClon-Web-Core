@@ -111,7 +111,7 @@ export function CheckoutGlobalView() {
               {grupos.map((g) => {
                 const envioTienda = calcularEnvio(g.lineas)
                 return (
-                  <li key={g.tienda.id} className="space-y-2">
+                  <li key={g.tienda.subdominio} className="space-y-2">
                     <p className="flex items-center gap-2.5 text-[14px] font-extrabold text-foreground">
                       <AvatarTienda tienda={g.tienda} className="size-8 rounded-lg text-[13px]" />
                       {g.tienda.nombre}
@@ -120,7 +120,7 @@ export function CheckoutGlobalView() {
                       {g.lineas.map((l) => (
                         <li key={l.producto.id} className="flex justify-between gap-3">
                           <span className="truncate">{l.cantidad} × {l.producto.titulo}</span>
-                          <span className="shrink-0 font-semibold text-foreground">{formatearDinero(l.producto.precio * l.cantidad, "PEN")}</span>
+                          <span className="shrink-0 font-semibold text-foreground">{formatearDinero(l.producto.precio_desde * l.cantidad, "PEN")}</span>
                         </li>
                       ))}
                       <li className="flex justify-between gap-3">

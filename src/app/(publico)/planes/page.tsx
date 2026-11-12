@@ -1,9 +1,13 @@
 import Link from "next/link"
 import { Check } from "lucide-react"
 import { listarPlanes } from "@/modules/mercado/datos"
+import { incluyePlan } from "@/modules/mercado/planes"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
+
+// Datos vivos del mercado: no se prerenderiza al compilar.
+export const dynamic = "force-dynamic"
 
 export const metadata = { title: "Planes para vender | OTemu", description: "Abre tu tienda gratis y mejora tu plan cuando crezcas." }
 
@@ -27,28 +31,28 @@ export default async function Planes() {
 
       <ul className="mt-10 grid gap-5 lg:grid-cols-3">
         {planes.map((plan) => (
-          <li key={plan.codigo} className={cn("rounded-[28px] p-px", plan.destacado ? "bg-primary" : "bg-island-border")}>
+          <li key={plan.codigo} className={cn("rounded-[28px] p-px", plan.es_gratuito ? "bg-primary" : "bg-island-border")}>
             <div className="flex h-full flex-col rounded-[27px] bg-card p-7">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-[20px] font-extrabold tracking-tight text-foreground">{plan.nombre}</h2>
-                {plan.destacado && <span className="rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">Sin costo</span>}
+                {plan.es_gratuito && <span className="rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">Sin costo</span>}
               </div>
               <p className="mt-5 text-[40px] font-extrabold leading-none tracking-tight text-foreground">
                 {formatearDinero(plan.precio_mensual, plan.moneda)}
                 <span className="ml-1.5 text-[14px] font-semibold text-muted-foreground">{plan.precio_mensual === 0 ? "siempre" : "al mes"}</span>
               </p>
               <p className="mt-2 text-[13.5px] font-medium text-muted-foreground">
-                Comisión por venta: {(plan.comision * 100).toLocaleString("es-PE", { maximumFractionDigits: 1 })} %
+                Comisión por venta: {(plan.porcentaje_comision * 100).toLocaleString("es-PE", { maximumFractionDigits: 1 })} %
               </p>
               <ul className="mt-6 flex-1 space-y-3">
-                {plan.incluye.map((x) => (
+                {incluyePlan(plan).map((x) => (
                   <li key={x} className="flex items-start gap-2.5 text-[14px] font-medium text-foreground">
                     <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand-text" strokeWidth={3} />
                     {x}
                   </li>
                 ))}
               </ul>
-              <Link href={`/registro?plan=${plan.codigo}`} className={cn(plan.destacado ? claseBotonMarca : claseBotonContorno, "mt-8 w-full")}>
+              <Link href={`/registro?plan=${plan.codigo}`} className={cn(plan.es_gratuito ? claseBotonMarca : claseBotonContorno, "mt-8 w-full")}>
                 {plan.precio_mensual === 0 ? "Crear mi tienda gratis" : `Elegir ${plan.nombre}`}
               </Link>
             </div>

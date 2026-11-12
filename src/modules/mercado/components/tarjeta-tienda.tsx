@@ -1,15 +1,15 @@
 import type { CSSProperties } from "react"
 import Link from "next/link"
-import { MapPin } from "lucide-react"
+import { tonoDe } from "../tono"
 import { cn } from "@/shared/utils/cn"
 import type { TiendaMercado } from "@/dtos/mercado"
 
 /** Avatar de la tienda: inicial sobre el degradado de su matiz (mientras no haya logo). */
-export function AvatarTienda({ tienda, className }: { tienda: Pick<TiendaMercado, "nombre" | "tono">; className?: string }) {
+export function AvatarTienda({ tienda, className }: { tienda: Pick<TiendaMercado, "nombre"> & { subdominio?: string; tono?: number }; className?: string }) {
   return (
     <span
       aria-hidden="true"
-      style={{ "--t": tienda.tono } as CSSProperties}
+      style={{ "--t": tienda.tono ?? tonoDe(tienda.subdominio ?? tienda.nombre) } as CSSProperties}
       className={cn(
         "flex size-12 shrink-0 items-center justify-center rounded-2xl text-[19px] font-extrabold",
         "bg-[linear-gradient(140deg,hsl(var(--t)_85%_82%),hsl(calc(var(--t)+40)_80%_70%))] text-[hsl(var(--t)_60%_20%)]",
@@ -37,15 +37,12 @@ export function TarjetaTienda({ tienda, className }: { tienda: TiendaMercado; cl
         <AvatarTienda tienda={tienda} />
         <div className="min-w-0">
           <h3 className="truncate text-[15px] font-extrabold tracking-tight text-foreground">{tienda.nombre}</h3>
-          <p className="flex items-center gap-1 text-[12px] font-medium text-muted-foreground">
-            <MapPin aria-hidden="true" className="size-3.5" />
-            {tienda.ciudad}
-          </p>
+          <p className="truncate text-[12px] font-medium text-muted-foreground">{tienda.subdominio}</p>
         </div>
       </div>
-      <p className="line-clamp-3 text-[13px] leading-relaxed text-muted-foreground">{tienda.descripcion}</p>
+      <p className="line-clamp-3 text-[13px] leading-relaxed text-muted-foreground">{tienda.descripcion ?? "Tienda independiente en OTemu."}</p>
       <p className="mt-auto pt-1 text-[12.5px] font-bold text-brand-text">
-        {tienda.total_productos} {tienda.total_productos === 1 ? "producto" : "productos"}
+        {tienda.cantidad_productos} {tienda.cantidad_productos === 1 ? "producto" : "productos"}
       </p>
     </Link>
   )
