@@ -62,7 +62,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
               className="h-11 w-full rounded-xl border-[1.8px] border-input bg-transparent pl-10 pr-3 text-[14px] font-medium text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18"
             />
           </label>
-          <button type="submit" className="h-11 rounded-xl bg-grad-marca px-5 text-[14px] font-extrabold text-sobre-marca outline-none transition-all hover:brightness-105 focus-visible:ring-[3px] focus-visible:ring-ring/40">
+          <button type="submit" className="h-11 rounded-xl bg-primary px-5 text-[14px] font-extrabold text-sobre-marca outline-none transition-all hover:brightness-105 focus-visible:ring-[3px] focus-visible:ring-ring/40">
             Buscar
           </button>
         </form>
@@ -77,7 +77,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
                 aria-current={activa ? "true" : undefined}
                 className={cn(
                   "rounded-full border px-4 py-2 text-[13.5px] font-semibold outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40",
-                  activa ? "border-transparent bg-grad-marca text-sobre-marca" : "border-border bg-card text-foreground hover:border-primary hover:bg-primary/10",
+                  activa ? "border-transparent bg-primary text-sobre-marca" : "border-border bg-card text-foreground hover:border-primary hover:bg-primary/10",
                 )}
               >
                 {c.nombre}

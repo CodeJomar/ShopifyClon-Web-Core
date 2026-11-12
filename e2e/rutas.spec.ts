@@ -15,7 +15,7 @@ async function iniciarSesionEnLaTienda(page: Page, correo: string, contrasena: s
   await page.getByLabel("Correo electrónico").fill(correo)
   await page.getByLabel("Contraseña", { exact: true }).fill(contrasena)
   await page.getByRole("button", { name: "Iniciar sesión" }).click()
-  await page.waitForURL(/\/(cuenta|panel)/)
+  await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
   if (page.url().includes("/cuenta/tiendas")) {
     await page.locator("li", { hasText: "Tienda W006 Prueba" }).getByRole("button", { name: "Continuar" }).click()
     await page.waitForURL(/\/panel/)

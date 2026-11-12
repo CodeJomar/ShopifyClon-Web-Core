@@ -8,6 +8,8 @@ import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 import { cn } from "@/shared/utils/cn"
 import { useCarritoEjemplo } from "@/modules/mercado/carrito-mock"
+import { useAcceso } from "@/modules/acceso/acceso"
+import { MenuCuenta, useEnlacesCuenta } from "./menu-cuenta"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "./estilos"
 
 const ENLACES = [
@@ -19,7 +21,7 @@ const ENLACES = [
 export function Logo({ className }: { className?: string }) {
   return (
     <Link href="/" aria-label="OTemu, inicio" className={cn("flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40", className)}>
-      <span className="flex size-9 items-center justify-center rounded-xl bg-grad-marca text-sobre-marca shadow-[0_6px_16px_-6px_rgb(var(--brand-rgb)/0.8)]">
+      <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-sobre-marca">
         <Store className="size-[18px]" aria-hidden="true" />
       </span>
       <span className="text-[20px] font-extrabold tracking-tight text-foreground">OTemu</span>
@@ -31,6 +33,8 @@ export function Logo({ className }: { className?: string }) {
 export function CabeceraPublica() {
   const ruta = usePathname()
   const { cantidadTotal, listo } = useCarritoEjemplo()
+  const { acceso } = useAcceso()
+  const enlacesCuenta = useEnlacesCuenta()
   const activo = (href: string) => (href === "/mercado" ? ruta === "/mercado" || ruta.startsWith("/mercado/tienda/") : ruta.startsWith(href))
 
   return (
@@ -78,16 +82,11 @@ export function CabeceraPublica() {
           >
             <ShoppingBag className="size-[18px]" aria-hidden="true" />
             {listo && cantidadTotal > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex min-w-5 items-center justify-center rounded-full bg-grad-marca px-1.5 text-[11px] font-extrabold leading-5 text-sobre-marca">{cantidadTotal}</span>
+              <span className="absolute -right-1.5 -top-1.5 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-extrabold leading-5 text-sobre-marca">{cantidadTotal}</span>
             )}
           </Link>
           <ThemeToggle />
-          <Link href="/login" className="hidden rounded-lg px-3 py-2 text-[14px] font-bold text-foreground outline-none transition-colors hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/40 sm:inline-block">
-            Iniciar sesión
-          </Link>
-          <Link href="/registro" className={cn(claseBotonMarca, "hidden h-10 px-4 sm:inline-flex")}>
-            Crear cuenta
-          </Link>
+          <MenuCuenta />
 
           <Sheet>
             <SheetTrigger
@@ -105,14 +104,26 @@ export function CabeceraPublica() {
                   </SheetClose>
                 ))}
               </div>
-              <div className="mt-auto flex flex-col gap-2.5 border-t border-border/60 p-5">
-                <SheetClose render={<Link href="/login" />} className={cn(claseBotonContorno, "w-full")}>
-                  Iniciar sesión
-                </SheetClose>
-                <SheetClose render={<Link href="/registro" />} className={cn(claseBotonMarca, "w-full")}>
-                  Crear cuenta
-                </SheetClose>
-              </div>
+              {acceso.estado === "autenticado" ? (
+                <div className="mt-auto flex flex-col gap-1 border-t border-border/60 p-5">
+                  <p className="px-3 pb-1 text-[13px] font-semibold text-muted-foreground">{acceso.nombres} {acceso.apellidos}</p>
+                  {enlacesCuenta.map((e) => (
+                    <SheetClose key={e.href} render={<Link href={e.href} />} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-[15px] font-bold text-foreground hover:bg-primary/10">
+                      <e.icono aria-hidden="true" className="size-4 text-brand-text" />
+                      {e.etiqueta}
+                    </SheetClose>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-auto flex flex-col gap-2.5 border-t border-border/60 p-5">
+                  <SheetClose render={<Link href="/login" />} className={cn(claseBotonContorno, "w-full")}>
+                    Iniciar sesión
+                  </SheetClose>
+                  <SheetClose render={<Link href="/registro" />} className={cn(claseBotonMarca, "w-full")}>
+                    Crear cuenta
+                  </SheetClose>
+                </div>
+              )}
             </SheetContent>
           </Sheet>
         </div>

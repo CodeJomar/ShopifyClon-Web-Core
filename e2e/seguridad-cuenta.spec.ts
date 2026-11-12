@@ -69,7 +69,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     await page.getByRole("button", { name: "Activar cuenta" }).click()
     await page.waitForURL(/\/login/)
     await iniciarSesion(page, { correo, contrasena: CONTRASENA })
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
   })
 
   test("dos pasos: se activa en Mi cuenta y el login pide el código; un código malo no entra", async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
 
     // Login normal (todavía sin dos pasos) → entra
     await iniciarSesion(page, cuenta)
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Activar dos pasos en Mi cuenta, confirmando la contraseña
     await page.goto("/cuenta")
@@ -104,7 +104,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     const codigo = await leerCodigo(cuenta.correo, "SEGUNDO_FACTOR")
     await escribirCodigo(page, codigo)
     await page.getByRole("button", { name: "Verificar y entrar" }).click()
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
     await page.goto("/cuenta")
     await expect(page.getByRole("region", { name: "Verificación en dos pasos" }).getByText("Activada")).toBeVisible()
   })
@@ -133,13 +133,13 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
 
     // Y ahora sí entra
     await iniciarSesion(page, cuenta)
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
   })
 
   test("cambiar la contraseña cierra la sesión y lleva al login con un aviso; cerrar sesión en todos los dispositivos también", async ({ page }) => {
     const cuenta = await crearCuenta(page)
     await iniciarSesion(page, cuenta)
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
     await page.goto("/cuenta")
 
     await expect(page.getByText("Al cambiarla se cerrará tu sesión en todos los dispositivos.")).toBeVisible()
@@ -162,7 +162,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     await iniciarSesion(page, cuenta)
     await expect(page.getByText("No pudimos iniciar sesión")).toBeVisible()
     await iniciarSesion(page, cuenta, nueva)
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Cerrar sesión en todos los dispositivos
     await page.goto("/cuenta")

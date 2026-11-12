@@ -91,7 +91,7 @@ export function CarritoGlobalView() {
           ))}
         </div>
 
-        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-grad-marca p-px lg:sticky lg:top-24">
+        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-primary/60 p-px lg:sticky lg:top-24">
           <div className="rounded-[23px] bg-card p-6">
             <h2 className="text-[18px] font-extrabold tracking-tight text-foreground">Resumen</h2>
             <dl className="mt-4 space-y-2.5 text-[14px]">

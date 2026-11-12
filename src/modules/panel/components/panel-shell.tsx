@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/shared/components/ui/card"
 import {
   NAVEGACION,
   NAVEGACION_PLATAFORMA,
+  NAVEGACION_PROPIETARIO,
   NAVEGACION_SIN_TIENDA,
   filtrarNavegacion,
   permisoDeRuta,
@@ -49,11 +50,13 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const { tienda, rol, nombres, apellidos, esAdministradorPlataforma, puede, cargando, error } = usePanel()
 
   const esRutaPlataforma = pathname.startsWith("/plataforma")
+  const esRutaPropietario = pathname.startsWith("/propietario")
 
   const items = React.useMemo(() => {
     if (esRutaPlataforma) {
       return NAVEGACION_PLATAFORMA
     }
+    if (esRutaPropietario) return NAVEGACION_PROPIETARIO
     const base = tienda ? filtrarNavegacion(NAVEGACION, puede) : [...NAVEGACION_SIN_TIENDA]
     if (esAdministradorPlataforma) {
       base.push({
@@ -64,10 +67,12 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
       })
     }
     return base
-  }, [tienda, puede, esRutaPlataforma, esAdministradorPlataforma])
+  }, [tienda, puede, esRutaPlataforma, esRutaPropietario, esAdministradorPlataforma])
 
   const etiquetaRol = esRutaPlataforma
     ? "Administrador de plataforma"
+    : esRutaPropietario
+    ? "Propietario"
     : rol
     ? (ETIQUETA_ROL[rol] ?? rol)
     : esAdministradorPlataforma
@@ -89,7 +94,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
     <AppSidebar
       items={items}
       isCollapsed={isCollapsed && !isMobile}
-      nombreMarca={esRutaPlataforma ? "Plataforma OTemu" : (tienda?.nombre ?? "OTemu")}
+      nombreMarca={esRutaPlataforma ? "Administración" : esRutaPropietario ? "Mis tiendas" : (tienda?.nombre ?? "OTemu")}
       tieneTienda={!esRutaPlataforma && Boolean(tienda)}
     />
   )

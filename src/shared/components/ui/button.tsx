@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)] hover:brightness-105 hover:-translate-y-px",
+          "bg-primary text-primary-foreground hover:brightness-105 hover:-translate-y-px",
         // Los tintes de marca usan --primary con opacidad (como la plantilla), no --brand-strong
         outline:
           "border-[1.8px] border-brand-strong bg-transparent text-brand-text hover:bg-primary/10",

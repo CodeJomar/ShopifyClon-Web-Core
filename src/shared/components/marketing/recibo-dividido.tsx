@@ -19,7 +19,7 @@ export function ReciboDividido({ className }: { className?: string }) {
 
   return (
     <figure
-      className={cn("relative rounded-[28px] bg-grad-marca p-px shadow-[0_40px_90px_-40px_rgb(var(--brand-rgb)/0.55)]", className)}
+      className={cn("relative rounded-[28px] bg-primary/60 p-px shadow-isla", className)}
       aria-label="Ejemplo de un pedido con productos de tres tiendas y un solo pago"
     >
       <div className="rounded-[27px] bg-card p-6 sm:p-7">

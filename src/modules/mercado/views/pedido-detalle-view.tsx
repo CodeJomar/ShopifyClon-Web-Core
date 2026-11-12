@@ -48,7 +48,7 @@ export function PedidoDetalleView({ id }: { id: string }) {
         <p className="text-[34px] font-extrabold leading-none tracking-tight text-foreground">{formatearDinero(pedido.total, "PEN")}</p>
       </div>
 
-      <div className={cn("mt-6 flex items-start gap-3.5 rounded-2xl p-4 sm:p-5", pedido.pagado ? "bg-grad-marca-suave" : "bg-secondary")}>
+      <div className={cn("mt-6 flex items-start gap-3.5 rounded-2xl p-4 sm:p-5", pedido.pagado ? "bg-primary/10" : "bg-secondary")}>
         {pedido.pagado ? <CircleCheck aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-brand-text" /> : <Clock aria-hidden="true" className="mt-0.5 size-6 shrink-0 text-muted-foreground" />}
         <div>
           <p className="text-[15px] font-extrabold text-foreground">

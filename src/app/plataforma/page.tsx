@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation"
+import { ResumenAdminView } from "@/modules/plataforma/views/vistas-admin"
 
-export default function PlataformaPage() {
-  redirect("/plataforma/planes")
+export const metadata = { title: "Administración | OTemu" }
+
+export default function Pagina() {
+  return <ResumenAdminView />
 }

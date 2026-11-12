@@ -49,7 +49,10 @@ function aErrorApi(error: unknown): ErrorApi {
  * Ejecuta una petición contra /api y devuelve `datos` ya desempaquetados de `RespuestaApi`.
  * Lanza `ErrorApi`. Un 401 fuera de `auth/*` lleva al login conservando la pantalla de destino.
  */
-export async function peticionApi<T>(config: AxiosRequestConfig): Promise<T> {
+export async function peticionApi<T>(configuracion: AxiosRequestConfig & { sinRedireccion401?: boolean }): Promise<T> {
+  // `sinRedireccion401`: para consultas que pueden hacerse SIN sesión (p. ej. saber si quien navega la zona pública ya inició sesión):
+  // un 401 es una respuesta normal, no una sesión vencida, y no debe mandar al login.
+  const { sinRedireccion401, ...config } = configuracion
   try {
     const { data } = await api.request<RespuestaApi<T>>(config)
     return data.datos as T
@@ -57,7 +60,7 @@ export async function peticionApi<T>(config: AxiosRequestConfig): Promise<T> {
     const errorApi = aErrorApi(error)
     // SUS-017: la suscripción de la tienda no está activa; las escrituras se rechazan con el mensaje de la API.
     if (errorApi.codigo === "SUS-017") toast.add({ type: "warning", title: "Suscripción no activa", description: errorApi.message })
-    if (errorApi.estado === 401 && !esRutaAuth(config.url) && typeof window !== "undefined") {
+    if (errorApi.estado === 401 && !sinRedireccion401 && !esRutaAuth(config.url) && typeof window !== "undefined") {
       window.location.replace(`/login?siguiente=${encodeURIComponent(window.location.pathname)}`)
     }
     throw errorApi

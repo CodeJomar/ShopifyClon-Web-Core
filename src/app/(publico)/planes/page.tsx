@@ -27,7 +27,7 @@ export default async function Planes() {
 
       <ul className="mt-10 grid gap-5 lg:grid-cols-3">
         {planes.map((plan) => (
-          <li key={plan.codigo} className={cn("rounded-[28px] p-px", plan.destacado ? "bg-grad-marca shadow-[0_30px_70px_-40px_rgb(var(--brand-rgb)/0.6)]" : "bg-island-border")}>
+          <li key={plan.codigo} className={cn("rounded-[28px] p-px", plan.destacado ? "bg-primary" : "bg-island-border")}>
             <div className="flex h-full flex-col rounded-[27px] bg-card p-7">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-[20px] font-extrabold tracking-tight text-foreground">{plan.nombre}</h2>

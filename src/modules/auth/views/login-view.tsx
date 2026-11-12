@@ -16,6 +16,7 @@ import { useCuentaRegresiva } from "../hooks/use-cuenta-regresiva"
 import { loginAction, verificarSegundoFactorAction } from "../actions/auth.actions"
 import { codigoSchema, loginSchema, type LoginValues } from "../schema"
 import { destinoSeguro } from "../utils"
+import { destinoSegunPerfil } from "@/modules/acceso/acceso"
 import type { ErrorApi } from "@/lib/api/error-api"
 import type { LoginDatosDto } from "@/dtos/auth"
 
@@ -51,18 +52,9 @@ export function LoginView({ correo, siguiente, aviso }: LoginViewProps) {
   /** Sesión iniciada (login normal o segundo paso): aviso y destino según las tiendas de la persona. */
   const entrar = (datos: LoginDatosDto) => {
     toast.add({ type: "success", title: "Sesión iniciada", description: "Bienvenido de nuevo." })
-    // Sin "siguiente": administrador de plataforma sin tiendas → /plataforma; 0 tiendas → crear la primera; 1 → su panel; varias → elegir.
-    const tiendas = datos.tiendas.length
-    const esAdminPlataforma = Boolean(datos.usuario.es_administrador_plataforma)
-    const destinoPorDefecto =
-      esAdminPlataforma && tiendas === 0
-        ? "/plataforma"
-        : tiendas === 0
-        ? "/cuenta/tiendas/nueva"
-        : tiendas === 1
-        ? "/panel"
-        : "/cuenta/tiendas"
-    router.replace(siguiente ? destinoSeguro(siguiente) : destinoPorDefecto)
+    // Sin "siguiente", según lo que sea la persona (rediseño): administrador → administración; propietario → panel general;
+    // comprador → el mercado. Todos pueden comprar, por eso nadie queda obligado a crear una tienda.
+    router.replace(siguiente ? destinoSeguro(siguiente) : destinoSegunPerfil({ esAdministrador: Boolean(datos.usuario.es_administrador_plataforma), tiendas: datos.tiendas.length }))
   }
 
   const verificar = async (e: React.FormEvent) => {

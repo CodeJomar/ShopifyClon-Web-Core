@@ -89,7 +89,8 @@
   --popover: #FFFFFF;
   --popover-foreground: #1F2A44;
   --primary: #00E699;
-  --primary-foreground: #FFFFFF;
+  /* Tinta oscura sobre el verde de marca (9,4:1). El blanco da 1,6:1 y no cumple WCAG AA. */
+  --primary-foreground: #062A1F;
   --secondary: #F4F7FB;
   --secondary-foreground: #1F2A44;
   --muted: #F4F7FB;
@@ -97,7 +98,8 @@
   --accent: #F4F7FB;
   --accent-foreground: #1F2A44;
   --destructive: #E91E63;
-  --destructive-text: #E91E63;
+  /* El rojo de marca #E91E63 se queda para rellenos, bordes e íconos; el TEXTO rojo usa un tono que sí cumple AA (5,2:1 sobre el fondo claro). */
+  --destructive-text: #C2185B;
   --border: #CFD8E3;
   --border-hover: #94A3B8;
   --island-border: rgb(148 163 184 / 0.22);
@@ -125,7 +127,7 @@
   --sidebar: #FFFFFF;
   --sidebar-foreground: #1F2A44;
   --sidebar-primary: #00E699;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #062A1F;
   --sidebar-accent: rgb(0 230 153 / 0.14);
   --sidebar-accent-foreground: #007A52;
   --sidebar-border: rgb(148 163 184 / 0.22);
@@ -167,7 +169,7 @@
   --popover: #0F1622;
   --popover-foreground: #F1F5F9;
   --primary: #00E699;
-  --primary-foreground: #FFFFFF;
+  --primary-foreground: #062A1F;
   --secondary: #172133;
   --secondary-foreground: #F1F5F9;
   --muted: #172133;
@@ -175,7 +177,7 @@
   --accent: #172133;
   --accent-foreground: #F1F5F9;
   --destructive: #E91E63;
-  --destructive-text: #E91E63;
+  --destructive-text: #FF5C8D;
   --border: #26354D;
   --border-hover: #3B5173;
   --island-border: rgb(255 255 255 / 0.07);
@@ -194,7 +196,7 @@
   --sidebar: #0F1622;
   --sidebar-foreground: #F1F5F9;
   --sidebar-primary: #00E699;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary-foreground: #062A1F;
   --sidebar-accent: rgb(0 230 153 / 0.14);
   --sidebar-accent-foreground: #00E699;
   --sidebar-border: rgb(255 255 255 / 0.07);

@@ -25,7 +25,7 @@ export function TarjetaProducto({ producto, className }: { producto: ProductoMer
       <div className="relative aspect-[4/3] overflow-hidden">
         <ImagenProducto tono={producto.tienda.tono} icono={categoria?.icono ?? "arte"} titulo={producto.titulo} className="transition-transform duration-500 group-hover:scale-[1.04]" />
         <div className="absolute left-3 top-3 flex gap-1.5">
-          {descuento > 0 && <span className="rounded-full bg-destructive px-2.5 py-1 text-[11px] font-extrabold text-white">-{descuento}%</span>}
+          {descuento > 0 && <span className="rounded-full bg-tono-peligro-bg px-2.5 py-1 text-[11px] font-extrabold text-tono-peligro-fg">-{descuento}%</span>}
           {producto.es_digital && <span className="rounded-full bg-card/90 px-2.5 py-1 text-[11px] font-bold text-foreground backdrop-blur">Digital</span>}
         </div>
         {!producto.disponible && (

@@ -104,7 +104,7 @@ export function CheckoutGlobalView() {
           </section>
         </div>
 
-        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-grad-marca p-px lg:sticky lg:top-24">
+        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-primary/60 p-px lg:sticky lg:top-24">
           <div className="rounded-[23px] bg-card p-6">
             <h2 className="text-[18px] font-extrabold tracking-tight text-foreground">Tu pedido</h2>
             <ul className="mt-4 space-y-4">

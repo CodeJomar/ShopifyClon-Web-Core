@@ -4,6 +4,12 @@ import {
   ChartNoAxesColumn,
   CreditCard,
   FolderTree,
+  House,
+  LayoutDashboard,
+  ScrollText,
+  ShieldAlert,
+  ShieldCheck,
+  UserCog,
   Layers,
   Package,
   Plus,
@@ -84,9 +90,25 @@ export const NAVEGACION_SIN_TIENDA: NavItem[] = [
 
 /** Menú lateral exclusivo para el panel de plataforma (W-017). */
 export const NAVEGACION_PLATAFORMA: NavItem[] = [
+  { id: "plataforma-resumen", label: "Resumen", icon: LayoutDashboard, href: "/plataforma", migas: ["Administración", "Resumen"] },
+  { id: "plataforma-tiendas", label: "Tiendas", icon: Store, href: "/plataforma/tiendas", migas: ["Administración", "Tiendas"] },
+  { id: "plataforma-usuarios", label: "Usuarios", icon: Users, href: "/plataforma/usuarios", migas: ["Administración", "Usuarios"] },
+  { id: "plataforma-administradores", label: "Administradores", icon: UserCog, href: "/plataforma/administradores", migas: ["Administración", "Administradores"] },
+  { id: "plataforma-auditoria", label: "Auditoría", icon: ScrollText, href: "/plataforma/auditoria", migas: ["Administración", "Auditoría"] },
+  { id: "plataforma-seguridad", label: "Seguridad", icon: ShieldAlert, href: "/plataforma/seguridad", migas: ["Administración", "Seguridad"] },
   { id: "plataforma-planes", label: "Planes", icon: Layers, href: "/plataforma/planes", migas: ["Plataforma", "Planes"] },
-  { id: "plataforma-suscripciones", label: "Suscripciones", icon: Store, href: "/plataforma/suscripciones", migas: ["Plataforma", "Suscripciones"] },
+  { id: "plataforma-suscripciones", label: "Suscripciones", icon: CreditCard, href: "/plataforma/suscripciones", migas: ["Plataforma", "Suscripciones"] },
   { id: "plataforma-comisiones", label: "Comisiones", icon: ChartNoAxesColumn, href: "/plataforma/comisiones", migas: ["Plataforma", "Comisiones"] },
+  { id: "plataforma-mercado", label: "Ir al mercado", icon: House, href: "/mercado" },
+]
+
+/** Menú de la zona del propietario: su resumen y el acceso a cada tienda; el panel de una tienda se abre desde ahí. */
+export const NAVEGACION_PROPIETARIO: NavItem[] = [
+  { id: "propietario-resumen", label: "Panel general", icon: LayoutDashboard, href: "/propietario", migas: ["Propietario", "Panel general"] },
+  { id: "propietario-tiendas", label: "Mis tiendas", icon: Store, href: "/cuenta/tiendas", migas: ["Propietario", "Mis tiendas"] },
+  { id: "propietario-compras", label: "Mis pedidos", icon: ReceiptText, href: "/mis-pedidos" },
+  { id: "propietario-cuenta", label: "Mi cuenta", icon: ShieldCheck, href: "/cuenta" },
+  { id: "propietario-mercado", label: "Ir al mercado", icon: House, href: "/mercado" },
 ]
 
 /** Una pantalla encontrada en el mapa, junto con el grupo al que pertenece (si lo tiene). */
@@ -118,11 +140,10 @@ export function permisoDeRuta(pathname: string): Permiso | undefined {
 /** Migas de pan [sección, pantalla] de una URL. */
 export function migasDe(pathname: string): [string, string] {
   if (pathname === PERFIL_HREF || pathname.startsWith(`${PERFIL_HREF}/`)) return ["Mi cuenta", seccionCuentaDe(pathname)]
+  if (pathname.startsWith("/propietario")) return ["Propietario", "Panel general"]
   if (pathname.startsWith("/plataforma")) {
-    if (pathname.startsWith("/plataforma/planes")) return ["Plataforma", "Planes"]
-    if (pathname.startsWith("/plataforma/suscripciones")) return ["Plataforma", "Suscripciones"]
-    if (pathname.startsWith("/plataforma/comisiones")) return ["Plataforma", "Comisiones"]
-    return ["Plataforma", "Planes"]
+    const encontrada = NAVEGACION_PLATAFORMA.filter((i) => i.href && i.href !== "/plataforma" && pathname.startsWith(i.href))[0]
+    return encontrada?.migas ?? ["Administración", "Resumen"]
   }
   const ruta = rutaDe(pathname)
   if (!ruta) return ["Panel", "Dashboard"]

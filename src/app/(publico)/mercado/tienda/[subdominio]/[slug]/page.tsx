@@ -58,7 +58,7 @@ export default async function DetalleProducto({ params }: Props) {
           <p className="mt-6 flex flex-wrap items-baseline gap-3">
             <span className="text-[38px] font-extrabold leading-none tracking-tight text-foreground">{formatearDinero(producto.precio, producto.moneda)}</span>
             {rebaja && <span className="text-[17px] font-medium text-muted-foreground line-through">{formatearDinero(rebaja, producto.moneda)}</span>}
-            {rebaja && <span className="rounded-full bg-destructive px-2.5 py-1 text-[12px] font-extrabold text-white">-{Math.round((1 - producto.precio / rebaja) * 100)}%</span>}
+            {rebaja && <span className="rounded-full bg-tono-peligro-bg px-2.5 py-1 text-[12px] font-extrabold text-tono-peligro-fg">-{Math.round((1 - producto.precio / rebaja) * 100)}%</span>}
           </p>
 
           <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted-foreground">{producto.descripcion}</p>

@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { ArrowRight, Boxes, PackageCheck, Rocket, Store, Truck, Wallet } from "lucide-react"
-import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
+import { claseBotonContorno, claseBotonHero, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { ReciboDividido } from "@/shared/components/marketing/recibo-dividido"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { TarjetaTienda } from "@/modules/mercado/components/tarjeta-tienda"
@@ -38,7 +38,7 @@ export default async function Portada() {
               tienda recibe su parte y te despacha lo suyo.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/mercado" className={claseBotonMarca}>
+              <Link href="/mercado" className={claseBotonHero}>
                 Explorar el mercado <ArrowRight aria-hidden="true" />
               </Link>
               <Link href="/planes" className={claseBotonContorno}>
@@ -59,16 +59,15 @@ export default async function Portada() {
           Comprar a varias tiendas deja de ser un trámite
         </h2>
         <div className="mt-8 grid gap-4 lg:grid-cols-[1.35fr_1fr]">
-          <div className="relative overflow-hidden rounded-3xl bg-grad-tinta p-8 text-white sm:p-10">
-            <div aria-hidden="true" className="absolute -right-16 -top-20 size-64 rounded-full bg-grad-marca opacity-30 blur-3xl" />
-            <PackageCheck aria-hidden="true" className="relative size-9 text-primary" strokeWidth={1.6} />
-            <h3 className="relative mt-5 max-w-md text-[24px] font-extrabold leading-snug tracking-tight sm:text-[28px]">Un carrito para todas las tiendas</h3>
-            <p className="relative mt-3 max-w-md text-[15px] font-medium leading-relaxed text-white/75">
+          <div className="rounded-3xl bg-primary p-8 text-sobre-marca sm:p-10">
+            <PackageCheck aria-hidden="true" className="size-9" strokeWidth={1.6} />
+            <h3 className="mt-5 max-w-md text-[24px] font-extrabold leading-snug tracking-tight sm:text-[28px]">Un carrito para todas las tiendas</h3>
+            <p className="mt-3 max-w-md text-[15px] font-semibold leading-relaxed">
               Agrega café de una tienda, una chalina de otra y un cargador de una tercera. Ves el total de todo junto y confirmas una sola vez.
             </p>
           </div>
           <div className="grid gap-4">
-            <div className="rounded-3xl border border-island-border bg-grad-marca-suave p-7">
+            <div className="rounded-3xl border border-island-border bg-primary/10 p-7">
               <Wallet aria-hidden="true" className="size-7 text-brand-text" strokeWidth={1.7} />
               <h3 className="mt-3 text-[18px] font-extrabold tracking-tight text-foreground">Pagas una vez, sin dividir nada</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">Con tarjeta se hace un solo cobro; nosotros repartimos el dinero entre las tiendas.</p>
@@ -161,8 +160,8 @@ export default async function Portada() {
             </ol>
           </div>
 
-          <div className="rounded-3xl bg-grad-marca p-px">
-            <div className="rounded-[23px] bg-card p-7">
+          <div className="rounded-3xl bg-primary p-0.5">
+            <div className="rounded-[22px] bg-card p-7">
               <p className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">
                 <Rocket aria-hidden="true" className="size-3.5" /> {gratis.nombre}
               </p>
@@ -173,7 +172,7 @@ export default async function Portada() {
               <ul className="mt-6 space-y-2.5">
                 {gratis.incluye.map((x) => (
                   <li key={x} className="flex items-start gap-2.5 text-[14px] font-medium text-foreground">
-                    <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-grad-marca" />
+                    <span aria-hidden="true" className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" />
                     {x}
                   </li>
                 ))}
@@ -194,7 +193,6 @@ export default async function Portada() {
       {/* Cierre */}
       <section className={cn(claseContenedor, "pt-24")}>
         <div className="relative overflow-hidden rounded-[32px] bg-grad-tinta px-7 py-14 text-center text-white sm:px-12 sm:py-20">
-          <div aria-hidden="true" className="absolute left-1/2 top-0 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-grad-marca opacity-30 blur-3xl" />
           <h2 className="relative mx-auto max-w-2xl text-[30px] font-extrabold leading-tight tracking-tight sm:text-[40px]">
             Tu próxima compra o tu primera venta empieza aquí
           </h2>

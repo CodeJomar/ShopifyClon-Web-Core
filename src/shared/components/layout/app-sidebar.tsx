@@ -115,8 +115,12 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
   )
 }
 /** ¿La URL actual pertenece a esta pantalla? (exacta o anidada) */
+// Las portadas de zona (/panel, /plataforma, /propietario) solo se marcan en su ruta exacta: si no, quedarían activas en todas sus pantallas.
+const PORTADAS = new Set(["/panel", "/plataforma", "/propietario"])
+
 function estaActivo(pathname: string, href?: string): boolean {
-  return Boolean(href) && (pathname === href || pathname.startsWith(`${href}/`))
+  if (!href) return false
+  return pathname === href || (!PORTADAS.has(href) && pathname.startsWith(`${href}/`))
 }
 
 /** Menú colapsado: un icono con tooltip. Un grupo lleva a su primera pantalla disponible. */

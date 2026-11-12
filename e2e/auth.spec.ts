@@ -29,9 +29,9 @@ test.describe("Autenticación y sesión (W-004)", () => {
     await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
     const pathname = new URL(page.url()).pathname
-    expect(pathname).toMatch(/\/(cuenta|panel)/)
+    expect(pathname).toMatch(/\/(cuenta|panel|mercado|propietario|plataforma)/)
   })
 
   test("cerrar sesión invalida la sesión y protege /cuenta", async ({ page }) => {
@@ -45,7 +45,7 @@ test.describe("Autenticación y sesión (W-004)", () => {
     await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Abrir menú de usuario y cerrar sesión
     await page.getByRole("button", { name: "Menú de la cuenta" }).click()

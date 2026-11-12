@@ -41,11 +41,11 @@ export function LineaDespacho({ estado }: { estado: EstadoOrdenTienda }) {
         const Icono = p.icono
         return (
           <li key={p.estado} className="relative flex flex-1 flex-col items-center gap-1.5 text-center" aria-current={i === actual ? "step" : undefined}>
-            {i > 0 && <span aria-hidden="true" className={cn("absolute right-1/2 top-[17px] h-0.5 w-full -translate-y-1/2", i <= actual ? "bg-grad-marca" : "bg-border")} />}
+            {i > 0 && <span aria-hidden="true" className={cn("absolute right-1/2 top-[17px] h-0.5 w-full -translate-y-1/2", i <= actual ? "bg-primary" : "bg-border")} />}
             <span
               className={cn(
                 "relative z-10 flex size-9 items-center justify-center rounded-full border-2",
-                hecho ? "border-transparent bg-grad-marca text-sobre-marca" : "border-border bg-card text-muted-foreground",
+                hecho ? "border-transparent bg-primary text-sobre-marca" : "border-border bg-card text-muted-foreground",
               )}
             >
               <Icono aria-hidden="true" className="size-4" />

@@ -17,7 +17,7 @@ test.describe("Panel de administración y gestión de órdenes (W-011)", () => {
     await page.getByLabel("Contraseña", { exact: true }).fill(contrasena!)
     await page.getByRole("button", { name: "Iniciar sesión" }).click()
 
-    await page.waitForURL(/\/(cuenta|panel)/)
+    await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Si llega a /cuenta/tiendas, seleccionar "Tienda W006 Prueba"
     if (page.url().includes("/cuenta/tiendas")) {
