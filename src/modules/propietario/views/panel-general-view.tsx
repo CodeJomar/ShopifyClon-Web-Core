@@ -16,25 +16,33 @@ import { cn } from "@/shared/utils/cn"
 import { fijarTiendaAction, misTiendasAction } from "@/modules/tienda/actions/tienda.actions"
 import type { MiTiendaDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
-import { metricasEjemplo } from "../metricas-mock"
+import { peticionApi } from "@/lib/api/client"
+import { resultado } from "@/lib/api/resultado"
+import type { ResumenPropietario, TiendaResumenPropietario } from "@/dtos/administracion"
 
 const ROL: Record<string, string> = { PROPIETARIO: "Propietario", ADMINISTRADOR: "Administrador", GESTOR_CATALOGO: "Gestor de catálogo", GESTOR_PEDIDOS: "Gestor de pedidos" }
 
 /**
- * Resumen de TODAS las tiendas de la persona. Las tiendas, su rol y su estado salen de la API real (`/cuenta/tiendas`); las cifras
- * son de ejemplo hasta que exista el resumen del backend (B7). Desde aquí se entra al panel administrativo de una tienda concreta.
+ * Resumen de TODAS las tiendas de las que la persona es propietaria (B7: `GET /propietario/resumen`, últimos 30 días). Los totales
+ * van por moneda porque monedas distintas no se suman. El rol sale de `/cuenta/tiendas`. Desde aquí se entra al panel de una tienda.
  */
 export function PanelGeneralView() {
   const router = useRouter()
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const [abriendo, setAbriendo] = React.useState<string | null>(null)
+  const [resumen, setResumen] = React.useState<ResumenPropietario | null>(null)
 
   React.useEffect(() => {
     let cancelado = false
     misTiendasAction().then((res) => {
       if (cancelado) return
       if (res.ok) setTiendas(res.datos)
+      else setError(res.error)
+    })
+    void resultado(peticionApi<ResumenPropietario>({ method: "GET", url: "/propietario/resumen" })).then((res) => {
+      if (cancelado) return
+      if (res.ok) setResumen(res.datos)
       else setError(res.error)
     })
     return () => {
@@ -52,23 +60,24 @@ export function PanelGeneralView() {
     router.push("/panel")
   }
 
-  const filas = (tiendas ?? []).map((t) => ({ tienda: t, m: metricasEjemplo(t.tienda_id) }))
-  const total = filas.reduce((s, f) => s + f.m.ventas, 0)
-  const pedidos = filas.reduce((s, f) => s + f.m.pedidos, 0)
-  const saldo = filas.reduce((s, f) => s + f.m.saldo_pendiente, 0)
-  const mayor = Math.max(1, ...filas.map((f) => f.m.ventas))
-  const alertas = filas.flatMap((f) => [
-    ...(f.m.por_despachar > 0 ? [{ id: `${f.tienda.tienda_id}-d`, texto: `${f.m.por_despachar} ${f.m.por_despachar === 1 ? "pedido por despachar" : "pedidos por despachar"} en ${f.tienda.nombre}` }] : []),
-    ...(f.m.stock_bajo > 0 ? [{ id: `${f.tienda.tienda_id}-s`, texto: `${f.m.stock_bajo} ${f.m.stock_bajo === 1 ? "producto con poco stock" : "productos con poco stock"} en ${f.tienda.nombre}` }] : []),
+  const metricas = new Map((resumen?.tiendas ?? []).map((t) => [t.tienda_id, t]))
+  const filas = (tiendas ?? []).map((t) => ({ tienda: t, m: metricas.get(t.tienda_id) }))
+  const totales = resumen?.totales ?? []
+  const pedidos = totales.reduce((s, t) => s + t.ordenes, 0)
+  const mayorPorMoneda = new Map<string, number>()
+  for (const t of resumen?.tiendas ?? []) mayorPorMoneda.set(t.moneda, Math.max(mayorPorMoneda.get(t.moneda) ?? 1, t.ventas))
+  const alertas = (resumen?.tiendas ?? []).flatMap((t: TiendaResumenPropietario) => [
+    ...(t.alertas.ordenes_por_preparar > 0 ? [{ id: `${t.tienda_id}-d`, texto: `${t.alertas.ordenes_por_preparar} ${t.alertas.ordenes_por_preparar === 1 ? "pedido por preparar" : "pedidos por preparar"} en ${t.nombre}` }] : []),
+    ...(t.alertas.stock_bajo > 0 ? [{ id: `${t.tienda_id}-s`, texto: `${t.alertas.stock_bajo} ${t.alertas.stock_bajo === 1 ? "producto con poco stock" : "productos con poco stock"} en ${t.nombre}` }] : []),
   ])
 
   return (
     <div className="space-y-6">
       <EncabezadoPagina
         titulo="Panel general"
-        descripcion={tiendas ? `Así van tus ${tiendas.length} ${tiendas.length === 1 ? "tienda" : "tiendas"} en los últimos 30 días.` : "El resumen de todas tus tiendas."}
+        descripcion={tiendas && tiendas.length > 0 ? `Así van tus ${tiendas.length} ${tiendas.length === 1 ? "tienda" : "tiendas"} en los últimos 30 días.` : "El resumen de todas tus tiendas."}
         acciones={
-          <Link href="/planes" className={buttonVariants({ variant: "outline", size: "sm" })}>
+          <Link href="/cuenta/tiendas/nueva" className={buttonVariants({ variant: "outline", size: "sm" })}>
             <Plus aria-hidden="true" /> Nueva tienda
           </Link>
         }
@@ -81,7 +90,7 @@ export function PanelGeneralView() {
         </Alert>
       )}
 
-      {!tiendas && !error && (
+      {(!tiendas || !resumen) && !error && (
         <div className="grid gap-4 sm:grid-cols-3" aria-busy="true" aria-label="Cargando tus tiendas">
           {[0, 1, 2].map((i) => (
             <Skeleton key={i} className="h-32 rounded-2xl" />
@@ -102,18 +111,26 @@ export function PanelGeneralView() {
         </Card>
       )}
 
-      {tiendas && tiendas.length > 0 && (
+      {tiendas && tiendas.length > 0 && resumen && (
         <>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-3xl bg-primary p-6 text-sobre-marca md:col-span-1">
               <p className="flex items-center gap-2 text-[13px] font-bold">
                 <TrendingUp aria-hidden="true" className="size-4" /> Ventas de todas tus tiendas
               </p>
-              <p className="mt-3 text-[34px] font-extrabold leading-none tracking-tight">{formatearDinero(total, "PEN")}</p>
-              <p className="mt-2 text-[12.5px] font-semibold">Últimos 30 días, datos de ejemplo</p>
+              {totales.length === 0 ? (
+                <p className="mt-3 text-[34px] font-extrabold leading-none tracking-tight">{formatearDinero(0, "PEN")}</p>
+              ) : (
+                <ul className="mt-3 space-y-1">
+                  {totales.map((t, i) => (
+                    <li key={t.moneda} className={cn("font-extrabold leading-none tracking-tight", i === 0 ? "text-[34px]" : "text-[20px]")}>{formatearDinero(t.ventas, t.moneda)}</li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-2 text-[12.5px] font-semibold">Ventas netas, últimos 30 días</p>
             </div>
             <Kpi icono={ShoppingBag} titulo="Pedidos" valor={String(pedidos)} detalle="entre todas las tiendas" />
-            <Kpi icono={Banknote} titulo="Saldo por cobrar" valor={formatearDinero(saldo, "PEN")} detalle="tu parte, después de comisiones" />
+            <Kpi icono={Banknote} titulo="Saldo por cobrar" valor={totales.length === 0 ? formatearDinero(0, "PEN") : totales.map((t) => formatearDinero(t.saldo_pendiente, t.moneda)).join(" · ")} detalle="tu parte, después de comisiones" />
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
@@ -121,17 +138,21 @@ export function PanelGeneralView() {
               <CardContent className="space-y-4">
                 <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Ventas por tienda</h2>
                 <ul className="space-y-3.5">
-                  {filas.map((f) => (
-                    <li key={f.tienda.tienda_id}>
-                      <div className="flex justify-between gap-3 text-[13.5px]">
-                        <span className="truncate font-bold text-foreground">{f.tienda.nombre}</span>
-                        <span className="font-extrabold text-foreground">{formatearDinero(f.m.ventas, "PEN")}</span>
-                      </div>
-                      <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-secondary" role="img" aria-label={`${f.tienda.nombre}: ${Math.round((f.m.ventas / mayor) * 100)} % de la tienda que más vendió`}>
-                        <div className="barra-reparto h-full rounded-full bg-primary" style={{ width: `${Math.max(4, (f.m.ventas / mayor) * 100)}%` }} />
-                      </div>
-                    </li>
-                  ))}
+                  {filas.map((f) => {
+                    const ventas = f.m?.ventas ?? 0
+                    const mayor = mayorPorMoneda.get(f.m?.moneda ?? "") ?? 1
+                    return (
+                      <li key={f.tienda.tienda_id}>
+                        <div className="flex justify-between gap-3 text-[13.5px]">
+                          <span className="truncate font-bold text-foreground">{f.tienda.nombre}</span>
+                          <span className="font-extrabold text-foreground">{formatearDinero(ventas, f.m?.moneda ?? "PEN")}</span>
+                        </div>
+                        <div className="mt-1.5 h-2.5 overflow-hidden rounded-full bg-secondary" role="img" aria-label={`${f.tienda.nombre}: ${Math.round((ventas / mayor) * 100)} % de la tienda que más vendió`}>
+                          <div className="barra-reparto h-full rounded-full bg-primary" style={{ width: `${Math.max(4, (ventas / mayor) * 100)}%` }} />
+                        </div>
+                      </li>
+                    )
+                  })}
                 </ul>
               </CardContent>
             </Card>
@@ -141,7 +162,7 @@ export function PanelGeneralView() {
                 <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Pendiente de atender</h2>
                 {alertas.length === 0 ? (
                   <p className="flex items-center gap-2 text-[13.5px] font-medium text-muted-foreground">
-                    <PackageCheck aria-hidden="true" className="size-4 text-brand-text" /> Todo al día: no hay pedidos ni stock por atender.
+                    <PackageCheck aria-hidden="true" className="size-4 text-brand-text" /> Todo al día: no hay pedidos por preparar ni stock bajo.
                   </p>
                 ) : (
                   <ul className="space-y-2.5">
@@ -172,9 +193,9 @@ export function PanelGeneralView() {
                         <Badge variant="estado" tono={t.operativa ? "marca" : "aviso"}>{t.operativa ? "Operativa" : "Suscripción vencida"}</Badge>
                       </div>
                       <dl className="grid grid-cols-3 gap-2 text-center">
-                        <Dato titulo="Ventas" valor={formatearDinero(m.ventas, "PEN").replace(/\.00$/, "")} />
-                        <Dato titulo="Pedidos" valor={String(m.pedidos)} />
-                        <Dato titulo="Productos" valor={String(m.productos)} />
+                        <Dato titulo="Ventas" valor={formatearDinero(m?.ventas ?? 0, m?.moneda ?? "PEN").replace(/\.00$/, "")} />
+                        <Dato titulo="Pedidos" valor={String(m?.ordenes ?? 0)} />
+                        <Dato titulo="Plan" valor={m?.codigo_plan ?? "—"} />
                       </dl>
                       <p className="text-[12.5px] font-semibold text-muted-foreground">Tu rol: {ROL[t.rol] ?? t.rol}</p>
                       <div className="mt-auto flex flex-wrap gap-2">
