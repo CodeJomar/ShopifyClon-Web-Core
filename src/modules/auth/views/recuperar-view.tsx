@@ -64,6 +64,12 @@ export function RecuperarView() {
       router.replace(`/login?correo=${encodeURIComponent(correo)}`)
       return
     }
+    // USR-015 (contraseña demasiado común o con el nombre del correo): va junto al campo y el código sigue siendo válido.
+    if (res.error.codigo === "USR-015") {
+      formNueva.setError("contrasena_nueva", { message: res.error.message })
+      formNueva.resetField("confirmar")
+      return
+    }
     setError(res.error)
     setCodigo("")
     formNueva.resetField("contrasena_nueva")

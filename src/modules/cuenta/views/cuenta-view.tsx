@@ -9,12 +9,14 @@ import { Card } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Switch } from "@/shared/components/ui/switch"
 import { Button } from "@/shared/components/ui/button"
+import { useConfirm } from "@/shared/providers/confirm-provider"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
 import { cerrarSesionAction } from "@/modules/auth"
 import { PerfilForm } from "../components/perfil-form"
 import { ContrasenaForm } from "../components/contrasena-form"
-import { perfilCuentaAction } from "../actions/cuenta.actions"
+import { DosPasosSeccion } from "../components/dos-pasos-seccion"
+import { cerrarSesionesAction, perfilCuentaAction } from "../actions/cuenta.actions"
 import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ErrorApi } from "@/lib/api/error-api"
 
@@ -34,6 +36,8 @@ export function CuentaView() {
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const router = useRouter()
   const [cerrando, setCerrando] = React.useState(false)
+  const [cerrandoTodas, setCerrandoTodas] = React.useState(false)
+  const confirmar = useConfirm()
   const { theme, setTheme } = useTheme()
   const montado = useMounted()
   const oscuro = montado && theme === "dark"
@@ -42,6 +46,25 @@ export function CuentaView() {
     setCerrando(true)
     await cerrarSesionAction()
     router.replace("/login")
+  }
+
+  /** Invalida todas las sesiones de la cuenta en el servidor (A-007), también la de este navegador, y lleva al login. */
+  const cerrarEnTodos = async () => {
+    const aceptado = await confirmar({
+      title: "¿Cerrar sesión en todos los dispositivos?",
+      description: "Se cerrará tu sesión en este navegador y en cualquier otro donde la tengas abierta. Tendrás que volver a iniciarla.",
+      confirmText: "Sí, cerrar todas",
+    })
+    if (!aceptado) return
+    setCerrandoTodas(true)
+    const res = await cerrarSesionesAction()
+    // Si la API ya no reconoce la sesión (401) igual se cierra la de la web: el resultado es el mismo.
+    if (!res.ok && res.error.estado !== 401) {
+      setCerrandoTodas(false)
+      return setError(res.error)
+    }
+    await cerrarSesionAction()
+    router.replace("/login?aviso=sesiones")
   }
 
   React.useEffect(() => {
@@ -92,6 +115,10 @@ export function CuentaView() {
               <h2 id="cuenta-seguridad" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Seguridad</h2>
               <ContrasenaForm />
             </section>
+
+            <div className="h-px bg-border/60" />
+
+            <DosPasosSeccion perfil={perfil} onCambio={setPerfil} />
 
             <div className="h-px bg-border/60" />
 
@@ -161,15 +188,15 @@ export function CuentaView() {
                 <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
                   Cerrar sesión
                 </Button>
-                {/* Próximamente: necesitan endpoints nuevos (docs/orquestacion/ajustes/A-003) */}
-                <Button variant="neutral" disabled leftIcon={<MonitorSmartphone aria-hidden="true" />} aria-describedby="cuenta-pronto">
-                  Cerrar sesión en otros dispositivos
+                <Button variant="neutral" onClick={cerrarEnTodos} loading={cerrandoTodas} leftIcon={<MonitorSmartphone aria-hidden="true" />}>
+                  Cerrar sesión en todos los dispositivos
                 </Button>
+                {/* Próximamente: necesita un endpoint nuevo (docs/orquestacion/ajustes/A-003) */}
                 <Button variant="danger-outline" disabled leftIcon={<Trash2 aria-hidden="true" />} aria-describedby="cuenta-pronto">
                   Eliminar mi cuenta
                 </Button>
               </div>
-              <p id="cuenta-pronto" className="mt-3 text-[11.5px] text-muted-foreground">Cerrar sesión en otros dispositivos y eliminar tu cuenta llegan pronto.</p>
+              <p id="cuenta-pronto" className="mt-3 text-[11.5px] text-muted-foreground">Eliminar tu cuenta llega pronto.</p>
             </section>
           </div>
         </Card>

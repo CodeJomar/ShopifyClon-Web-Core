@@ -8,8 +8,9 @@ export const metadata = {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ correo?: string | string[]; siguiente?: string | string[] }>
+  searchParams: Promise<{ correo?: string | string[]; siguiente?: string | string[]; aviso?: string | string[] }>
 }) {
-  const { correo, siguiente } = await searchParams
-  return <LoginView correo={Array.isArray(correo) ? correo[0] : correo} siguiente={Array.isArray(siguiente) ? siguiente[0] : siguiente} />
+  const { correo, siguiente, aviso } = await searchParams
+  const uno = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v)
+  return <LoginView correo={uno(correo)} siguiente={uno(siguiente)} aviso={uno(aviso)} />
 }
