@@ -4,7 +4,6 @@ import * as React from "react"
 import { Banknote, Coins, Copy, ExternalLink, Percent, Wallet, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button, buttonVariants } from "@/shared/components/ui/button"
-import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
 import { ControlSegmentado } from "@/shared/components/composed/control-segmentado"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
@@ -71,16 +70,20 @@ export function InicioView() {
   const maxImporte = Math.max(1, ...(datos?.top_productos.map((p) => p.importe) ?? [0]))
 
   return (
-    <div className="otemu-dashboard space-y-6">
-      <section className="otemu-dashboard-intro">
-        <div className="otemu-dashboard-intro-inner">
-          <span className="otemu-eyebrow"><Sparkles aria-hidden="true" className="size-3.5" /> TU ESPACIO DE TRABAJO</span>
-          <p className="otemu-dashboard-intro-note">Una mirada clara a lo que importa: tu negocio.</p>
-        </div>
-      <EncabezadoPagina
-        titulo={nombres ? `Hola, ${nombres.split(/\s+/)[0]}` : "Dashboard"}
-        descripcion={`Así va ${tienda?.nombre ?? "tu tienda"}. Los montos están en ${moneda}.`}
-        acciones={
+    <div className="space-y-6">
+      <section className="rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-7">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-brand-text">
+              <Sparkles aria-hidden="true" className="size-3.5" /> Tu espacio de trabajo
+            </p>
+            <h1 className="mt-2 text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">
+              {nombres ? `Hola, ${nombres.split(/\s+/)[0]}` : "Dashboard"}
+            </h1>
+            <p className="mt-1 text-[14px] font-medium text-muted-foreground">
+              Así va {tienda?.nombre ?? "tu tienda"}. Los montos están en {moneda}.
+            </p>
+          </div>
           <div className="flex flex-wrap items-center gap-3">
             <IndicadorEnVivo estado={estadoEnVivo} />
             <ControlSegmentado
@@ -90,8 +93,7 @@ export function InicioView() {
               opciones={RANGOS.map((rango) => ({ valor: rango.dias, etiqueta: rango.etiqueta }))}
             />
           </div>
-        }
-      />
+        </div>
       </section>
 
       {tienda && (
@@ -122,7 +124,7 @@ export function InicioView() {
       {!datos && !error && (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-busy="true" aria-label="Cargando métricas">
           {Array.from({ length: 4 }, (_, i) => (
-            <Skeleton key={i} className="h-36 rounded-xl" />
+            <Skeleton key={i} className="h-32 rounded-3xl" />
           ))}
         </div>
       )}

@@ -3,6 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 import { Badge } from "@/shared/components/ui/badge"
+import { ImagenProducto } from "@/modules/mercado/components/imagen-producto"
+import { tonoDe } from "@/modules/mercado/tono"
 import { buttonVariants } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
@@ -14,7 +16,7 @@ import { SearchInput } from "@/shared/components/composed/search-input"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table"
 import { useRouter } from "next/navigation"
-import { ImageOff, LayoutGrid, List, Package, Plus, X } from "lucide-react"
+import { LayoutGrid, List, Package, Plus, X } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
@@ -94,16 +96,8 @@ export function ProductosView() {
   const estadoPublicacion = (publicado: boolean) =>
     publicado ? <Badge variant="estado" tono="marca">Activo en tienda</Badge> : <Badge variant="estado" tono="contorno">Borrador</Badge>
   const precio = (p: ProductoListaDto) => (p.precio_minimo != null ? `Desde ${formatearDinero(p.precio_minimo, moneda)}` : "Sin precio")
-  const miniatura = (p: ProductoListaDto, clase: string) =>
-    p.imagen_principal ? (
-      // Miniatura por URL: el dominio lo elige la persona comerciante.
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={p.imagen_principal} alt="" className={clase} />
-    ) : (
-      <span className="flex size-full items-center justify-center text-muted-foreground" aria-label="Sin imagen">
-        <ImageOff className="size-5" aria-hidden="true" />
-      </span>
-    )
+  // Miniatura por URL (el dominio lo elige la persona comerciante); si falta o no carga, la imagen generada con el matiz del producto.
+  const miniatura = (p: ProductoListaDto, clase: string) => <ImagenProducto tono={tonoDe(p.id)} src={p.imagen_principal} titulo={p.titulo} className={clase} />
 
   return (
     <div className="space-y-5">
@@ -198,15 +192,14 @@ export function ProductosView() {
                 <li key={producto.id}>
                   <Link href={`/panel/productos/${producto.id}`} className="group block h-full rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/25">
                     <Card className="h-full gap-0 py-0 transition-all group-hover:-translate-y-px group-hover:border-primary/60">
-                      <div className="aspect-[4/3] overflow-hidden bg-muted">{miniatura(producto, "size-full object-cover transition-transform duration-300 group-hover:scale-[1.03]")}</div>
-                      <CardContent className="space-y-2 py-4">
-                        <div className="flex items-start justify-between gap-2">
-                          <p className="min-w-0 truncate text-[14px] font-bold text-foreground">{producto.titulo}</p>
-                          {estadoPublicacion(producto.esta_publicado)}
-                        </div>
-                        <p className="text-[12.5px] text-muted-foreground">
-                          <span className="font-bold text-foreground">{precio(producto)}</span> · {producto.numero_variantes} {producto.numero_variantes === 1 ? "variante" : "variantes"}
-                        </p>
+                      <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                        {miniatura(producto, "transition-transform duration-300 group-hover:scale-[1.03]")}
+                        <span className="absolute left-3 top-3 rounded-full bg-card shadow-isla">{estadoPublicacion(producto.esta_publicado)}</span>
+                      </div>
+                      <CardContent className="space-y-1.5 py-4">
+                        <p className="line-clamp-2 min-h-[2.6em] text-[14.5px] font-bold leading-snug text-foreground">{producto.titulo}</p>
+                        <p className="text-[15px] font-extrabold text-foreground">{precio(producto)}</p>
+                        <p className="text-[12.5px] text-muted-foreground">{producto.numero_variantes} {producto.numero_variantes === 1 ? "variante" : "variantes"}</p>
                       </CardContent>
                     </Card>
                   </Link>
