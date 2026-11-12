@@ -12,12 +12,13 @@ import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { OtpInput } from "../components/otp-input"
 import { useCuentaRegresiva } from "../hooks/use-cuenta-regresiva"
 import { desbloquearAction } from "../actions/auth.actions"
-import { activarSchema, type ActivarValues } from "../schema"
+import { codigoSchema, recuperarSolicitarSchema, type RecuperarSolicitarValues } from "../schema"
 import type { ErrorApi } from "@/lib/api/error-api"
 
 /**
  * Desbloqueo de la cuenta tras 5 intentos fallidos (A-007, USR-014): correo + el código de 6 dígitos que llegó al correo
- * (vale 30 minutos). Reutiliza el esquema de activación (mismo correo y mismo código de 6 dígitos).
+ * (vale 30 minutos). El formulario solo valida el correo; el código se valida aparte con `codigoSchema` porque su campo está fuera del
+ * formulario (si no, `handleSubmit` lo daría siempre por vacío y no llegaría a enviar).
  */
 export function DesbloquearCuentaView({ correo }: { correo?: string }) {
   const router = useRouter()
@@ -27,16 +28,16 @@ export function DesbloquearCuentaView({ correo }: { correo?: string }) {
   const [enviando, setEnviando] = React.useState(false)
   const espera = useCuentaRegresiva()
 
-  const form = useForm<ActivarValues>({
-    resolver: zodResolver(activarSchema),
-    defaultValues: { correo_electronico: correo ?? "", codigo: "" },
+  const form = useForm<RecuperarSolicitarValues>({
+    resolver: zodResolver(recuperarSolicitarSchema),
+    defaultValues: { correo_electronico: correo ?? "" },
   })
 
   const enviar = form.handleSubmit(async (valores) => {
     setError(null)
-    const parsed = activarSchema.safeParse({ ...valores, codigo })
+    const parsed = codigoSchema.safeParse(codigo)
     if (!parsed.success) {
-      setErrorCodigo(parsed.error.issues.find((i) => i.path[0] === "codigo")?.message)
+      setErrorCodigo(parsed.error.issues[0]?.message)
       return
     }
     setErrorCodigo(undefined)

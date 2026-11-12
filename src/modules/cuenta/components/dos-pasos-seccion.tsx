@@ -54,8 +54,8 @@ export function DosPasosSeccion({ perfil, onCambio }: { perfil: PerfilCuentaDto;
   }
 
   return (
-    <section className="space-y-3" aria-labelledby="dos-pasos-titulo">
-      <h2 className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Verificación en dos pasos</h2>
+    <section className="space-y-3" aria-labelledby="dos-pasos-encabezado">
+      <h2 id="dos-pasos-encabezado" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Verificación en dos pasos</h2>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p id="dos-pasos-titulo" className="flex items-center gap-1.5 text-[13.5px] font-bold text-foreground">
@@ -82,6 +82,7 @@ export function DosPasosSeccion({ perfil, onCambio }: { perfil: PerfilCuentaDto;
             {pendiente ? "Para activarla, confirma tu contraseña." : "Para desactivarla, confirma tu contraseña."}
           </p>
           <CampoContrasena
+            id="dos-pasos-contrasena"
             label="Contraseña actual"
             autoComplete="current-password"
             value={contrasena}

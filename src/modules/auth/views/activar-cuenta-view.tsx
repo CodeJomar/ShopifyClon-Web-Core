@@ -13,7 +13,7 @@ import { toast } from "@/shared/components/ui/toast"
 import { OtpInput } from "../components/otp-input"
 import { useCuentaRegresiva } from "../hooks/use-cuenta-regresiva"
 import { activarAction, reenviarActivacionAction } from "../actions/auth.actions"
-import { activarSchema, type ActivarValues } from "../schema"
+import { codigoSchema, recuperarSolicitarSchema, type RecuperarSolicitarValues } from "../schema"
 import type { ErrorApi } from "@/lib/api/error-api"
 
 export function ActivarCuentaView({ correo }: { correo?: string }) {
@@ -24,16 +24,18 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
   const [enviando, setEnviando] = React.useState(false)
   const espera = useCuentaRegresiva()
 
-  const form = useForm<ActivarValues>({
-    resolver: zodResolver(activarSchema),
-    defaultValues: { correo_electronico: correo ?? "", codigo: "" },
+  // El formulario solo valida el correo: el código está fuera del formulario y se valida aparte con `codigoSchema`
+  // (con `activarSchema` completo, `handleSubmit` lo daba siempre por vacío y el envío nunca llegaba a la API).
+  const form = useForm<RecuperarSolicitarValues>({
+    resolver: zodResolver(recuperarSolicitarSchema),
+    defaultValues: { correo_electronico: correo ?? "" },
   })
 
   const enviar = form.handleSubmit(async (valores) => {
     setError(null)
-    const parsed = activarSchema.safeParse({ ...valores, codigo })
+    const parsed = codigoSchema.safeParse(codigo)
     if (!parsed.success) {
-      setErrorCodigo(parsed.error.issues.find((i) => i.path[0] === "codigo")?.message)
+      setErrorCodigo(parsed.error.issues[0]?.message)
       return
     }
     setErrorCodigo(undefined)
@@ -51,7 +53,7 @@ export function ActivarCuentaView({ correo }: { correo?: string }) {
 
   const reenviar = async () => {
     const correoActual = form.getValues("correo_electronico")
-    const parsed = activarSchema.shape.correo_electronico.safeParse(correoActual)
+    const parsed = recuperarSolicitarSchema.shape.correo_electronico.safeParse(correoActual)
     if (!parsed.success) {
       form.setError("correo_electronico", { message: parsed.error.issues[0]?.message })
       return
