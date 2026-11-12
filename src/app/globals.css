@@ -149,6 +149,13 @@
   --tono-morado-fg: #7E22CE;
   --tono-indigo-bg: #E0E7FF;
   --tono-indigo-fg: #4338CA;
+  /* Degradados de marca (rediseño): solo verde marca, cian de apoyo y tinta; nunca el rojo. */
+  --grad-marca: linear-gradient(135deg, #00E699 0%, #00D3B0 48%, #00A2EC 100%);
+  --grad-marca-suave: linear-gradient(135deg, rgb(0 230 153 / 0.16) 0%, rgb(0 162 236 / 0.1) 100%);
+  --grad-tinta: linear-gradient(145deg, #1F2A44 0%, #123B3A 62%, #00704C 100%);
+  --grad-halo: radial-gradient(60% 60% at 18% 0%, rgb(0 230 153 / 0.3), transparent 70%), radial-gradient(48% 48% at 100% 12%, rgb(0 162 236 / 0.2), transparent 72%);
+  /* Tinta oscura para el texto sobre el verde marca: el blanco sobre #00E699 no llega a 4.5:1. */
+  --sobre-marca: #062A1F;
 }
 
 /* Oscuro (docs/diseno-web.md §2). */
@@ -211,6 +218,11 @@
   --tono-morado-fg: #D8B4FE;
   --tono-indigo-bg: #1E1B4B;
   --tono-indigo-fg: #A5B4FC;
+  --grad-marca: linear-gradient(135deg, #00E699 0%, #00C8A6 50%, #0091D1 100%);
+  --grad-marca-suave: linear-gradient(135deg, rgb(0 230 153 / 0.16) 0%, rgb(0 162 236 / 0.1) 100%);
+  --grad-tinta: linear-gradient(145deg, #0F1622 0%, #0B2A2A 60%, #05503A 100%);
+  --grad-halo: radial-gradient(60% 60% at 18% 0%, rgb(0 230 153 / 0.2), transparent 70%), radial-gradient(48% 48% at 100% 12%, rgb(0 162 236 / 0.16), transparent 72%);
+  --sobre-marca: #062A1F;
 }
 
 @layer base {
@@ -243,4 +255,46 @@ input[type="search"]::-webkit-search-results-decoration {
   .otemu-app-shell, .otemu-workspace, .otemu-main-scroll { display: block !important; height: auto !important; overflow: visible !important; padding: 0 !important; }
   body { background: #fff !important; }
   .hoja-guia { max-width: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; }
+}
+
+/* Utilidades de degradado (rediseño). */
+@utility bg-grad-marca {
+  background-image: var(--grad-marca);
+}
+@utility bg-grad-marca-suave {
+  background-image: var(--grad-marca-suave);
+}
+@utility bg-grad-tinta {
+  background-image: var(--grad-tinta);
+}
+@utility bg-grad-halo {
+  background-image: var(--grad-halo);
+}
+@utility text-sobre-marca {
+  color: var(--sobre-marca);
+}
+@utility text-grad-marca {
+  background-image: var(--grad-marca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Reparto del pago: las barras crecen una sola vez al cargar (único movimiento no pedido por quien navega). */
+@keyframes crecer-barra {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.barra-reparto {
+  transform-origin: left center;
+  animation: crecer-barra 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .barra-reparto {
+    animation: none;
+  }
 }
