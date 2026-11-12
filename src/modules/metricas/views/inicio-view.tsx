@@ -13,6 +13,8 @@ import { toast } from "@/shared/components/ui/toast"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { rangoUltimosDias } from "@/shared/utils/fechas"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
+import { useEstadoEnVivo, useEventosOrdenes } from "@/modules/panel/context/tiempo-real"
+import { IndicadorEnVivo } from "@/shared/components/composed/indicador-en-vivo"
 import { metricasAction } from "../actions/metricas.actions"
 import { GraficoVentas } from "../components/grafico-ventas"
 import { TarjetaMetrica } from "../components/tarjeta-metrica"
@@ -32,6 +34,10 @@ export function InicioView() {
   const [dias, setDias] = React.useState<(typeof RANGOS)[number]["dias"]>(30)
   const [datos, setDatos] = React.useState<MetricasDto | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
+  // Tiempo real (W-022): una orden nueva o pagada cambia las métricas, así que se vuelven a pedir.
+  const [version, setVersion] = React.useState(0)
+  useEventosOrdenes(() => setVersion((v) => v + 1))
+  const estadoEnVivo = useEstadoEnVivo()
 
   React.useEffect(() => {
     let cancelado = false
@@ -46,7 +52,7 @@ export function InicioView() {
     return () => {
       cancelado = true
     }
-  }, [dias])
+  }, [dias, version])
 
   const moneda = datos?.moneda ?? tienda?.moneda ?? "PEN"
   const ventasNetas = datos?.por_dia.reduce((total, dia) => total + dia.ventas_netas, 0) ?? 0
@@ -75,12 +81,15 @@ export function InicioView() {
         titulo={nombres ? `Hola, ${nombres.split(/\s+/)[0]}` : "Dashboard"}
         descripcion={`Así va ${tienda?.nombre ?? "tu tienda"}. Los montos están en ${moneda}.`}
         acciones={
-          <ControlSegmentado
-            aria-label="Rango de fechas"
-            valor={dias}
-            onCambiar={setDias}
-            opciones={RANGOS.map((rango) => ({ valor: rango.dias, etiqueta: rango.etiqueta }))}
-          />
+          <div className="flex flex-wrap items-center gap-3">
+            <IndicadorEnVivo estado={estadoEnVivo} />
+            <ControlSegmentado
+              aria-label="Rango de fechas"
+              valor={dias}
+              onCambiar={setDias}
+              opciones={RANGOS.map((rango) => ({ valor: rango.dias, etiqueta: rango.etiqueta }))}
+            />
+          </div>
         }
       />
       </section>

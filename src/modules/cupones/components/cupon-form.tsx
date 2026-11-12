@@ -9,6 +9,7 @@ import { FloatingSelect } from "@/shared/components/composed/floating-select"
 import { SelectContent, SelectItem } from "@/shared/components/ui/select"
 import { Switch } from "@/shared/components/ui/switch"
 import { toast } from "@/shared/components/ui/toast"
+import { aDatetimeLocalLima, datetimeLocalLimaAIso } from "@/shared/utils/fechas"
 import type { CuponDto, CuponRequest, TipoDescuento } from "@/dtos/cupon"
 import type { ErrorApi } from "@/lib/api/error-api"
 import { crearCuponAction, editarCuponAction } from "../actions/cupones.actions"
@@ -16,24 +17,9 @@ import { cuponSchema, type CuponValues } from "../schema"
 
 export const FORMULARIO_CUPON = "formulario-cupon"
 
-function aDatetimeLocal(iso?: string | null): string {
-  if (!iso) return ""
-  const d = new Date(iso)
-  if (Number.isNaN(d.getTime())) return ""
-  const yyyy = d.getFullYear()
-  const mm = String(d.getMonth() + 1).padStart(2, "0")
-  const dd = String(d.getDate()).padStart(2, "0")
-  const hh = String(d.getHours()).padStart(2, "0")
-  const min = String(d.getMinutes()).padStart(2, "0")
-  return `${yyyy}-${mm}-${dd}T${hh}:${min}`
-}
-
-function datetimeLocalAIso(local?: string | null): string | undefined {
-  if (!local || !local.trim()) return undefined
-  const d = new Date(local)
-  if (Number.isNaN(d.getTime())) return undefined
-  return d.toISOString()
-}
+// Las fechas del cupón se editan y se guardan en hora de Lima (no en la del navegador), igual que se muestran.
+const aDatetimeLocal = aDatetimeLocalLima
+const datetimeLocalAIso = datetimeLocalLimaAIso
 
 const mapeoCampos: Record<string, keyof CuponValues> = {
   codigo: "codigo",

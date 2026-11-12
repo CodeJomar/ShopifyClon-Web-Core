@@ -19,6 +19,8 @@ import { formatearDinero } from "@/shared/utils/dinero"
 import { formatearFecha } from "@/shared/utils/fechas"
 import { cn } from "@/shared/utils/cn"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
+import { useEstadoEnVivo, useEventosOrdenes } from "@/modules/panel/context/tiempo-real"
+import { IndicadorEnVivo } from "@/shared/components/composed/indicador-en-vivo"
 import { PERMISO } from "@/shared/constants/permisos"
 import type { OrdenLista } from "@/dtos/ordenes"
 import type { Paginado } from "@/dtos/core/respuesta-api.dto"
@@ -51,6 +53,10 @@ export function OrdenesView() {
   const [datos, setDatos] = React.useState<Paginado<OrdenLista> | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const filtrosClave = JSON.stringify(filtros)
+  // Tiempo real (W-022): cada evento de órdenes o envíos vuelve a pedir la lista en vez de armarla a mano.
+  const [version, setVersion] = React.useState(0)
+  useEventosOrdenes(() => setVersion((v) => v + 1))
+  const estadoEnVivo = useEstadoEnVivo()
 
   // La búsqueda espera a que termines de escribir para no pedir datos con cada tecla
   React.useEffect(() => {
@@ -74,7 +80,7 @@ export function OrdenesView() {
     return () => {
       cancelado = true
     }
-  }, [puedeVer, pagina, filtrosClave])
+  }, [puedeVer, pagina, filtrosClave, version])
 
   if (!puedeVer) {
     return <EstadoVacio titulo="No tienes acceso a las órdenes" descripcion="Pide a quien administra la tienda que te dé permiso." />
@@ -97,6 +103,7 @@ export function OrdenesView() {
   return (
     <div className="space-y-5">
       <EncabezadoPagina
+        acciones={<IndicadorEnVivo estado={estadoEnVivo} />}
         titulo="Órdenes"
         descripcion={datos ? `${datos.total} ${datos.total === 1 ? "orden" : "órdenes"}${hayFiltros ? " con estos filtros" : ""}, de la más reciente a la más antigua.` : "Las compras de tu tienda, de la más reciente a la más antigua."}
       />
