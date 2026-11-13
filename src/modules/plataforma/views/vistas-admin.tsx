@@ -24,7 +24,6 @@ import { resultado } from "@/lib/api/resultado"
 import type { EventoAuditoriaDto, TiendaAdminDto, UsuarioAdminDto } from "@/dtos/administracion"
 import { reactivarTiendaAction, suspenderTiendaAction } from "../actions/plataforma.actions"
 import { useListaAdmin } from "../hooks/use-lista-admin"
-import { ADMINISTRADORES_ADMIN, PERMISOS_POR_ROL, type AdministradorAdmin } from "../admin-mock"
 
 type Tono = TonoInsignia
 
@@ -413,97 +412,6 @@ function ConfirmarAccion({ abierto, titulo, descripcion, confirmar, alCerrar, al
     >
       {error && <p role="alert" className="text-[13px] font-bold text-destructive-text">{error}</p>}
     </FormPanel>
-  )
-}
-
-function Aviso() {
-  return <p className="text-[12px] font-medium text-muted-foreground">Datos de ejemplo: los administradores con rol se conectan a la API cuando el backend cierre los roles y permisos (B9).</p>
-}
-
-/* ---------- Administradores ---------- */
-export function AdministradoresAdminView() {
-  const [lista, setLista] = React.useState<AdministradorAdmin[]>(ADMINISTRADORES_ADMIN)
-  const [abierto, setAbierto] = React.useState(false)
-  const [nombre, setNombre] = React.useState("")
-  const [correo, setCorreo] = React.useState("")
-  const [rol, setRol] = React.useState<AdministradorAdmin["rol"]>("Soporte")
-  const [errores, setErrores] = React.useState<{ nombre?: string; correo?: string }>({})
-
-  const crear = () => {
-    const e: typeof errores = {}
-    if (!nombre.trim()) e.nombre = "Escribe el nombre."
-    if (!/^\S+@\S+\.\S+$/.test(correo.trim())) e.correo = "Escribe un correo válido."
-    setErrores(e)
-    if (Object.keys(e).length) return
-    setLista((l) => [...l, { id: crypto.randomUUID(), nombre: nombre.trim(), correo: correo.trim(), rol, activo: true, creado: new Date().toISOString() }])
-    toast.add({ type: "success", title: "Administrador creado", description: "Recibirá un correo para activar su cuenta." })
-    setAbierto(false)
-    setNombre("")
-    setCorreo("")
-  }
-
-  return (
-    <div className="space-y-5">
-      <EncabezadoPagina
-        titulo="Administradores"
-        descripcion="Quienes administran la plataforma y qué pueden hacer. Los propietarios de tiendas no ven estos permisos."
-        acciones={<Button onClick={() => setAbierto(true)} leftIcon={<Plus aria-hidden="true" />}>Nuevo administrador</Button>}
-      />
-      <ul className="grid gap-4 md:grid-cols-2">
-        {lista.map((a) => (
-          <li key={a.id}>
-            <Card className="h-full">
-              <CardContent className="space-y-3">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-[15px] font-extrabold tracking-tight text-foreground">{a.nombre}</p>
-                    <p className="truncate text-[12.5px] text-muted-foreground">{a.correo}</p>
-                  </div>
-                  <Badge variant="estado" tono={a.activo ? "marca" : "neutro"}>{a.activo ? "Activo" : "Desactivado"}</Badge>
-                </div>
-                <p className="text-[13px] font-bold text-foreground">{a.rol}</p>
-                <ul className="space-y-1 text-[13px] text-muted-foreground">
-                  {PERMISOS_POR_ROL[a.rol].map((p) => (
-                    <li key={p} className="flex items-start gap-2"><ShieldCheck aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-brand-text" />{p}</li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
-          </li>
-        ))}
-      </ul>
-      <Aviso />
-
-      <FormPanel
-        open={abierto}
-        onOpenChange={setAbierto}
-        title="Nuevo administrador"
-        footer={
-          <>
-            <Button type="button" variant="neutral" onClick={() => setAbierto(false)}>Cancelar</Button>
-            <Button type="button" onClick={crear}>Crear administrador</Button>
-          </>
-        }
-      >
-        <div className="space-y-5">
-          <FloatingInput label="Nombre y apellido" value={nombre} onChange={(e) => setNombre(e.target.value)} state={errores.nombre ? "error" : "default"} mensajeError={errores.nombre} />
-          <FloatingInput label="Correo electrónico" type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} state={errores.correo ? "error" : "default"} mensajeError={errores.correo} />
-          <label className="block space-y-1.5 text-[12px]">
-            <span className="font-bold text-muted-foreground">Rol</span>
-            <select value={rol} onChange={(e) => setRol(e.target.value as AdministradorAdmin["rol"])} className="h-11 w-full cursor-pointer rounded-xl border-[1.8px] border-input bg-transparent px-3 text-[13px] font-medium text-foreground outline-none focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18">
-              {(Object.keys(PERMISOS_POR_ROL) as AdministradorAdmin["rol"][]).map((r) => (
-                <option key={r} value={r}>{r}</option>
-              ))}
-            </select>
-          </label>
-          <ul className="space-y-1.5 rounded-xl bg-secondary p-4 text-[13px] text-muted-foreground">
-            {PERMISOS_POR_ROL[rol].map((p) => (
-              <li key={p} className="flex items-start gap-2"><ShieldCheck aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-brand-text" />{p}</li>
-            ))}
-          </ul>
-        </div>
-      </FormPanel>
-    </div>
   )
 }
 

@@ -47,14 +47,15 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const router = useRouter()
   const pathname = usePathname()
   const { isCollapsed, toggleSidebar, isDrawerOpen, setIsDrawerOpen, isMobile } = useWorkspaceLayout()
-  const { tienda, rol, nombres, apellidos, esAdministradorPlataforma, puede, cargando, error } = usePanel()
+  const { tienda, rol, nombres, apellidos, esAdministradorPlataforma, permisosPlataforma, rolPlataforma, puede, cargando, error } = usePanel()
 
   const esRutaPlataforma = pathname.startsWith("/plataforma")
   const esRutaPropietario = pathname.startsWith("/propietario")
 
   const items = React.useMemo(() => {
     if (esRutaPlataforma) {
-      return NAVEGACION_PLATAFORMA
+      // Cada sección pide su permiso de plataforma (B9): un administrador con rol de soporte o de finanzas ve solo lo suyo.
+      return NAVEGACION_PLATAFORMA.filter((i) => !i.permisoPlataforma || permisosPlataforma.includes(i.permisoPlataforma))
     }
     if (esRutaPropietario) return NAVEGACION_PROPIETARIO
     const base = tienda ? filtrarNavegacion(NAVEGACION, puede) : [...NAVEGACION_SIN_TIENDA]
@@ -67,10 +68,10 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
       })
     }
     return base
-  }, [tienda, puede, esRutaPlataforma, esRutaPropietario, esAdministradorPlataforma])
+  }, [tienda, puede, esRutaPlataforma, esRutaPropietario, esAdministradorPlataforma, permisosPlataforma])
 
   const etiquetaRol = esRutaPlataforma
-    ? "Administrador de plataforma"
+    ? (rolPlataforma ?? "Administrador de plataforma")
     : esRutaPropietario
     ? "Propietario"
     : rol
@@ -81,7 +82,10 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const iniciales = ((nombres.trim()[0] ?? "") + (apellidos.trim()[0] ?? "") || "U").toUpperCase()
   const nombreCorto = [abreviar(nombres), abreviar(apellidos)].filter(Boolean).join(" ")
   const permiso = permisoDeRuta(pathname)
-  const permitida = esRutaPlataforma ? esAdministradorPlataforma : (!permiso || puede(permiso))
+  const seccionPlataforma = NAVEGACION_PLATAFORMA.find((i) => i.href && i.href !== "/plataforma" && pathname.startsWith(i.href))
+  const permitida = esRutaPlataforma
+    ? esAdministradorPlataforma && (!seccionPlataforma?.permisoPlataforma || permisosPlataforma.includes(seccionPlataforma.permisoPlataforma))
+    : (!permiso || puede(permiso))
   // Tiempo real (W-022): solo en el panel de una tienda y para quien puede ver sus órdenes.
   const tiempoRealActivo = !esRutaPlataforma && pathname.startsWith("/panel") && Boolean(tienda) && puede(PERMISO.ORDENES_VER)
 

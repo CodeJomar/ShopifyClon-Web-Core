@@ -35,4 +35,6 @@ export interface PerfilDto {
   telefono?: string
   es_administrador_plataforma?: boolean
   dos_pasos_activo?: boolean
+  /** Qué es la persona y qué puede en la plataforma (B2, B9). */
+  acceso?: import("@/dtos/cuenta").AccesoPerfilDto
 }

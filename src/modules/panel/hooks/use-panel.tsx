@@ -19,6 +19,9 @@ export interface PanelContextValue {
   apellidos: string
   /** Indica si la persona es administradora global de la plataforma (acceso a /plataforma). */
   esAdministradorPlataforma: boolean
+  /** Permisos efectivos de plataforma (B9) y nombre del rol; vacíos si no administra. */
+  permisosPlataforma: readonly string[]
+  rolPlataforma: string | null
   cargando: boolean
   error: ErrorApi | null
   /** Oculta lo que el rol no puede hacer. La API vuelve a comprobar cada petición. */
@@ -43,6 +46,8 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
   const [nombres, setNombres] = React.useState("")
   const [apellidos, setApellidos] = React.useState("")
   const [esAdministradorPlataforma, setEsAdministradorPlataforma] = React.useState(false)
+  const [permisosPlataforma, setPermisosPlataforma] = React.useState<string[]>([])
+  const [rolPlataforma, setRolPlataforma] = React.useState<string | null>(null)
   const [cargando, setCargando] = React.useState(true)
   const [error, setError] = React.useState<ErrorApi | null>(null)
 
@@ -66,6 +71,8 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
             setNombres(perfil.datos.nombres)
             setApellidos(perfil.datos.apellidos)
             setEsAdministradorPlataforma(Boolean(perfil.datos.es_administrador_plataforma))
+            setPermisosPlataforma(perfil.datos.acceso?.permisos_plataforma ?? [])
+            setRolPlataforma(perfil.datos.acceso?.rol_plataforma?.nombre ?? null)
           }
           setCargando(false)
           return
@@ -86,6 +93,8 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
         setNombres(perfil.datos.nombres)
         setApellidos(perfil.datos.apellidos)
         setEsAdministradorPlataforma(Boolean(perfil.datos.es_administrador_plataforma))
+            setPermisosPlataforma(perfil.datos.acceso?.permisos_plataforma ?? [])
+            setRolPlataforma(perfil.datos.acceso?.rol_plataforma?.nombre ?? null)
       }
       setCargando(false)
     })()
@@ -101,13 +110,15 @@ export function PanelProvider({ children, exigirTienda = true }: { children: Rea
       nombres,
       apellidos,
       esAdministradorPlataforma,
+      permisosPlataforma,
+      rolPlataforma,
       cargando,
       error,
       puede: puedeConRol(rol),
       permisos: permisosDeRol(rol),
       recargar,
     }),
-    [tienda, rol, nombres, apellidos, esAdministradorPlataforma, cargando, error, recargar],
+    [tienda, rol, nombres, apellidos, esAdministradorPlataforma, permisosPlataforma, rolPlataforma, cargando, error, recargar],
   )
 
   return <PanelContext.Provider value={valor}>{children}</PanelContext.Provider>

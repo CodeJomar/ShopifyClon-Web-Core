@@ -19,7 +19,9 @@ export interface AccesoPerfilDto {
   es_comprador: boolean
   es_propietario: boolean
   es_administrador_plataforma: boolean
+  /** Permisos efectivos del administrador (B9): salen de su rol y se leen de la base en cada petición. */
   permisos_plataforma: string[]
+  rol_plataforma?: { id: string; codigo: string; nombre: string } | null
   tiendas: { tienda_id: string; nombre: string; subdominio: string; rol: string; es_propietario_de_la_tienda: boolean; permisos: string[] }[]
 }
 

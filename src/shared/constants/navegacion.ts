@@ -52,6 +52,8 @@ export interface NavItem {
   href?: string
   /** Permiso para ver la sección. Sin permiso no aparece en el menú. */
   permiso?: Permiso
+  /** Permiso de plataforma (B9) que exige la sección de administración; sin él no aparece. */
+  permisoPlataforma?: string
   /** Migas de pan [sección, pantalla]; por defecto [label, label]. */
   migas?: [string, string]
   hijos?: NavItem[]
@@ -91,14 +93,14 @@ export const NAVEGACION_SIN_TIENDA: NavItem[] = [
 /** Menú lateral exclusivo para el panel de plataforma (W-017). */
 export const NAVEGACION_PLATAFORMA: NavItem[] = [
   { id: "plataforma-resumen", label: "Resumen", icon: LayoutDashboard, href: "/plataforma", migas: ["Administración", "Resumen"] },
-  { id: "plataforma-tiendas", label: "Tiendas", icon: Store, href: "/plataforma/tiendas", migas: ["Administración", "Tiendas"] },
-  { id: "plataforma-usuarios", label: "Usuarios", icon: Users, href: "/plataforma/usuarios", migas: ["Administración", "Usuarios"] },
-  { id: "plataforma-administradores", label: "Administradores", icon: UserCog, href: "/plataforma/administradores", migas: ["Administración", "Administradores"] },
-  { id: "plataforma-auditoria", label: "Auditoría", icon: ScrollText, href: "/plataforma/auditoria", migas: ["Administración", "Auditoría"] },
-  { id: "plataforma-seguridad", label: "Seguridad", icon: ShieldAlert, href: "/plataforma/seguridad", migas: ["Administración", "Seguridad"] },
-  { id: "plataforma-planes", label: "Planes", icon: Layers, href: "/plataforma/planes", migas: ["Plataforma", "Planes"] },
-  { id: "plataforma-suscripciones", label: "Suscripciones", icon: CreditCard, href: "/plataforma/suscripciones", migas: ["Plataforma", "Suscripciones"] },
-  { id: "plataforma-comisiones", label: "Comisiones", icon: ChartNoAxesColumn, href: "/plataforma/comisiones", migas: ["Plataforma", "Comisiones"] },
+  { id: "plataforma-tiendas", permisoPlataforma: "PLATAFORMA_TIENDAS", label: "Tiendas", icon: Store, href: "/plataforma/tiendas", migas: ["Administración", "Tiendas"] },
+  { id: "plataforma-usuarios", permisoPlataforma: "PLATAFORMA_USUARIOS", label: "Usuarios", icon: Users, href: "/plataforma/usuarios", migas: ["Administración", "Usuarios"] },
+  { id: "plataforma-administradores", permisoPlataforma: "PLATAFORMA_ADMINISTRADORES", label: "Administradores", icon: UserCog, href: "/plataforma/administradores", migas: ["Administración", "Administradores"] },
+  { id: "plataforma-auditoria", permisoPlataforma: "PLATAFORMA_AUDITORIA", label: "Auditoría", icon: ScrollText, href: "/plataforma/auditoria", migas: ["Administración", "Auditoría"] },
+  { id: "plataforma-seguridad", permisoPlataforma: "PLATAFORMA_AUDITORIA", label: "Seguridad", icon: ShieldAlert, href: "/plataforma/seguridad", migas: ["Administración", "Seguridad"] },
+  { id: "plataforma-planes", permisoPlataforma: "PLATAFORMA_PLANES", label: "Planes", icon: Layers, href: "/plataforma/planes", migas: ["Plataforma", "Planes"] },
+  { id: "plataforma-suscripciones", permisoPlataforma: "PLATAFORMA_TIENDAS", label: "Suscripciones", icon: CreditCard, href: "/plataforma/suscripciones", migas: ["Plataforma", "Suscripciones"] },
+  { id: "plataforma-comisiones", permisoPlataforma: "PLATAFORMA_PEDIDOS", label: "Comisiones", icon: ChartNoAxesColumn, href: "/plataforma/comisiones", migas: ["Plataforma", "Comisiones"] },
   { id: "plataforma-mercado", label: "Ir al mercado", icon: House, href: "/mercado" },
 ]
 
