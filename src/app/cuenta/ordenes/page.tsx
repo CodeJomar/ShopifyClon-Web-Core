@@ -1,14 +1,6 @@
-import { OrdenesView } from "@/modules/cuenta"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Mis compras | OTemu",
-  description: "Compras que hiciste en OTemu.",
-}
-
+// Las compras viven en «Mis pedidos»: un pedido reúne las órdenes de todas las tiendas.
 export default function OrdenesPage() {
-  return (
-    <div className="max-w-4xl">
-      <OrdenesView />
-    </div>
-  )
+  redirect("/mis-pedidos")
 }

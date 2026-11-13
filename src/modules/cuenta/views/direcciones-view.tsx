@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/link"
 import { MapPin, Pencil, Star, Trash2 } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Badge } from "@/shared/components/ui/badge"
@@ -71,13 +70,10 @@ export function DireccionesView() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <Link href="/cuenta" className="text-[12px] font-bold text-brand-text hover:underline">
-            ← Mi cuenta
-          </Link>
-          <h1 className="mt-1 text-[18px] font-extrabold tracking-tight text-foreground">Mis direcciones</h1>
-          <p className="mt-1 text-[13px] text-muted-foreground">Donde recibes tus compras. Puedes guardar hasta 20.</p>
-        </div>
+        <header>
+          <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">Direcciones</h1>
+          <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">Donde recibes tus compras. Puedes guardar hasta 20.</p>
+        </header>
         <Button onClick={() => setPanel({ abierto: true })}>Agregar dirección</Button>
       </div>
 

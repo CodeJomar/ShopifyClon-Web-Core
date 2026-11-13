@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/shared/components/ui/button"
@@ -18,7 +17,6 @@ import type { ErrorApi } from "@/lib/api/error-api"
  * borra la suya y lleva al login con un aviso, en vez de dejar que la siguiente acción dé un 401 sin explicación.
  */
 export function ContrasenaForm() {
-  const router = useRouter()
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const form = useForm<CambiarContrasenaValues>({
     resolver: zodResolver(cambiarContrasenaSchema),
@@ -49,7 +47,8 @@ export function ContrasenaForm() {
     }
     form.reset()
     await cerrarSesionAction()
-    router.replace("/login?aviso=contrasena")
+    // Recarga completa: el login ya puede estar precargado sin el aviso en el caché del router.
+    window.location.replace("/login?aviso=contrasena")
   })
 
   const estado = (campo: keyof CambiarContrasenaValues) => (form.formState.errors[campo] ? "error" : "default") as "error" | "default"

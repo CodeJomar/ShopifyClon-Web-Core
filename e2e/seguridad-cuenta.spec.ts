@@ -80,7 +80,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Activar dos pasos en Mi cuenta, confirmando la contraseña
-    await page.goto("/cuenta")
+    await page.goto("/cuenta/seguridad")
     const seccion = page.getByRole("region", { name: "Verificación en dos pasos" })
     await expect(seccion.getByText("Desactivada")).toBeVisible()
     await seccion.getByRole("switch").click()
@@ -105,7 +105,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     await escribirCodigo(page, codigo)
     await page.getByRole("button", { name: "Verificar y entrar" }).click()
     await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
-    await page.goto("/cuenta")
+    await page.goto("/cuenta/seguridad")
     await expect(page.getByRole("region", { name: "Verificación en dos pasos" }).getByText("Activada")).toBeVisible()
   })
 
@@ -140,7 +140,7 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     const cuenta = await crearCuenta(page)
     await iniciarSesion(page, cuenta)
     await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
-    await page.goto("/cuenta")
+    await page.goto("/cuenta/seguridad")
 
     await expect(page.getByText("Al cambiarla se cerrará tu sesión en todos los dispositivos.")).toBeVisible()
     // Una contraseña común se rechaza junto al campo y no cierra la sesión
@@ -165,12 +165,12 @@ test.describe("Seguridad de la cuenta (W-021)", () => {
     await page.waitForURL(/\/(cuenta|panel|mercado|propietario|plataforma)/)
 
     // Cerrar sesión en todos los dispositivos
-    await page.goto("/cuenta")
+    await page.goto("/cuenta/seguridad")
     await page.getByRole("button", { name: "Cerrar sesión en todos los dispositivos" }).click()
     await page.getByRole("button", { name: "Sí, cerrar todas" }).click()
     await page.waitForURL(/\/login.*aviso=sesiones/)
     await expect(page.getByText(/Cerramos tu sesión en todos los dispositivos/)).toBeVisible()
-    await page.goto("/cuenta")
+    await page.goto("/cuenta/seguridad")
     await page.waitForURL(/\/login/)
   })
 })

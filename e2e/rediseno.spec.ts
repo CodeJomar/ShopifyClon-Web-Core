@@ -95,6 +95,7 @@ test.describe("Rediseño: zona pública y perfiles", () => {
     const sufijo = Date.now().toString(36)
     await page.getByLabel("Nombre de la tienda").fill(`Tienda Vender ${sufijo}`)
     await page.getByLabel("Subdominio").fill(`vd-${sufijo}`)
+    await page.getByLabel("Correo de contacto").fill(`tienda-${sufijo}@otemu.test`)
     await page.getByRole("button", { name: "Crear tienda" }).click()
     await page.waitForURL(/\/panel/, { timeout: 40_000 })
 

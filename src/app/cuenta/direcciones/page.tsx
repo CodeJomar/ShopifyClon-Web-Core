@@ -7,7 +7,7 @@ export const metadata = {
 
 export default function DireccionesPage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-3xl">
       <DireccionesView />
     </div>
   )

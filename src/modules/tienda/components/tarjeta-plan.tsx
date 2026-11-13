@@ -41,17 +41,17 @@ export const TarjetaPlan = React.forwardRef<HTMLDivElement, TarjetaPlanProps>(
         seleccionada && "border-primary ring-[3.5px] ring-primary/18",
       )}
     >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[15px] font-extrabold text-foreground">{plan.nombre}</p>
-          <p className="text-[12.5px] text-muted-foreground">{plan.descripcion}</p>
+      <div className="space-y-1.5">
+        <div className="flex items-start justify-between gap-3">
+          <p className="text-[16px] font-extrabold text-foreground">{plan.nombre}</p>
+          {seleccionada && (
+            <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-sobre-marca">
+              <Check className="size-3.5" />
+            </span>
+          )}
         </div>
         {destacada && <Badge variant="estado" tono="marca">Para empezar</Badge>}
-        {seleccionada && (
-          <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-sobre-marca">
-            <Check className="size-3.5" />
-          </span>
-        )}
+        <p className="text-[12.5px] leading-snug text-muted-foreground">{plan.descripcion}</p>
       </div>
 
       <p className="text-[22px] font-extrabold text-foreground">

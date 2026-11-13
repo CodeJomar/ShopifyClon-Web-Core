@@ -1,14 +1,6 @@
-import { MisTiendasView } from "@/modules/tienda"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Mis tiendas | OTemu",
-  description: "Elige con cuál tienda quieres trabajar.",
-}
-
+// Las tiendas de la persona se ven en el panel general del propietario.
 export default function MisTiendasPage() {
-  return (
-    <div className="max-w-4xl">
-      <MisTiendasView />
-    </div>
-  )
+  redirect("/propietario")
 }

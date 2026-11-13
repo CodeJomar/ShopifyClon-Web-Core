@@ -1,86 +1,29 @@
 "use client"
 
-import * as React from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ChevronRight, LogOut, Mail, MapPin, MonitorSmartphone, Moon, Receipt, Store, Sun, Trash2, User } from "lucide-react"
+import { Mail, Moon, Sun, User } from "lucide-react"
 import { useTheme } from "next-themes"
-import { Card } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Switch } from "@/shared/components/ui/switch"
-import { Button } from "@/shared/components/ui/button"
-import { useConfirm } from "@/shared/providers/confirm-provider"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
-import { cerrarSesionAction } from "@/modules/auth"
 import { PerfilForm } from "../components/perfil-form"
-import { ContrasenaForm } from "../components/contrasena-form"
-import { DosPasosSeccion } from "../components/dos-pasos-seccion"
-import { cerrarSesionesAction, perfilCuentaAction } from "../actions/cuenta.actions"
-import type { PerfilCuentaDto } from "@/dtos/cuenta"
-import type { ErrorApi } from "@/lib/api/error-api"
+import { usePerfilCuenta } from "../hooks/use-perfil-cuenta"
 
-/** Tarjetas hacia las demás pantallas de la cuenta (cada una sigue siendo su propia ruta). */
-const ACCESOS = [
-  { href: "/cuenta/tiendas", icono: Store, titulo: "Mis tiendas", descripcion: "Elige con cuál trabajar o crea una nueva." },
-  { href: "/cuenta/direcciones", icono: MapPin, titulo: "Direcciones", descripcion: "Donde recibes tus compras." },
-  { href: "/cuenta/ordenes", icono: Receipt, titulo: "Mis compras", descripcion: "Lo que compraste en cualquier tienda." },
-]
-
-/**
- * "Mi cuenta": a la izquierda el perfil (identidad, datos, contraseña y apariencia) y a la derecha tarjetas
- * hacia Mis tiendas, Direcciones y Mis compras.
- */
+/** «Mi cuenta · Perfil»: quién eres, tus datos de contacto y la apariencia del sitio. La seguridad y las direcciones tienen su propia pantalla. */
 export function CuentaView() {
-  const [perfil, setPerfil] = React.useState<PerfilCuentaDto | null>(null)
-  const [error, setError] = React.useState<ErrorApi | null>(null)
-  const router = useRouter()
-  const [cerrando, setCerrando] = React.useState(false)
-  const [cerrandoTodas, setCerrandoTodas] = React.useState(false)
-  const confirmar = useConfirm()
+  const { perfil, setPerfil, error } = usePerfilCuenta()
   const { theme, setTheme } = useTheme()
   const montado = useMounted()
   const oscuro = montado && theme === "dark"
 
-  const cerrarSesion = async () => {
-    setCerrando(true)
-    await cerrarSesionAction()
-    router.replace("/login")
-  }
-
-  /** Invalida todas las sesiones de la cuenta en el servidor (A-007), también la de este navegador, y lleva al login. */
-  const cerrarEnTodos = async () => {
-    const aceptado = await confirmar({
-      title: "¿Cerrar sesión en todos los dispositivos?",
-      description: "Se cerrará tu sesión en este navegador y en cualquier otro donde la tengas abierta. Tendrás que volver a iniciarla.",
-      confirmText: "Sí, cerrar todas",
-    })
-    if (!aceptado) return
-    setCerrandoTodas(true)
-    const res = await cerrarSesionesAction()
-    // Si la API ya no reconoce la sesión (401) igual se cierra la de la web: el resultado es el mismo.
-    if (!res.ok && res.error.estado !== 401) {
-      setCerrandoTodas(false)
-      return setError(res.error)
-    }
-    await cerrarSesionAction()
-    router.replace("/login?aviso=sesiones")
-  }
-
-  React.useEffect(() => {
-    let cancelado = false
-    perfilCuentaAction().then((res) => {
-      if (cancelado) return
-      if (res.ok) setPerfil(res.datos)
-      else setError(res.error)
-    })
-    return () => {
-      cancelado = true
-    }
-  }, [])
-
   return (
-    <div className="flex w-full flex-1 flex-col gap-6">
+    <div className="space-y-6">
+      <header>
+        <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">Perfil</h1>
+        <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">Tus datos. Así te ven las tiendas donde compras.</p>
+      </header>
+
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos cargar tu cuenta</AlertTitle>
@@ -88,59 +31,21 @@ export function CuentaView() {
         </Alert>
       )}
 
-      {!perfil && !error && (
-        <p className="text-[13px] text-muted-foreground" aria-live="polite">
-          Cargando tus datos…
-        </p>
-      )}
+      {!perfil && !error && <Skeleton className="h-72 rounded-3xl" aria-busy="true" aria-label="Cargando tus datos" />}
 
-      <div className="flex flex-1 flex-col">
-      {perfil ? (
-        <Card className="flex-1 gap-0 py-0 lg:grid lg:grid-cols-[380px_1fr]">
-          {/* Columna izquierda: identidad, contraseña y apariencia */}
-          <div className="flex flex-col gap-6 border-b border-border/60 p-6 sm:p-7 lg:border-b-0 lg:border-r">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex size-24 items-center justify-center rounded-full bg-primary/14 text-brand-text ring-1 ring-primary/32" aria-hidden="true">
-                <User className="size-11" />
-              </div>
-              <div className="min-w-0">
-                <p className="truncate text-[16px] font-extrabold tracking-tight text-foreground">{perfil.nombres} {perfil.apellidos}</p>
-                <p className="truncate text-[12.5px] text-muted-foreground">{perfil.correo_electronico}</p>
-              </div>
+      {perfil && (
+        <>
+          <section className="flex items-center gap-4 rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-6" aria-label="Tu cuenta">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/14 text-brand-text ring-1 ring-primary/32" aria-hidden="true">
+              <User className="size-8" />
+            </span>
+            <div className="min-w-0">
+              <p className="truncate text-[18px] font-extrabold tracking-tight text-foreground">{perfil.nombres} {perfil.apellidos}</p>
+              <p className="truncate text-[13.5px] font-medium text-muted-foreground">{perfil.correo_electronico}</p>
             </div>
+          </section>
 
-            <div className="h-px bg-border/60" />
-
-            <section className="space-y-4" aria-labelledby="cuenta-seguridad">
-              <h2 id="cuenta-seguridad" className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Seguridad</h2>
-              <ContrasenaForm />
-            </section>
-
-            <div className="h-px bg-border/60" />
-
-            <DosPasosSeccion perfil={perfil} onCambio={setPerfil} />
-
-            <div className="h-px bg-border/60" />
-
-            <section className="space-y-3" aria-labelledby="tema-titulo">
-              <h2 className="text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Preferencias</h2>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="min-w-0">
-                  <p id="tema-titulo" className="text-[13.5px] font-bold text-foreground">Apariencia</p>
-                  <p className="mt-0.5 text-[12.5px] text-muted-foreground">{oscuro ? "Tema oscuro activado." : "Tema claro activado."}</p>
-                </div>
-                {/* El mismo interruptor luna / sol que estaba en el encabezado */}
-                <div className="flex h-9 items-center gap-2 rounded-full bg-brand-strong/12 px-3">
-                  <Moon aria-hidden="true" className="size-3.5 text-muted-foreground" />
-                  <Switch checked={oscuro} onCheckedChange={(marcado) => setTheme(marcado ? "dark" : "light")} aria-labelledby="tema-titulo" />
-                  <Sun aria-hidden="true" className={oscuro ? "size-3.5 text-muted-foreground" : "size-3.5 text-foreground"} />
-                </div>
-              </div>
-            </section>
-          </div>
-
-          {/* Columna derecha: información del perfil */}
-          <div className="@container p-6 sm:p-7">
+          <section className="@container rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7">
             <PerfilForm
               perfil={perfil}
               onGuardado={setPerfil}
@@ -155,54 +60,24 @@ export function CuentaView() {
                 />
               }
             />
+          </section>
 
-            {/* Tarjetas hacia las otras pantallas de la cuenta, debajo de los datos */}
-            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-mas">
-              <h3 id="cuenta-mas" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Tus tiendas, direcciones y compras</h3>
-              <nav aria-label="Más de tu cuenta" className="grid gap-3 @2xl:grid-cols-3">
-                {ACCESOS.map(({ href, icono: Icono, titulo, descripcion }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    className="group flex items-center gap-3.5 rounded-xl border border-island-border bg-card p-4 shadow-isla outline-none transition-all hover:-translate-y-px hover:border-primary focus-visible:ring-[3px] focus-visible:ring-ring/25"
-                  >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/14 text-brand-text" aria-hidden="true">
-                      <Icono className="size-5" />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-2 whitespace-nowrap text-[14px] font-extrabold text-foreground">
-                {titulo}
-              </span>
-                      <span className="mt-0.5 block text-[12.5px] leading-snug text-muted-foreground">{descripcion}</span>
-                    </span>
-                    <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-brand-text" />
-                  </Link>
-                ))}
-              </nav>
-            </section>
-
-            {/* Sesión y cuenta: botones en una fila */}
-            <section className="mt-8 border-t border-border/60 pt-6" aria-labelledby="cuenta-sesion">
-              <h3 id="cuenta-sesion" className="mb-4 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">Sesión y cuenta</h3>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
-                  Cerrar sesión
-                </Button>
-                <Button variant="neutral" onClick={cerrarEnTodos} loading={cerrandoTodas} leftIcon={<MonitorSmartphone aria-hidden="true" />}>
-                  Cerrar sesión en todos los dispositivos
-                </Button>
-                {/* Próximamente: necesita un endpoint nuevo (docs/orquestacion/ajustes/A-003) */}
-                <Button variant="danger-outline" disabled leftIcon={<Trash2 aria-hidden="true" />} aria-describedby="cuenta-pronto">
-                  Eliminar mi cuenta
-                </Button>
+          <section className="rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7" aria-labelledby="tema-titulo">
+            <h2 className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Preferencias</h2>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p id="tema-titulo" className="text-[14.5px] font-bold text-foreground">Apariencia</p>
+                <p className="mt-0.5 text-[13px] text-muted-foreground">{oscuro ? "Tema oscuro activado." : "Tema claro activado."}</p>
               </div>
-              <p id="cuenta-pronto" className="mt-3 text-[11.5px] text-muted-foreground">Eliminar tu cuenta llega pronto.</p>
-            </section>
-          </div>
-        </Card>
-      ) : null}
-
-      </div>
+              <div className="flex h-10 items-center gap-2.5 rounded-full bg-secondary px-3.5">
+                <Sun aria-hidden="true" className={oscuro ? "size-4 text-muted-foreground" : "size-4 text-foreground"} />
+                <Switch checked={oscuro} onCheckedChange={(marcado) => setTheme(marcado ? "dark" : "light")} aria-labelledby="tema-titulo" />
+                <Moon aria-hidden="true" className={oscuro ? "size-4 text-foreground" : "size-4 text-muted-foreground"} />
+              </div>
+            </div>
+          </section>
+        </>
+      )}
     </div>
   )
 }

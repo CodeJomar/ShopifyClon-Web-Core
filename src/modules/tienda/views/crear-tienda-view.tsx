@@ -134,10 +134,10 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
     <div className="space-y-6">
       <div>
         <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Paso {paso} de 2</p>
-        <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">
+        <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">
           {paso === 1 ? "Elige tu plan" : "Datos de tu tienda"}
         </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">
           {paso === 1 ? "Tu primera tienda puede ser gratis y sin tarjeta; cambias de plan cuando crezcas." : "Así te encontrarán tus clientes."}
         </p>
       </div>
@@ -156,7 +156,7 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
               Cargando planes…
             </p>
           ) : (
-            <div role="radiogroup" aria-label="Planes" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div role="radiogroup" aria-label="Planes" className="grid gap-4 sm:grid-cols-2">
               {planes.map((plan) => (
                 <TarjetaPlan
                   key={plan.codigo}
