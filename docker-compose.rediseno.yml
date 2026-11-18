@@ -1,0 +1,50 @@
+# OTemu (rediseño): API Spring + web Next.js en un solo comando, para probar la rama develop-rediseno.
+#
+# Estructura esperada (los dos repos lado a lado, ambos en la rama develop-rediseno):
+#   Desarrollo/
+#     ShopifyClon-Api-Core/   <- aquí va el .env de la API (no está en git; se pide por privado)
+#     ShopifyClon-Web-Core/   <- este archivo
+#
+# Uso (desde ShopifyClon-Web-Core):
+#   docker compose -f docker-compose.rediseno.yml up --build
+# Luego abrir http://localhost:3000. La primera construcción tarda varios minutos (Maven + npm); después queda en caché.
+#
+# Variables opcionales (en un archivo .env.compose junto a este, o exportadas):
+#   API_DIR=../ShopifyClon-Api-Core        carpeta del repo de la API (si la tienes en otra ruta)
+#   WEB_PUERTO=3000  API_PUERTO=8080       puertos publicados en tu máquina (cámbialos si ya están ocupados)
+#   CORREO_ACTIVO=false                    false = no se envían correos (las cuentas nuevas no se pueden activar por código)
+#   STRIPE_PUBLICA=pk_test_...             clave pública de Stripe (modo prueba); sin ella el pago con tarjeta avisa que no está configurado
+
+name: otemu-rediseno
+
+services:
+  api-core:
+    build:
+      context: ${API_DIR:-../ShopifyClon-Api-Core}
+    container_name: otemu-api-core
+    env_file:
+      - ${API_DIR:-../ShopifyClon-Api-Core}/.env
+    environment:
+      MAIL_ENABLED: ${CORREO_ACTIVO:-false}
+      # Orígenes del navegador (CORS y WebSocket): la web publicada en este equipo.
+      CORS_ORIGENES_PERMITIDOS: http://localhost:${WEB_PUERTO:-3000}
+    ports:
+      - "${API_PUERTO:-8080}:8080"
+    restart: unless-stopped
+
+  web-core:
+    build:
+      context: .
+      args:
+        # La web habla con la API por la red interna de Docker (el navegador usa /api del mismo origen).
+        API_INTERNAL_URL: http://api-core:8080
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLICA:-}
+    container_name: otemu-web-core
+    environment:
+      # El proxy de /api lee esta variable al ejecutarse (no solo al construir): apunta a la API por la red de Docker.
+      API_INTERNAL_URL: http://api-core:8080
+    depends_on:
+      - api-core
+    ports:
+      - "${WEB_PUERTO:-3000}:3000"
+    restart: unless-stopped
