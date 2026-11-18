@@ -26,7 +26,7 @@ export function PagoStripe({ iniciar: iniciarPago, alPagar }: { iniciar: Iniciar
   const { resolvedTheme } = useTheme()
   const apariencia: Appearance = {
     theme: resolvedTheme === "dark" ? "night" : "stripe",
-    variables: { colorPrimary: "#00A36C", colorDanger: "#E91E63", borderRadius: "12px", fontFamily: "Montserrat, system-ui, sans-serif" },
+    variables: { colorPrimary: "#00A36C", colorDanger: "#E91E63", borderRadius: "12px", fontFamily: "'Space Grotesk', system-ui, sans-serif" },
   }
 
   if (!stripePromise) {

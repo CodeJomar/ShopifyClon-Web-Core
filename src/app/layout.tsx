@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { Toaster } from "@/shared/components/ui/toast"
 import { ConfirmProvider } from "@/shared/providers/confirm-provider"
@@ -7,11 +7,12 @@ import { EstadoConexionModalGuard } from "@/shared/components/composed/estado-co
 import "./globals.css";
 import "./otemu-capa-visual.css";
 
-// Montserrat: única fuente de la interfaz, los títulos y los códigos (SKU, número de orden, subdominio)
-const montserrat = Montserrat({
+// Space Grotesk: única fuente de la interfaz, los títulos y los códigos (SKU, número de orden, subdominio). Llega hasta el peso 700:
+// donde el diseño pide 800 (font-extrabold) el navegador usa el 700.
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-montserrat",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${montserrat.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="otemu-studio min-h-full flex flex-col" suppressHydrationWarning>
