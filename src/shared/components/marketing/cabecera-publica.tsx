@@ -3,14 +3,14 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, Search, ShoppingBag, Store } from "lucide-react"
+import { Menu, ShoppingBag, Store } from "lucide-react"
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 import { cn } from "@/shared/utils/cn"
 import { useCarrito } from "@/modules/carrito-global/carrito"
 import { useAcceso } from "@/modules/acceso/acceso"
 import { MenuCuenta, useEnlacesCuenta } from "./menu-cuenta"
-import { claseBotonContorno, claseBotonMarca, claseContenedor } from "./estilos"
+import { claseBotonContorno, claseBotonMarca } from "./estilos"
 
 const ENLACES = [
   { href: "/mercado", etiqueta: "Mercado" },
@@ -36,8 +36,6 @@ export function CabeceraPublica() {
   const { acceso } = useAcceso()
   const enlacesCuenta = useEnlacesCuenta()
   const activo = (href: string) => (href === "/mercado" ? ruta === "/mercado" || ruta.startsWith("/mercado/tienda/") : ruta.startsWith(href))
-  // Una sola cabecera para todo el sitio del comprador: pastilla de vidrio flotante. En la portada se omite el buscador.
-  const portada = ruta === "/"
 
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 sm:px-6 sm:pt-4">
@@ -63,20 +61,7 @@ export function CabeceraPublica() {
           ))}
         </nav>
 
-        <form action="/mercado" method="get" role="search" className={cn("ml-auto hidden max-w-sm flex-1", portada ? "hidden" : "lg:block")}>
-          <label className="relative block">
-            <span className="sr-only">Buscar productos en el mercado</span>
-            <Search aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <input
-              name="q"
-              type="search"
-              placeholder="Buscar café, cerámica, audífonos…"
-              className="h-10 w-full rounded-xl border-[1.8px] border-input bg-card pl-10 pr-3 text-[13.5px] font-medium text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18"
-            />
-          </label>
-        </form>
-
-        <div className={cn("ml-auto flex items-center gap-2", !portada && "lg:ml-0")}>
+        <div className="ml-auto flex items-center gap-2">
           <Link
             href="/carrito"
             aria-label={listo && cantidadTotal > 0 ? `Mi carrito, ${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"}` : "Mi carrito"}

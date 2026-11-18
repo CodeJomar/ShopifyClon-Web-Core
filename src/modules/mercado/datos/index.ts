@@ -32,9 +32,8 @@ export async function listarProductos(filtros: FiltrosProductos = {}): Promise<P
   return (await leer<PaginaMercado<ProductoMercado>>("/mercado/productos", { tamano: 12, ...filtros })) ?? PAGINA_VACIA()
 }
 
-export async function listarTiendas(q?: string): Promise<TiendaMercado[]> {
-  const pagina = await leer<PaginaMercado<TiendaMercado>>("/mercado/tiendas", { q, tamano: 48 })
-  return pagina?.datos ?? []
+export async function listarTiendas(filtros: { q?: string; pagina?: number; tamano?: number } = {}): Promise<PaginaMercado<TiendaMercado>> {
+  return (await leer<PaginaMercado<TiendaMercado>>("/mercado/tiendas", { tamano: 12, ...filtros })) ?? PAGINA_VACIA()
 }
 
 export async function obtenerTienda(subdominio: string): Promise<TiendaMercado | null> {
