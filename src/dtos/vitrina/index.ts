@@ -54,6 +54,8 @@ export interface ProductoDetalleVitrina {
   categorias: CategoriaVitrina[]
   variantes: VarianteVitrina[]
   imagenes: ImagenVitrina[]
+  calificacion_promedio?: number | null
+  cantidad_resenas?: number
 }
 
 /** Filtros para consultar productos en la vitrina. */
