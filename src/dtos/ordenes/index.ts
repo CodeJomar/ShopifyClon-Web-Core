@@ -10,6 +10,9 @@ export type EstadoEnvio = "CREADO" | "EN_TRANSITO" | "ENTREGADO" | "DEVUELTO"
 export interface OrdenLista {
   id: string
   numero_orden: string
+  /** Pedido padre al que pertenece la orden (B5): un pedido reúne una orden por tienda. */
+  pedido_id?: string | null
+  numero_pedido?: string | null
   fecha_creacion: string
   nombre_cliente: string
   correo_cliente: string
@@ -33,6 +36,9 @@ export interface ItemOrdenPanel {
 export interface OrdenDetallePanel {
   id: string
   numero_orden: string
+  /** Pedido padre al que pertenece la orden (B5): un pedido reúne una orden por tienda. */
+  pedido_id?: string | null
+  numero_pedido?: string | null
   fecha_creacion: string
   nombre_cliente: string
   correo_cliente: string

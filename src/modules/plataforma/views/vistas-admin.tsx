@@ -24,6 +24,7 @@ import { resultado } from "@/lib/api/resultado"
 import type { EventoAuditoriaDto, TiendaAdminDto, UsuarioAdminDto } from "@/dtos/administracion"
 import { reactivarTiendaAction, suspenderTiendaAction } from "../actions/plataforma.actions"
 import { useListaAdmin } from "../hooks/use-lista-admin"
+import { usePanel } from "@/modules/panel/hooks/use-panel"
 
 type Tono = TonoInsignia
 
@@ -108,7 +109,8 @@ export function ResumenAdminView() {
   const usuarios = useListaAdmin<UsuarioAdminDto>("/plataforma/usuarios", {})
   const pedidos = useListaAdmin<{ id: string }>("/plataforma/pedidos", {})
   const eventos = useListaAdmin<EventoAuditoriaDto>("/plataforma/auditoria", {})
-  const error = tiendas.error ?? usuarios.error
+  // Un rol parcial (soporte, finanzas) no ve todo: solo se muestra error si ninguna consulta respondió.
+  const error = tiendas.error && usuarios.error && pedidos.error && eventos.error ? tiendas.error : null
   return (
     <div className="space-y-6">
       <EncabezadoPagina titulo="Resumen de la plataforma" descripcion="Cómo va OTemu: tiendas, personas, pedidos y lo último que pasó." />
@@ -185,6 +187,8 @@ export function TiendasAdminView() {
   const [texto, q, setTexto] = useTextoConEspera()
   const { datos, error, pagina, setPagina, recargar, cargando } = useListaAdmin<TiendaAdminDto>("/plataforma/tiendas", { q, estado })
   const [objetivo, setObjetivo] = React.useState<TiendaAdminDto | null>(null)
+  const { permisosPlataforma } = usePanel()
+  const puedeSuspender = permisosPlataforma.includes("PLATAFORMA_SUSPENDER_TIENDAS")
 
   const confirmar = async (motivo: string) => {
     if (!objetivo) return null
@@ -248,9 +252,9 @@ export function TiendasAdminView() {
                         <p className="text-[12px] font-medium text-muted-foreground">{t.ordenes_pagadas} órdenes</p>
                       </TableCell>
                       <TableCell className="pr-6 text-right">
-                        <Button size="sm" variant={t.esta_activa ? "danger-outline" : "soft"} onClick={() => setObjetivo(t)} leftIcon={t.esta_activa ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}>
+                        {puedeSuspender && <Button size="sm" variant={t.esta_activa ? "danger-outline" : "soft"} onClick={() => setObjetivo(t)} leftIcon={t.esta_activa ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}>
                           {t.esta_activa ? "Suspender" : "Reactivar"}
-                        </Button>
+                        </Button>}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -285,6 +289,8 @@ export function UsuariosAdminView() {
   const [texto, q, setTexto] = useTextoConEspera()
   const { datos, error, pagina, setPagina, recargar, cargando } = useListaAdmin<UsuarioAdminDto>("/plataforma/usuarios", { q, estado })
   const [accion, setAccion] = React.useState<AccionUsuario | null>(null)
+  const { permisosPlataforma } = usePanel()
+  const puedeSeguridad = permisosPlataforma.includes("PLATAFORMA_SEGURIDAD")
 
   const ejecutar = async (motivo?: string) => {
     if (!accion) return null
@@ -346,7 +352,7 @@ export function UsuariosAdminView() {
                         <TableCell className="text-[13px]">{u.dos_pasos_activo ? "Activos" : "No"}</TableCell>
                         <TableCell className="whitespace-nowrap text-[12.5px] text-muted-foreground">{formatearFecha(u.fecha_creacion)}</TableCell>
                         <TableCell className="pr-6 text-right">
-                          {u.esta_activo && !u.es_administrador_plataforma && (
+                          {puedeSeguridad && u.esta_activo && !u.es_administrador_plataforma && (
                             <div className="flex justify-end gap-2">
                               <Button size="sm" variant="ghost" onClick={() => setAccion({ tipo: "sesiones", usuario: u })} leftIcon={<LogOut aria-hidden="true" />}>Cerrar sesiones</Button>
                               {u.bloqueado ? (

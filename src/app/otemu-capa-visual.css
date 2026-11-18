@@ -293,7 +293,7 @@ body { background: var(--background); color: var(--foreground); }
 .otemu-shop-links a:hover { color: var(--brand-text); }
 .otemu-shop-footer { background: var(--secondary); color: var(--muted-foreground); }
 .otemu-store-hero { background: linear-gradient(110deg, #e6f8f2 0%, #e2f6ef 58%, #d8f4eb 100%); border-color: var(--border); box-shadow: var(--shadow-isla); }
-.otemu-shop-kicker { color: #0eb07a; }
+.otemu-shop-kicker { color: var(--brand-text); }
 .otemu-shop-art-card { background: var(--card); color: var(--brand-text); border-color: var(--background); box-shadow: var(--shadow-isla); }
 .otemu-shop-art-mini { color: var(--foreground); }
 .otemu-product-visual { background: var(--secondary); }

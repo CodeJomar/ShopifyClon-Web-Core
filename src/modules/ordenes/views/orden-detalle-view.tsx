@@ -211,6 +211,7 @@ export function OrdenDetalleView({ ordenId }: { ordenId: string }) {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="min-w-0 space-y-2">
             <h1 className="font-mono text-[20px] font-extrabold tracking-tight text-foreground">{orden.numero_orden}</h1>
+            {orden.numero_pedido && <p className="text-[12.5px] font-semibold text-muted-foreground">Parte del pedido {orden.numero_pedido}</p>}
             <p className="text-[12.5px] text-muted-foreground">Hecha el {formatearFecha(orden.fecha_creacion, zonaHoraria)}</p>
             <div className="flex flex-wrap gap-1.5">
               <Badge variant="estado" className="ring-1 ring-border/70" tono={ETIQUETA_ESTADO[orden.estado].tono}>{ETIQUETA_ESTADO[orden.estado].texto}</Badge>

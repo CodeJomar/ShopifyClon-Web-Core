@@ -75,4 +75,39 @@ test.describe("Rediseño: panel del propietario y administración", () => {
     await expect(fila.getByText("Activo")).toBeVisible({ timeout: 30_000 })
     await ctx.close()
   })
+
+  test("administradores: lista a los administradores, los roles de sistema y permite crear y borrar un rol", async ({ browser, baseURL }) => {
+    const doc = fs.readFileSync("C:/UTP-Proyectos/Shopify-Clon-Core/Desarrollo/docs/orquestacion-frontend/datos-de-prueba.md", "utf8")
+    const clave = /Contrase[ñn]a[^`\n]*`([^`]+)`/i.exec(doc)?.[1]
+    test.skip(!clave, "sin contraseña documentada para el administrador de pruebas")
+    const ctx = await browser.newContext({ baseURL })
+    const page = await ctx.newPage()
+    await page.goto("/login")
+    await page.getByLabel("Correo electrónico").fill("admin.prueba@otemu.test")
+    await page.getByLabel("Contraseña", { exact: true }).fill(clave!)
+    await page.getByRole("button", { name: "Iniciar sesión" }).click()
+    await page.waitForURL(/\/plataforma/, { timeout: 60_000 })
+
+    await page.goto("/plataforma/administradores")
+    await expect(page.getByRole("heading", { name: "Administradores", level: 1 })).toBeVisible({ timeout: 40_000 })
+    await expect(page.getByText("Superadministrador").first()).toBeVisible({ timeout: 30_000 })
+    await page.getByRole("button", { name: "Roles y permisos" }).click()
+    await expect(page.getByText("Soporte").first()).toBeVisible()
+    await expect(page.getByText("Finanzas").first()).toBeVisible()
+
+    const codigo = `PRUEBA_${Date.now().toString(36).toUpperCase().replace(/[^A-Z]/g, "X")}`
+    await page.getByRole("button", { name: "Nuevo rol" }).click()
+    await page.getByLabel("Código").fill(codigo)
+    await page.getByLabel("Nombre", { exact: true }).fill("Rol de prueba")
+    await page.getByRole("checkbox", { name: "Ver la auditoría" }).check()
+    await page.getByRole("button", { name: "Crear rol" }).click()
+    await expect(page.getByText("Rol de prueba").first()).toBeVisible({ timeout: 30_000 })
+
+    // Se deja todo como estaba: se elimina el rol creado.
+    const tarjeta = page.getByRole("listitem").filter({ hasText: "Rol de prueba" }).first()
+    await tarjeta.getByRole("button", { name: "Eliminar" }).click()
+    await page.getByRole("button", { name: "Sí, eliminar" }).click()
+    await expect(page.getByText("Rol de prueba")).toHaveCount(0, { timeout: 30_000 })
+    await ctx.close()
+  })
 })
