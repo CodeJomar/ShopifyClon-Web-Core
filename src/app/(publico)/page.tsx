@@ -2,7 +2,6 @@ import Link from "next/link"
 import { ArrowRight, Boxes, PackageCheck, Rocket, Store, Truck, Wallet } from "lucide-react"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { HeroPortada } from "@/modules/landing/hero-portada"
-import { FondoAurora } from "@/shared/components/marketing/fondo-aurora"
 import { Aparece } from "@/modules/landing/aparece"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { TarjetaTienda } from "@/modules/mercado/components/tarjeta-tienda"
@@ -31,9 +30,6 @@ export default async function Portada() {
 
   return (
     <>
-      {/* Un solo fondo fijo para toda la portada: la aurora acompaña al scroll y sigue el tema (claro u oscuro) */}
-      <FondoAurora className="!fixed inset-0 z-0" />
-
       {/* Héroe inmersivo: titular y recibo de vidrio en 3D sobre la aurora */}
       <HeroPortada />
 
@@ -185,22 +181,37 @@ export default async function Portada() {
       </section>
       </Aparece>
 
-      {/* Cierre */}
+      {/* Cierre: sin tarjeta, directamente sobre la aurora */}
       <Aparece>
-      <section className={cn(claseContenedor, "pt-24")}>
-        <div className="relative overflow-hidden rounded-[32px] bg-grad-tinta px-7 py-14 text-center text-white sm:px-12 sm:py-20">
-          <h2 className="relative mx-auto max-w-2xl text-[30px] font-extrabold leading-tight tracking-tight sm:text-[40px]">
-            Tu próxima compra o tu primera venta empieza aquí
-          </h2>
-          <div className="relative mt-8 flex flex-wrap justify-center gap-3">
-            <Link href="/mercado" className={claseBotonMarca}>
-              Explorar el mercado
-            </Link>
-            <Link href="/registro" className="inline-flex h-11 items-center justify-center rounded-xl border-[1.8px] border-white/40 px-5 text-[14px] font-bold text-white outline-none transition-colors hover:bg-white/10 focus-visible:ring-[3px] focus-visible:ring-white/50">
-              Crear mi cuenta
-            </Link>
-          </div>
+      <section className={cn(claseContenedor, "pt-28 text-center sm:pt-36")} aria-labelledby="cierre-titulo">
+        <h2 id="cierre-titulo" className="mx-auto max-w-4xl text-balance text-[38px] font-extrabold leading-[1.04] tracking-[-0.035em] sm:text-[60px]">
+          Tu próxima compra o tu primera venta{" "}
+          <span className="bg-[linear-gradient(95deg,#00E699_10%,#7DF3FF_90%)] bg-clip-text text-transparent">empieza aquí</span>
+        </h2>
+        <p className="mx-auto mt-5 max-w-xl text-[16px] font-medium leading-relaxed text-muted-foreground sm:text-[18px]">
+          Una cuenta para comprar en todas las tiendas y, cuando quieras, abrir la tuya gratis.
+        </p>
+        <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/mercado"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-[linear-gradient(95deg,#00E699,#2BD9FF)] px-7 text-[15px] font-extrabold text-[#03130E] shadow-[0_14px_40px_-12px_rgb(0_230_153/0.7)] outline-none transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110"
+          >
+            Explorar el mercado <ArrowRight aria-hidden="true" className="size-4" />
+          </Link>
+          <Link
+            href="/registro"
+            className="inline-flex h-12 items-center justify-center rounded-2xl border border-white/20 bg-white/[0.07] px-7 text-[15px] font-bold text-foreground outline-none backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/[0.14]"
+          >
+            Crear mi cuenta
+          </Link>
         </div>
+        <ul className="mx-auto mt-12 flex max-w-2xl flex-wrap items-center justify-center gap-3" aria-label="Lo que incluye">
+          {["Un solo pago", "Envío por tienda", "Tienda gratis, sin tarjeta"].map((t) => (
+            <li key={t} className="rounded-full border border-white/12 bg-white/[0.05] px-4 py-2 text-[13px] font-semibold text-muted-foreground backdrop-blur-xl">
+              {t}
+            </li>
+          ))}
+        </ul>
       </section>
       </Aparece>
       </div>

@@ -22,7 +22,7 @@ export function HeroPortada() {
     reducido ? {} : { initial: { opacity: 0, y: 26, filter: "blur(8px)" }, animate: { opacity: 1, y: 0, filter: "blur(0px)" }, transition: { duration: 0.9, delay: retraso, ease } }
 
   return (
-    <section className="relative z-10 flex min-h-[100svh] flex-col items-center px-4 pb-20 pt-32 text-foreground sm:pt-36">
+    <section className="relative z-10 flex min-h-[100svh] flex-col items-center px-4 pb-20 pt-16 text-foreground sm:pt-20">
 
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center text-center">
         <motion.p

@@ -5,6 +5,7 @@ import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { cn } from "@/shared/utils/cn"
 import { useMounted } from "@/shared/hooks/use-mounted"
+import { TEMA_UNICO } from "@/shared/config/tema"
 
 type ThemeToggleProps = {
   className?: string
@@ -18,6 +19,9 @@ export function ThemeToggle({ className, showLabel = false }: ThemeToggleProps) 
 
   const isDark = mounted && resolvedTheme === "dark"
   const actionLabel = isDark ? "Cambiar a modo claro" : "Cambiar a modo oscuro"
+
+  // Con un tema único no hay nada que elegir.
+  if (TEMA_UNICO) return null
 
   return (
     <button

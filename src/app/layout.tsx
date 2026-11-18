@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { Toaster } from "@/shared/components/ui/toast"
+import { TEMA_UNICO } from "@/shared/config/tema"
 import { ConfirmProvider } from "@/shared/providers/confirm-provider"
 import { EstadoConexionModalGuard } from "@/shared/components/composed/estado-conexion-modal-guard"
 import "./globals.css";
@@ -29,13 +30,14 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${spaceGrotesk.variable} h-full antialiased`}
+      className={`${spaceGrotesk.variable} h-full antialiased${TEMA_UNICO === "dark" ? " dark" : ""}`}
       suppressHydrationWarning
     >
       <body className="otemu-studio min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme={TEMA_UNICO ?? "light"}
+          forcedTheme={TEMA_UNICO}
           enableSystem={false}
           disableTransitionOnChange
         >

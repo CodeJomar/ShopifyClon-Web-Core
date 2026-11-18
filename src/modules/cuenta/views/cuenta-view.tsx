@@ -7,6 +7,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Switch } from "@/shared/components/ui/switch"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { useMounted } from "@/shared/hooks/use-mounted"
+import { TEMA_UNICO } from "@/shared/config/tema"
 import { PerfilForm } from "../components/perfil-form"
 import { usePerfilCuenta } from "../hooks/use-perfil-cuenta"
 
@@ -62,6 +63,7 @@ export function CuentaView() {
             />
           </section>
 
+          {!TEMA_UNICO && (
           <section className="rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7" aria-labelledby="tema-titulo">
             <h2 className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Preferencias</h2>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
@@ -76,6 +78,7 @@ export function CuentaView() {
               </div>
             </div>
           </section>
+          )}
         </>
       )}
     </div>

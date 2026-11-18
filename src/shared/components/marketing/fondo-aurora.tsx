@@ -12,15 +12,15 @@ void main() { gl_Position = vec4(position, 0.0, 1.0); }
 
 /**
  * Aurora de la marca: cintas de luz verde y turquesa con un toque de rosa (los colores de OTemu) sobre negro, con estrellas.
- * Se calcula entera en el fragment shader; el ratón desplaza las cintas con suavidad.
+ * Se calcula entera en el fragment shader y se anima sola, sin depender del ratón ni del scroll.
  */
 const FRAGMENTO = /* glsl */ `
 precision highp float;
 uniform float uTime;
 uniform vec2 uRes;
-uniform vec2 uMouse;
 uniform float uVista;
 uniform float uClaro;
+uniform float uIntens;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
 float ruido(vec2 p) {
@@ -30,7 +30,7 @@ float ruido(vec2 p) {
 }
 float fbm(vec2 p) {
   float v = 0.0, a = 0.5;
-  for (int i = 0; i < 4; i++) { v += a * ruido(p); p = p * 2.03 + 11.7; a *= 0.5; }
+  for (int i = 0; i < 3; i++) { v += a * ruido(p); p = p * 2.03 + 11.7; a *= 0.55; }
   return v;
 }
 
@@ -52,7 +52,6 @@ void main() {
   // Las cintas se miden respecto a la primera pantalla (no a todo el héroe): así siempre se ven al abrir la página.
   float yv = (gl_FragCoord.y - (uRes.y - uVista)) / uVista;
   vec2 p = vec2(uv.x * razon, yv);
-  p += (uMouse - 0.5) * vec2(0.18, 0.10);
 
   vec3 verde = vec3(0.0, 0.90, 0.60);
   vec3 turquesa = vec3(0.0, 0.64, 0.92);
@@ -77,7 +76,7 @@ void main() {
   // la parte alta, donde va el titular, queda más oscura para que el texto se lea
   col *= mix(1.0, 0.3, smoothstep(0.55, 0.95, yv));
   float vineta = smoothstep(1.25, 0.25, length(uv - 0.5) * 1.15);
-  col *= vineta;
+  col *= vineta * uIntens;
   col = pow(col, vec3(0.95));
   if (uClaro > 0.5) {
     // Tema claro: la misma luz, pero como tinta suave sobre un fondo casi blanco con un toque de verde.
@@ -92,11 +91,18 @@ void main() {
 }
 `
 
+/** Velocidad del flujo (1 = el ritmo original). Siempre automático: no depende del ratón ni del scroll. */
+const RITMO = 1.6
+
 /** Fondo animado en WebGL. Respeta «reducir movimiento» (un solo cuadro), se pausa fuera de pantalla y cae a un degradado si no hay WebGL. */
-export function FondoAurora({ className }: { className?: string }) {
+export function FondoAurora({ className, intensidad = 1 }: { className?: string; intensidad?: number }) {
   const contenedor = React.useRef<HTMLDivElement>(null)
   const { resolvedTheme } = useTheme()
   const claro = React.useRef(resolvedTheme !== "dark")
+  const brillo = React.useRef(intensidad)
+  React.useEffect(() => {
+    brillo.current = intensidad
+  }, [intensidad])
   // El tema se lee dentro del bucle de dibujo sin reiniciar el contexto WebGL.
   React.useEffect(() => {
     claro.current = resolvedTheme !== "dark"
@@ -108,7 +114,7 @@ export function FondoAurora({ className }: { className?: string }) {
     if (!el) return
     let renderer: Renderer
     try {
-      renderer = new Renderer({ alpha: false, antialias: false, dpr: Math.min(window.devicePixelRatio || 1, 1.5) })
+      renderer = new Renderer({ alpha: false, antialias: false, dpr: 0.6 })
     } catch {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- sin WebGL se muestra el respaldo
       setSinWebgl(true)
@@ -119,12 +125,10 @@ export function FondoAurora({ className }: { className?: string }) {
     el.appendChild(gl.canvas)
 
     const geometria = new Triangle(gl)
-    const objetivo = { x: 0.5, y: 0.5 }
-    const raton = { x: 0.5, y: 0.5 }
     const programa = new Program(gl, {
       vertex: VERTICE,
       fragment: FRAGMENTO,
-      uniforms: { uTime: { value: 0 }, uRes: { value: [1, 1] }, uMouse: { value: [0.5, 0.5] }, uVista: { value: 1 }, uClaro: { value: 0 } },
+      uniforms: { uTime: { value: 0 }, uRes: { value: [1, 1] }, uVista: { value: 1 }, uClaro: { value: 0 }, uIntens: { value: 1 } },
     })
     const malla = new Mesh(gl, { geometry: geometria, program: programa })
 
@@ -143,18 +147,30 @@ export function FondoAurora({ className }: { className?: string }) {
     let raf = 0
     let reloj = 0
     let anterior = performance.now()
+    let escala = 0.6
+    let acumulado = 0
+    let cuadros = 0
 
     const pintar = (ahora: number) => {
       raf = 0
+      // Resolución adaptativa: el fondo es difuso, así que bajarla casi no se nota y mantiene el movimiento fluido.
+      acumulado += Math.min(ahora - anterior, 250)
+      if (++cuadros === 45) {
+        if (acumulado / cuadros > 34 && escala > 0.3) {
+          escala = Math.max(0.3, escala * 0.8)
+          renderer.dpr = escala
+          ajustar()
+        }
+        acumulado = 0
+        cuadros = 0
+      }
       if (!movimientoReducido) {
         reloj += (ahora - anterior) / 1000
-        raton.x += (objetivo.x - raton.x) * 0.04
-        raton.y += (objetivo.y - raton.y) * 0.04
       }
       anterior = ahora
-      programa.uniforms.uTime.value = movimientoReducido ? 8 : reloj
-      programa.uniforms.uMouse.value = [raton.x, raton.y]
+      programa.uniforms.uTime.value = movimientoReducido ? 8 : reloj * RITMO
       programa.uniforms.uClaro.value = claro.current ? 1 : 0
+      programa.uniforms.uIntens.value = brillo.current
       renderer.render({ scene: malla })
       if (!movimientoReducido && visible && !document.hidden) raf = requestAnimationFrame(pintar)
     }
@@ -166,10 +182,6 @@ export function FondoAurora({ className }: { className?: string }) {
     }
     arrancar()
 
-    const alMover = (e: PointerEvent) => {
-      objetivo.x = e.clientX / window.innerWidth
-      objetivo.y = 1 - e.clientY / window.innerHeight
-    }
     const observadorVisible = new IntersectionObserver(([entrada]) => {
       visible = entrada.isIntersecting
       if (visible) arrancar()
@@ -178,14 +190,12 @@ export function FondoAurora({ className }: { className?: string }) {
     const alCambiarVisibilidad = () => {
       if (!document.hidden) arrancar()
     }
-    window.addEventListener("pointermove", alMover, { passive: true })
     document.addEventListener("visibilitychange", alCambiarVisibilidad)
 
     return () => {
       if (raf) cancelAnimationFrame(raf)
       observadorTamano.disconnect()
       observadorVisible.disconnect()
-      window.removeEventListener("pointermove", alMover)
       document.removeEventListener("visibilitychange", alCambiarVisibilidad)
       gl.canvas.remove()
       gl.getExtension("WEBGL_lose_context")?.loseContext()
@@ -193,7 +203,7 @@ export function FondoAurora({ className }: { className?: string }) {
   }, [])
 
   return (
-    <div ref={contenedor} aria-hidden="true" className={cn("absolute inset-0 overflow-hidden bg-[#02070b]", className)}>
+    <div ref={contenedor} aria-hidden="true" className={cn("pointer-events-none absolute inset-0 overflow-hidden bg-[#02070b] [contain:strict] [transform:translateZ(0)]", className)}>
       {sinWebgl && (
         <div
           className="absolute inset-0"
