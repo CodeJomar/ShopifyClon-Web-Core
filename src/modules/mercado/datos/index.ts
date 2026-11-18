@@ -32,6 +32,29 @@ export async function listarProductos(filtros: FiltrosProductos = {}): Promise<P
   return (await leer<PaginaMercado<ProductoMercado>>("/mercado/productos", { tamano: 12, ...filtros })) ?? PAGINA_VACIA()
 }
 
+/** Texto plano y corto de una descripción (quita etiquetas y espacios de más). */
+function resumirTexto(texto: string | null | undefined, max = 110): string | null {
+  const limpio = (texto ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+  if (!limpio) return null
+  return limpio.length > max ? `${limpio.slice(0, max - 1).trimEnd()}…` : limpio
+}
+
+/**
+ * Completa cada producto de la lista con su descripción corta y sus variantes para la tarjeta. Mientras la lista de la API no los entregue,
+ * se toman del detalle de cada producto (en paralelo). Si la API ya los trae, no se hace ninguna consulta extra.
+ */
+export async function conDetalleParaTarjeta(productos: ProductoMercado[]): Promise<ProductoMercado[]> {
+  return Promise.all(
+    productos.map(async (p) => {
+      if (p.descripcion_corta !== undefined || p.variantes_resumen !== undefined) return p
+      const d = await obtenerProducto(p.tienda.subdominio, p.identificador_url)
+      if (!d) return p
+      const variantes = d.variantes.map((v) => ({ titulo: v.titulo, precio: Number(v.precio) }))
+      return { ...p, descripcion_corta: resumirTexto(d.descripcion), variantes_resumen: variantes.slice(0, 3), cantidad_variantes: variantes.length }
+    }),
+  )
+}
+
 export async function listarTiendas(filtros: { q?: string; pagina?: number; tamano?: number } = {}): Promise<PaginaMercado<TiendaMercado>> {
   return (await leer<PaginaMercado<TiendaMercado>>("/mercado/tiendas", { tamano: 12, ...filtros })) ?? PAGINA_VACIA()
 }

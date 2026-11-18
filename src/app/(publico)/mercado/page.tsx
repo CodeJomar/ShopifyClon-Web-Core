@@ -1,6 +1,6 @@
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { ListadoMercado } from "@/modules/mercado/components/listado-mercado"
-import { listarCategorias, listarProductos } from "@/modules/mercado/datos"
+import { conDetalleParaTarjeta, listarCategorias, listarProductos } from "@/modules/mercado/datos"
 import type { OrdenProductos } from "@/dtos/mercado"
 
 // Datos vivos del mercado: no se prerenderiza al compilar.
@@ -23,7 +23,8 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
   const categoria = uno(sp.categoria) || undefined
   const orden = (ORDENES.find((o) => o.valor === uno(sp.orden))?.valor ?? "recientes") as OrdenProductos
   const pagina = Math.max(1, Number(uno(sp.pagina)) || 1)
-  const [resultado, categorias] = await Promise.all([listarProductos({ q, categoria, orden, pagina: pagina - 1, tamano: 12 }), listarCategorias()])
+  const [pagina_, categorias] = await Promise.all([listarProductos({ q, categoria, orden, pagina: pagina - 1, tamano: 12 }), listarCategorias()])
+  const resultado = { ...pagina_, datos: await conDetalleParaTarjeta(pagina_.datos) }
 
   const enlace = (cambios: Record<string, string | undefined>) => {
     const p = new URLSearchParams()
@@ -49,7 +50,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
       hayResultados={resultado.datos.length > 0}
       vacio={{ titulo: "No encontramos productos con esa búsqueda", texto: "Prueba con otra palabra o quita los filtros para ver todo el mercado.", enlace: "/mercado", etiquetaEnlace: "Ver todo el mercado" }}
     >
-      <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {resultado.datos.map((p) => (
           <li key={p.id}>
             <TarjetaProducto producto={p} className="h-full" />
