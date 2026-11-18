@@ -37,7 +37,7 @@ export function PiePublico() {
   // En la portada el pie sigue la estética oscura de la página.
   const portada = usePathname() === "/"
   return (
-    <footer className={cn("border-t", portada ? "dark border-white/10 bg-[#02070b] text-foreground" : "mt-24 border-island-border bg-card/60")}>
+    <footer className={cn("border-t", portada ? "relative z-10 border-black/10 bg-background/60 backdrop-blur-xl dark:border-white/10" : "mt-24 border-island-border bg-card/60")}>
       <div className={cn(claseContenedor, "grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]")}>
         <div className="max-w-xs space-y-3">
           <Logo />

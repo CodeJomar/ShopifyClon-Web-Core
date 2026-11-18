@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Renderer, Program, Mesh, Triangle } from "ogl"
+import { useTheme } from "next-themes"
 import { cn } from "@/shared/utils/cn"
 
 const VERTICE = /* glsl */ `
@@ -19,6 +20,7 @@ uniform float uTime;
 uniform vec2 uRes;
 uniform vec2 uMouse;
 uniform float uVista;
+uniform float uClaro;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
 float ruido(vec2 p) {
@@ -77,13 +79,28 @@ void main() {
   float vineta = smoothstep(1.25, 0.25, length(uv - 0.5) * 1.15);
   col *= vineta;
   col = pow(col, vec3(0.95));
-  gl_FragColor = vec4(col, 1.0);
+  if (uClaro > 0.5) {
+    // Tema claro: la misma luz, pero como tinta suave sobre un fondo casi blanco con un toque de verde.
+    float m = max(max(col.r, col.g), col.b);
+    vec3 tono = col / max(m, 0.001);
+    vec3 fondo = vec3(0.935, 0.968, 0.972);
+    vec3 tinta = mix(fondo, tono * vec3(0.55, 0.95, 0.85), clamp(m * 1.25, 0.0, 0.72));
+    gl_FragColor = vec4(tinta, 1.0);
+  } else {
+    gl_FragColor = vec4(col, 1.0);
+  }
 }
 `
 
 /** Fondo animado en WebGL. Respeta «reducir movimiento» (un solo cuadro), se pausa fuera de pantalla y cae a un degradado si no hay WebGL. */
 export function FondoAurora({ className }: { className?: string }) {
   const contenedor = React.useRef<HTMLDivElement>(null)
+  const { resolvedTheme } = useTheme()
+  const claro = React.useRef(resolvedTheme !== "dark")
+  // El tema se lee dentro del bucle de dibujo sin reiniciar el contexto WebGL.
+  React.useEffect(() => {
+    claro.current = resolvedTheme !== "dark"
+  }, [resolvedTheme])
   const [sinWebgl, setSinWebgl] = React.useState(false)
 
   React.useEffect(() => {
@@ -107,7 +124,7 @@ export function FondoAurora({ className }: { className?: string }) {
     const programa = new Program(gl, {
       vertex: VERTICE,
       fragment: FRAGMENTO,
-      uniforms: { uTime: { value: 0 }, uRes: { value: [1, 1] }, uMouse: { value: [0.5, 0.5] }, uVista: { value: 1 } },
+      uniforms: { uTime: { value: 0 }, uRes: { value: [1, 1] }, uMouse: { value: [0.5, 0.5] }, uVista: { value: 1 }, uClaro: { value: 0 } },
     })
     const malla = new Mesh(gl, { geometry: geometria, program: programa })
 
@@ -137,6 +154,7 @@ export function FondoAurora({ className }: { className?: string }) {
       anterior = ahora
       programa.uniforms.uTime.value = movimientoReducido ? 8 : reloj
       programa.uniforms.uMouse.value = [raton.x, raton.y]
+      programa.uniforms.uClaro.value = claro.current ? 1 : 0
       renderer.render({ scene: malla })
       if (!movimientoReducido && visible && !document.hidden) raf = requestAnimationFrame(pintar)
     }

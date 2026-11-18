@@ -40,11 +40,11 @@ export function CabeceraPublica() {
   const portada = ruta === "/"
 
   return (
-    <header className={portada ? "dark fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6" : "sticky top-0 z-40 border-b border-island-border bg-background/80 backdrop-blur-xl"}>
+    <header className={portada ? "fixed inset-x-0 top-3 z-50 px-3 sm:top-4 sm:px-6" : "sticky top-0 z-40 border-b border-island-border bg-background/80 backdrop-blur-xl"}>
       <a href="#contenido" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-card focus:px-3 focus:py-2 focus:text-sm focus:font-bold">
         Saltar al contenido
       </a>
-      <div className={portada ? "mx-auto flex h-14 w-full max-w-6xl items-center gap-3 rounded-2xl border border-white/12 bg-black/40 px-4 shadow-[0_18px_50px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.1)] backdrop-blur-2xl lg:gap-6" : cn(claseContenedor, "flex h-16 items-center gap-3 lg:gap-6")}>
+      <div className={portada ? "mx-auto flex h-14 w-full max-w-6xl items-center gap-3 rounded-2xl border border-black/10 bg-white/85 px-4 shadow-[0_18px_50px_-24px_rgb(15_40_60/0.35),inset_0_1px_0_rgb(255_255_255/0.8)] backdrop-blur-2xl dark:border-white/12 dark:bg-black/40 dark:shadow-[0_18px_50px_-20px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.1)] lg:gap-6" : cn(claseContenedor, "flex h-16 items-center gap-3 lg:gap-6")}>
         <Logo />
 
         <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">

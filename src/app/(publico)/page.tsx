@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowRight, Boxes, PackageCheck, Rocket, Store, Truck, Wallet } from "lucide-react"
 import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { HeroPortada } from "@/modules/landing/hero-portada"
+import { FondoAurora } from "@/shared/components/marketing/fondo-aurora"
 import { Aparece } from "@/modules/landing/aparece"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { TarjetaTienda } from "@/modules/mercado/components/tarjeta-tienda"
@@ -30,14 +31,14 @@ export default async function Portada() {
 
   return (
     <>
-      {/* Héroe inmersivo: aurora animada en WebGL, titular y recibo de vidrio en 3D */}
+      {/* Un solo fondo fijo para toda la portada: la aurora acompaña al scroll y sigue el tema (claro u oscuro) */}
+      <FondoAurora className="!fixed inset-0 z-0" />
+
+      {/* Héroe inmersivo: titular y recibo de vidrio en 3D sobre la aurora */}
       <HeroPortada />
 
-      {/* El resto de la portada sigue en tema oscuro, con vidrio sobre resplandores suaves */}
-      <div className="dark relative isolate overflow-hidden bg-[#02070b] pb-28 text-foreground">
-        <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-24 -z-10 size-[34rem] rounded-full bg-[#00E699]/10 blur-[120px]" />
-        <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-[42rem] -z-10 size-[30rem] rounded-full bg-[#2BD9FF]/10 blur-[120px]" />
-        <div aria-hidden="true" className="pointer-events-none absolute bottom-40 left-1/3 -z-10 size-[28rem] rounded-full bg-[#E91E63]/[0.07] blur-[130px]" />
+      {/* El resto de la portada: vidrio sobre la aurora fija */}
+      <div className="relative z-10 pb-28 text-foreground">
 
       {/* Para quien compra: tres razones, no tres tarjetas iguales */}
       <Aparece>
@@ -54,12 +55,12 @@ export default async function Portada() {
             </p>
           </div>
           <div className="grid gap-4">
-            <div className="rounded-3xl border border-white/12 bg-white/[0.06] p-7 backdrop-blur-xl">
+            <div className="rounded-3xl border border-black/10 bg-white/55 p-7 backdrop-blur-xl dark:border-white/12 dark:bg-white/[0.06]">
               <Wallet aria-hidden="true" className="size-7 text-brand-text" strokeWidth={1.7} />
               <h3 className="mt-3 text-[18px] font-extrabold tracking-tight text-foreground">Pagas una vez, sin dividir nada</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">Con tarjeta se hace un solo cobro; nosotros repartimos el dinero entre las tiendas.</p>
             </div>
-            <div className="rounded-3xl border border-white/12 bg-white/[0.04] p-7 backdrop-blur-xl">
+            <div className="rounded-3xl border border-black/10 bg-white/45 p-7 backdrop-blur-xl dark:border-white/12 dark:bg-white/[0.04]">
               <Truck aria-hidden="true" className="size-7 text-brand-text" strokeWidth={1.7} />
               <h3 className="mt-3 text-[18px] font-extrabold tracking-tight text-foreground">Sigues cada despacho</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">Cada tienda despacha lo suyo y tú ves el avance de todo en un solo pedido.</p>
@@ -85,7 +86,7 @@ export default async function Portada() {
             <li key={c.slug}>
               <Link
                 href={`/mercado?categoria=${c.slug}`}
-                className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 text-[13.5px] font-semibold text-foreground outline-none backdrop-blur-md transition-colors hover:border-primary hover:bg-primary/10"
+                className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white/55 px-4 py-2 text-[13.5px] font-semibold text-foreground outline-none backdrop-blur-md transition-colors hover:border-primary hover:bg-primary/10 dark:border-white/12 dark:bg-white/[0.06]"
               >
                 {c.nombre}
                 <span className="text-[12px] font-medium text-muted-foreground">{c.cantidad_productos}</span>
@@ -127,7 +128,7 @@ export default async function Portada() {
       {/* Vender */}
       <Aparece>
       <section className={cn(claseContenedor, "pt-24")} aria-labelledby="vender-titulo">
-        <div className="grid items-start gap-10 rounded-[32px] border border-white/12 bg-white/[0.04] p-7 shadow-[inset_0_1px_0_rgb(255_255_255/0.12)] backdrop-blur-xl sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-14">
+        <div className="grid items-start gap-10 rounded-[32px] border border-black/10 bg-white/45 p-7 shadow-[inset_0_1px_0_rgb(255_255_255/0.6)] backdrop-blur-xl dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.12)] sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-14">
           <div>
             <h2 id="vender-titulo" className="max-w-lg text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[38px]">
               Abre tu tienda sin pagar nada
@@ -154,7 +155,7 @@ export default async function Portada() {
           </div>
 
           <div className="rounded-3xl bg-primary p-0.5">
-            <div className="rounded-[22px] bg-[#07151c] p-7">
+            <div className="rounded-[22px] bg-card/85 p-7 backdrop-blur-xl">
               <p className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">
                 <Rocket aria-hidden="true" className="size-3.5" /> {gratis.nombre}
               </p>
