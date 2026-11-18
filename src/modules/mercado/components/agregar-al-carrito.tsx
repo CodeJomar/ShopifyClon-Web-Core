@@ -5,18 +5,15 @@ import Link from "next/link"
 import { Minus, Plus, ShoppingBag } from "lucide-react"
 import { toast } from "@/shared/components/ui/toast"
 import { claseBotonMarca } from "@/shared/components/marketing/estilos"
-import { formatearDinero } from "@/shared/utils/dinero"
 import { useCarrito } from "@/modules/carrito-global/carrito"
 import type { VarianteVitrina } from "@/dtos/vitrina"
 
 /** Selector de opción y cantidad, y botón «Agregar al carrito» del detalle de producto (carrito global de la API). */
-export function AgregarAlCarrito({ titulo, moneda, variantes }: { titulo: string; moneda: string; variantes: VarianteVitrina[] }) {
+export function AgregarAlCarrito({ titulo, variante, hayStock = true }: { titulo: string; variante?: VarianteVitrina; hayStock?: boolean }) {
   const { agregar } = useCarrito()
   const [cantidad, setCantidad] = React.useState(1)
   const [agregado, setAgregado] = React.useState(false)
   const [enviando, setEnviando] = React.useState(false)
-  const [varianteId, setVarianteId] = React.useState(variantes.find((v) => v.disponible)?.id ?? variantes[0]?.id)
-  const variante = variantes.find((v) => v.id === varianteId)
 
   const confirmar = async () => {
     if (!variante) return
@@ -32,34 +29,12 @@ export function AgregarAlCarrito({ titulo, moneda, variantes }: { titulo: string
     toast.add({ type: "success", title: "Agregado al carrito", description: `${cantidad} × ${titulo}` })
   }
 
-  if (!variante?.disponible && !variantes.some((v) => v.disponible)) {
-    return <p className="rounded-xl bg-secondary px-4 py-3 text-[14px] font-semibold text-muted-foreground">Este producto está agotado por ahora.</p>
+  if (!hayStock) {
+    return <p className="rounded-xl bg-white/5 px-4 py-3 text-[14px] font-semibold text-muted-foreground">Este producto está agotado por ahora.</p>
   }
 
   return (
     <div className="space-y-3">
-      {variantes.length > 1 && (
-        <fieldset className="space-y-2">
-          <legend className="text-[13px] font-bold text-muted-foreground">Opción</legend>
-          <div className="flex flex-wrap gap-2">
-            {variantes.map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                disabled={!v.disponible}
-                aria-pressed={v.id === varianteId}
-                onClick={() => setVarianteId(v.id)}
-                className={
-                  "rounded-xl border-[1.8px] px-3.5 py-2 text-[13.5px] font-semibold outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40 disabled:line-through disabled:opacity-50 " +
-                  (v.id === varianteId ? "border-primary bg-primary/10 text-foreground" : "border-input text-foreground hover:border-primary")
-                }
-              >
-                {v.titulo} · {formatearDinero(Number(v.precio), moneda)}
-              </button>
-            ))}
-          </div>
-        </fieldset>
-      )}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex h-11 items-center rounded-xl border-[1.8px] border-input" role="group" aria-label="Cantidad">
           <button

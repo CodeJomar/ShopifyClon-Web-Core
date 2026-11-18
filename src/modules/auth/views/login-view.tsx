@@ -31,9 +31,11 @@ interface LoginViewProps {
   correo?: string
   siguiente?: string
   aviso?: string
+  /** Si el login se muestra en una ventana (modal), se avisa al iniciar sesión para cerrarla. */
+  alEntrar?: () => void
 }
 
-export function LoginView({ correo, siguiente, aviso }: LoginViewProps) {
+export function LoginView({ correo, siguiente, aviso, alEntrar }: LoginViewProps) {
   const router = useRouter()
   const [error, setError] = React.useState<ErrorApi | null>(null)
   // Dos pasos (A-007): tras la contraseña, si la cuenta lo tiene activo, se pide el código que llegó al correo.
@@ -52,6 +54,7 @@ export function LoginView({ correo, siguiente, aviso }: LoginViewProps) {
   /** Sesión iniciada (login normal o segundo paso): aviso y destino según las tiendas de la persona. */
   const entrar = (datos: LoginDatosDto) => {
     toast.add({ type: "success", title: "Sesión iniciada", description: "Bienvenido de nuevo." })
+    alEntrar?.()
     // Sin "siguiente", según lo que sea la persona (rediseño): administrador → administración; propietario → panel general;
     // comprador → el mercado. Todos pueden comprar, por eso nadie queda obligado a crear una tienda.
     // Con `siguiente` se navega recargando: si la persona llegó desde un enlace precargado sin sesión, el caché del router guarda la

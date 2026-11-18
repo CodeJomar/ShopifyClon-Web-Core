@@ -3,10 +3,11 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { LayoutDashboard, LogIn, LogOut, Receipt, ShieldCheck, Store, User } from "lucide-react"
+import { LayoutDashboard, LogOut, Receipt, ShieldCheck, Store, User } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
 import { cerrarSesionAction } from "@/modules/auth"
 import { useAcceso } from "@/modules/acceso/acceso"
+import { LoginModal } from "./login-modal"
 
 /** Entradas del menú de la persona según lo que sea: comprador, propietario y/o administrador. */
 export function useEnlacesCuenta() {
@@ -31,17 +32,8 @@ export function MenuCuenta() {
   if (acceso.estado === "cargando") return <span aria-hidden="true" className="hidden h-10 w-44 sm:block" />
 
   if (acceso.estado === "anonimo") {
-    // Un solo icono de acceso: desde el login se llega a «Crear cuenta».
-    return (
-      <Link
-        href="/login"
-        aria-label="Iniciar sesión o crear cuenta"
-        title="Iniciar sesión"
-        className="flex size-10 items-center justify-center rounded-xl border-[1.8px] border-input text-foreground outline-none transition-colors hover:border-primary hover:text-brand-text focus-visible:border-primary"
-      >
-        <LogIn className="size-[18px]" aria-hidden="true" />
-      </Link>
-    )
+    // Un solo icono de acceso: abre el login en una ventana (sin página aparte); desde ahí se llega a «Crear cuenta».
+    return <LoginModal alEntrar={recargar} />
   }
 
   const iniciales = `${acceso.nombres.charAt(0)}${acceso.apellidos.charAt(0)}`.toUpperCase() || "U"
