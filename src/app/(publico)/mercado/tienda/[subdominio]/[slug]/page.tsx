@@ -26,8 +26,8 @@ export default async function DetalleProducto({ params }: Props) {
   const { subdominio, slug } = await params
   const [detalle, tienda] = await Promise.all([obtenerProducto(subdominio, slug), obtenerTienda(subdominio)])
   if (!detalle || !tienda) notFound()
-  const { datos: otros } = await listarProductos({ tienda: subdominio, tamano: 5 })
-  const masDeLaTienda = otros.filter((p) => p.identificador_url !== detalle.identificador_url).slice(0, 4)
+  const { datos: otros } = await listarProductos({ tienda: subdominio, tamano: 4 })
+  const masDeLaTienda = otros.filter((p) => p.identificador_url !== detalle.identificador_url).slice(0, 3)
 
   const variantes = detalle.variantes
   const base = variantes.find((v) => v.disponible) ?? variantes[0]
@@ -107,7 +107,7 @@ export default async function DetalleProducto({ params }: Props) {
       {masDeLaTienda.length > 0 && (
         <section className="mt-16" aria-labelledby="mas-titulo">
           <h2 id="mas-titulo" className="text-[24px] font-extrabold tracking-tight text-foreground">Más de {producto.tienda.nombre}</h2>
-          <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
+          <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
             {masDeLaTienda.map((p) => (
               <li key={p.id}>
                 <TarjetaProducto producto={p} className="h-full" />

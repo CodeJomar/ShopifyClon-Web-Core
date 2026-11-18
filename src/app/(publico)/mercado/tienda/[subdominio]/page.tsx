@@ -43,7 +43,7 @@ export default async function PaginaTienda({ params }: { params: Promise<{ subdo
         <h2 className="mt-10 text-[24px] font-extrabold tracking-tight text-foreground">
           {productos.length} {productos.length === 1 ? "producto" : "productos"}
         </h2>
-        <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+        <ul className="mt-5 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
           {productos.map((p) => (
             <li key={p.id}>
               <TarjetaProducto producto={p} className="h-full" />

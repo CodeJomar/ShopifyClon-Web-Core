@@ -49,7 +49,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
       hayResultados={resultado.datos.length > 0}
       vacio={{ titulo: "No encontramos productos con esa búsqueda", texto: "Prueba con otra palabra o quita los filtros para ver todo el mercado.", enlace: "/mercado", etiquetaEnlace: "Ver todo el mercado" }}
     >
-      <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-4">
+      <ul className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3">
         {resultado.datos.map((p) => (
           <li key={p.id}>
             <TarjetaProducto producto={p} className="h-full" />
