@@ -29,6 +29,9 @@ export interface ProductoMercado {
   imagen_url?: string | null
   es_digital: boolean
   hay_stock: boolean
+  /** Reseñas (R-011): null/ausente hasta que haya calificaciones. */
+  calificacion_promedio?: number | null
+  cantidad_resenas?: number
   tienda: Pick<TiendaMercado, "nombre" | "subdominio"> & { logo_url?: string | null }
 }
 

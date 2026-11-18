@@ -3,6 +3,7 @@ import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
 import { tonoDe } from "../tono"
 import { ImagenProducto } from "./imagen-producto"
+import { Estrellas } from "@/modules/resenas/components/estrellas"
 import type { ProductoMercado } from "@/dtos/mercado"
 
 /** Producto en una lista del mercado. Toda la tarjeta es un solo enlace al detalle del producto. */
@@ -32,6 +33,7 @@ export function TarjetaProducto({ producto, className }: { producto: ProductoMer
       </div>
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         <p className="truncate text-[12px] font-semibold text-muted-foreground">{producto.tienda.nombre}</p>
+        <Estrellas promedio={producto.calificacion_promedio} cantidad={producto.cantidad_resenas} />
         <h3 className="line-clamp-2 min-h-[2.6em] text-[14.5px] font-bold leading-snug tracking-tight text-foreground">{producto.titulo}</h3>
         <div className="mt-auto flex items-end justify-between gap-2 pt-2">
           <div>

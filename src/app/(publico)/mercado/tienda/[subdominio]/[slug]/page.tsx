@@ -10,6 +10,8 @@ import { claseContenedor } from "@/shared/components/marketing/estilos"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { cn } from "@/shared/utils/cn"
 import { tonoDe } from "@/modules/mercado/tono"
+import { Estrellas } from "@/modules/resenas/components/estrellas"
+import { SeccionResenas } from "@/modules/resenas/components/seccion-resenas"
 import type { ProductoMercado } from "@/dtos/mercado"
 
 type Props = { params: Promise<{ subdominio: string; slug: string }> }
@@ -73,6 +75,7 @@ export default async function DetalleProducto({ params }: Props) {
           </Link>
 
           <h1 className="mt-4 text-balance text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[38px]">{producto.titulo}</h1>
+          <Estrellas promedio={detalle.calificacion_promedio} cantidad={detalle.cantidad_resenas} tamano="lg" className="mt-2" />
 
           <p className="mt-6 flex flex-wrap items-baseline gap-3">
             <span className="text-[38px] font-extrabold leading-none tracking-tight text-foreground">{formatearDinero(precio, moneda)}</span>
@@ -98,6 +101,8 @@ export default async function DetalleProducto({ params }: Props) {
           </ul>
         </div>
       </div>
+
+      <SeccionResenas subdominio={subdominio} slug={slug} />
 
       {masDeLaTienda.length > 0 && (
         <section className="mt-16" aria-labelledby="mas-titulo">
