@@ -1,3 +1,6 @@
+"use client"
+
+import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/shared/utils/cn"
 import { claseContenedor } from "./estilos"
@@ -31,8 +34,10 @@ const COLUMNAS = [
 ]
 
 export function PiePublico() {
+  // En la portada el pie sigue la estética oscura de la página.
+  const portada = usePathname() === "/"
   return (
-    <footer className="mt-24 border-t border-island-border bg-card/60">
+    <footer className={cn("border-t", portada ? "dark border-white/10 bg-[#02070b] text-foreground" : "mt-24 border-island-border bg-card/60")}>
       <div className={cn(claseContenedor, "grid gap-10 py-12 md:grid-cols-[1.4fr_repeat(3,1fr)]")}>
         <div className="max-w-xs space-y-3">
           <Logo />

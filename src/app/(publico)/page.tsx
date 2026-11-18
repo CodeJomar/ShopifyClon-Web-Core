@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { ArrowRight, Boxes, PackageCheck, Rocket, Store, Truck, Wallet } from "lucide-react"
-import { claseBotonContorno, claseBotonHero, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
-import { ReciboDividido } from "@/shared/components/marketing/recibo-dividido"
+import { claseBotonContorno, claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
+import { HeroPortada } from "@/modules/landing/hero-portada"
+import { Aparece } from "@/modules/landing/aparece"
 import { TarjetaProducto } from "@/modules/mercado/components/tarjeta-producto"
 import { TarjetaTienda } from "@/modules/mercado/components/tarjeta-tienda"
 import { incluyePlan } from "@/modules/mercado/planes"
@@ -29,35 +30,17 @@ export default async function Portada() {
 
   return (
     <>
-      {/* Héroe: lo que distingue a OTemu es el pago único repartido entre tiendas */}
-      <section className="relative isolate overflow-hidden">
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-grad-halo" />
-        <div className={cn(claseContenedor, "grid items-center gap-12 pb-16 pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pb-20 lg:pt-20")}>
-          <div>
-            <h1 className="max-w-2xl text-[40px] font-extrabold leading-[1.04] tracking-[-0.035em] text-foreground sm:text-[56px] lg:text-[64px]">
-              Compra en muchas tiendas. Paga una sola vez.
-            </h1>
-            <p className="mt-6 max-w-xl text-[17px] font-medium leading-relaxed text-muted-foreground">
-              OTemu reúne tiendas independientes en un solo lugar. Arma un carrito con productos de varias tiendas y paga una vez con tarjeta: cada
-              tienda recibe su parte y te despacha lo suyo.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <Link href="/mercado" className={claseBotonHero}>
-                Explorar el mercado <ArrowRight aria-hidden="true" />
-              </Link>
-              <Link href="/planes" className={claseBotonContorno}>
-                Crear mi tienda gratis
-              </Link>
-            </div>
-            <p className="mt-6 text-[13.5px] font-medium text-muted-foreground">
-              Tu primera tienda es gratis y no necesitas tarjeta para abrirla.
-            </p>
-          </div>
-          <ReciboDividido className="mx-auto w-full max-w-md lg:mx-0 lg:ml-auto" />
-        </div>
-      </section>
+      {/* Héroe inmersivo: aurora animada en WebGL, titular y recibo de vidrio en 3D */}
+      <HeroPortada />
+
+      {/* El resto de la portada sigue en tema oscuro, con vidrio sobre resplandores suaves */}
+      <div className="dark relative isolate overflow-hidden bg-[#02070b] pb-28 text-foreground">
+        <div aria-hidden="true" className="pointer-events-none absolute -left-40 top-24 -z-10 size-[34rem] rounded-full bg-[#00E699]/10 blur-[120px]" />
+        <div aria-hidden="true" className="pointer-events-none absolute -right-40 top-[42rem] -z-10 size-[30rem] rounded-full bg-[#2BD9FF]/10 blur-[120px]" />
+        <div aria-hidden="true" className="pointer-events-none absolute bottom-40 left-1/3 -z-10 size-[28rem] rounded-full bg-[#E91E63]/[0.07] blur-[130px]" />
 
       {/* Para quien compra: tres razones, no tres tarjetas iguales */}
+      <Aparece>
       <section className={cn(claseContenedor, "py-10")} aria-labelledby="comprar-titulo">
         <h2 id="comprar-titulo" className="max-w-2xl text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">
           Comprar a varias tiendas deja de ser un trámite
@@ -71,12 +54,12 @@ export default async function Portada() {
             </p>
           </div>
           <div className="grid gap-4">
-            <div className="rounded-3xl border border-island-border bg-primary/10 p-7">
+            <div className="rounded-3xl border border-white/12 bg-white/[0.06] p-7 backdrop-blur-xl">
               <Wallet aria-hidden="true" className="size-7 text-brand-text" strokeWidth={1.7} />
               <h3 className="mt-3 text-[18px] font-extrabold tracking-tight text-foreground">Pagas una vez, sin dividir nada</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">Con tarjeta se hace un solo cobro; nosotros repartimos el dinero entre las tiendas.</p>
             </div>
-            <div className="rounded-3xl border border-island-border bg-card p-7 shadow-isla">
+            <div className="rounded-3xl border border-white/12 bg-white/[0.04] p-7 backdrop-blur-xl">
               <Truck aria-hidden="true" className="size-7 text-brand-text" strokeWidth={1.7} />
               <h3 className="mt-3 text-[18px] font-extrabold tracking-tight text-foreground">Sigues cada despacho</h3>
               <p className="mt-1.5 text-[14px] leading-relaxed text-muted-foreground">Cada tienda despacha lo suyo y tú ves el avance de todo en un solo pedido.</p>
@@ -84,8 +67,10 @@ export default async function Portada() {
           </div>
         </div>
       </section>
+      </Aparece>
 
       {/* Mercado: categorías y productos recientes */}
+      <Aparece>
       <section className={cn(claseContenedor, "pt-16")} aria-labelledby="mercado-titulo">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 id="mercado-titulo" className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">
@@ -100,7 +85,7 @@ export default async function Portada() {
             <li key={c.slug}>
               <Link
                 href={`/mercado?categoria=${c.slug}`}
-                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-[13.5px] font-semibold text-foreground outline-none transition-colors hover:border-primary hover:bg-primary/10 focus-visible:ring-[3px] focus-visible:ring-ring/40"
+                className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.06] px-4 py-2 text-[13.5px] font-semibold text-foreground outline-none backdrop-blur-md transition-colors hover:border-primary hover:bg-primary/10"
               >
                 {c.nombre}
                 <span className="text-[12px] font-medium text-muted-foreground">{c.cantidad_productos}</span>
@@ -116,8 +101,10 @@ export default async function Portada() {
           ))}
         </ul>
       </section>
+      </Aparece>
 
       {/* Tiendas */}
+      <Aparece>
       <section className={cn(claseContenedor, "pt-20")} aria-labelledby="tiendas-titulo">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 id="tiendas-titulo" className="max-w-xl text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">
@@ -135,10 +122,12 @@ export default async function Portada() {
           ))}
         </ul>
       </section>
+      </Aparece>
 
       {/* Vender */}
+      <Aparece>
       <section className={cn(claseContenedor, "pt-24")} aria-labelledby="vender-titulo">
-        <div className="grid items-start gap-10 rounded-[32px] border border-island-border bg-card p-7 shadow-isla sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-14">
+        <div className="grid items-start gap-10 rounded-[32px] border border-white/12 bg-white/[0.04] p-7 shadow-[inset_0_1px_0_rgb(255_255_255/0.12)] backdrop-blur-xl sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14 lg:p-14">
           <div>
             <h2 id="vender-titulo" className="max-w-lg text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[38px]">
               Abre tu tienda sin pagar nada
@@ -165,7 +154,7 @@ export default async function Portada() {
           </div>
 
           <div className="rounded-3xl bg-primary p-0.5">
-            <div className="rounded-[22px] bg-card p-7">
+            <div className="rounded-[22px] bg-[#07151c] p-7">
               <p className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">
                 <Rocket aria-hidden="true" className="size-3.5" /> {gratis.nombre}
               </p>
@@ -193,8 +182,10 @@ export default async function Portada() {
           </div>
         </div>
       </section>
+      </Aparece>
 
       {/* Cierre */}
+      <Aparece>
       <section className={cn(claseContenedor, "pt-24")}>
         <div className="relative overflow-hidden rounded-[32px] bg-grad-tinta px-7 py-14 text-center text-white sm:px-12 sm:py-20">
           <h2 className="relative mx-auto max-w-2xl text-[30px] font-extrabold leading-tight tracking-tight sm:text-[40px]">
@@ -210,6 +201,8 @@ export default async function Portada() {
           </div>
         </div>
       </section>
+      </Aparece>
+      </div>
     </>
   )
 }

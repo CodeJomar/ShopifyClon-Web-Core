@@ -300,3 +300,17 @@ input[type="search"]::-webkit-search-results-decoration {
     animation: none;
   }
 }
+
+/* Campos de texto sin contorno de enfoque (decisión de diseño): el enfoque se nota por el cambio de color del borde, sin anillo ni outline. */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible,
+select:focus,
+select:focus-visible,
+[data-slot="input"]:focus-visible {
+  outline: none !important;
+  --tw-ring-shadow: 0 0 #0000 !important;
+  --tw-ring-offset-shadow: 0 0 #0000 !important;
+  box-shadow: none !important;
+}
