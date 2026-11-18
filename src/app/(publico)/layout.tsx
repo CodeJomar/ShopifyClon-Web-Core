@@ -9,7 +9,7 @@ export default function LayoutPublico({ children }: { children: React.ReactNode 
   return (
     <AccesoProvider>
     <CarritoProvider>
-      <div className="flex min-h-screen flex-col bg-background">
+      <div className="zona-vidrio flex min-h-screen flex-col bg-background">
         <FondoPublico />
         <CabeceraPublica />
         <main id="contenido" className="relative z-10 flex-1">

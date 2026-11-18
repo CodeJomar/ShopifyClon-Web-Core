@@ -52,7 +52,7 @@ export function CarritoGlobalView() {
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_380px]">
         <div className="space-y-5">
           {grupos.map((g) => (
-            <section key={g.tienda.id} aria-label={`Productos de ${g.tienda.nombre}`} className="overflow-hidden rounded-3xl border border-island-border bg-card shadow-isla">
+            <section key={g.tienda.id} aria-label={`Productos de ${g.tienda.nombre}`} className="overflow-hidden rounded-3xl vidrio">
               <header className="flex items-center justify-between gap-3 border-b border-border/60 px-5 py-4">
                 <Link href={`/mercado/tienda/${g.tienda.subdominio}`} className="flex items-center gap-3 rounded-lg outline-none hover:text-brand-text focus-visible:ring-[3px] focus-visible:ring-ring/40">
                   <AvatarTienda tienda={g.tienda} className="size-10 rounded-xl text-[16px]" />
@@ -96,8 +96,8 @@ export function CarritoGlobalView() {
           ))}
         </div>
 
-        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-primary/60 p-px lg:sticky lg:top-24">
-          <div className="rounded-[23px] bg-card p-6">
+        <aside aria-label="Resumen del pedido" className="lg:sticky lg:top-24">
+          <div className="vidrio neon-anim rounded-3xl p-6">
             <h2 className="text-[18px] font-extrabold tracking-tight text-foreground">Resumen</h2>
             <dl className="mt-4 space-y-2.5 text-[14px]">
               {grupos.map((g) => (

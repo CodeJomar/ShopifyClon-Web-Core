@@ -84,7 +84,7 @@ export function SeccionResenas({ subdominio, slug }: { subdominio: string; slug:
                       }}
                       className={cn(
                         "rounded-full border px-3.5 py-1.5 text-[13px] font-semibold outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40",
-                        orden === o.valor ? "border-transparent bg-primary text-sobre-marca" : "border-border bg-card text-foreground hover:border-primary",
+                        orden === o.valor ? "border-transparent bg-primary text-sobre-marca" : "border-white/12 bg-white/[0.06] text-foreground backdrop-blur-md hover:border-primary",
                       )}
                     >
                       {o.etiqueta}
@@ -93,7 +93,7 @@ export function SeccionResenas({ subdominio, slug }: { subdominio: string; slug:
                 </div>
                 <ul className="mt-4 space-y-3">
                   {datos.pagina.datos.map((r) => (
-                    <li key={r.id} className="rounded-2xl border border-island-border bg-card p-5 shadow-isla">
+                    <li key={r.id} className="rounded-2xl vidrio p-5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <Estrellas promedio={r.calificacion} cantidad={1} mostrarNumero={false} />
                         <span className="text-[12.5px] font-medium text-muted-foreground">{formatearFecha(r.fecha)}</span>
@@ -127,7 +127,7 @@ export function SeccionResenas({ subdominio, slug }: { subdominio: string; slug:
 function Resumen({ datos }: { datos: RespuestaResenas }) {
   const { promedio, total, distribucion } = datos.resumen
   return (
-    <div className="rounded-3xl border border-island-border bg-card p-6 shadow-isla">
+    <div className="rounded-3xl vidrio p-6">
       {promedio == null || total === 0 ? (
         <p className="text-[14px] font-semibold text-muted-foreground">Sin calificaciones todavía.</p>
       ) : (
@@ -164,7 +164,7 @@ function Formulario({ base, datos, alGuardar }: { base: string; datos: Respuesta
 
   if (!datos.puedo_resenar && !mia) {
     return (
-      <p className="rounded-2xl bg-secondary px-4 py-3 text-[13px] font-medium leading-relaxed text-muted-foreground">
+      <p className="rounded-2xl border border-white/12 bg-white/[0.05] px-4 py-3 text-[13px] font-medium leading-relaxed text-muted-foreground backdrop-blur-xl">
         Solo quien compró este producto puede calificarlo. <Link href="/login" className="font-bold text-brand-text hover:underline">Inicia sesión</Link> si ya lo compraste.
       </p>
     )
@@ -185,7 +185,7 @@ function Formulario({ base, datos, alGuardar }: { base: string; datos: Respuesta
   }
 
   return (
-    <form onSubmit={enviar} noValidate className="space-y-4 rounded-3xl border border-island-border bg-card p-6 shadow-isla">
+    <form onSubmit={enviar} noValidate className="space-y-4 rounded-3xl vidrio p-6">
       <h3 className="text-[16px] font-extrabold tracking-tight text-foreground">{mia ? "Tu reseña" : "Cuéntanos qué te pareció"}</h3>
       <fieldset>
         <legend className="sr-only">Tu calificación</legend>

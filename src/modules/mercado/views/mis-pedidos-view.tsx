@@ -60,7 +60,7 @@ export function MisPedidosView() {
         <ul className="mt-8 space-y-4">
           {pedidos.map((p) => (
             <li key={p.pedido_id}>
-              <Link href={`/mis-pedidos/${encodeURIComponent(p.token_acceso)}`} className="group block rounded-3xl border border-island-border bg-card p-6 shadow-isla outline-none transition-all hover:-translate-y-0.5 hover:border-primary/60 focus-visible:ring-[3px] focus-visible:ring-ring/30">
+              <Link href={`/mis-pedidos/${encodeURIComponent(p.token_acceso)}`} className="group block rounded-3xl vidrio p-6 outline-none transition-all hover:-translate-y-0.5 hover:border-primary/60 focus-visible:ring-[3px] focus-visible:ring-ring/30">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
                     <p className="text-[17px] font-extrabold tracking-tight text-foreground">Pedido {p.numero_pedido}</p>

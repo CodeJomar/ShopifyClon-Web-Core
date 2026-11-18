@@ -28,7 +28,7 @@ export function TarjetaTienda({ tienda, className }: { tienda: TiendaMercado; cl
     <Link
       href={`/mercado/tienda/${tienda.subdominio}`}
       className={cn(
-        "group flex h-full flex-col gap-3 rounded-2xl border border-island-border bg-card p-5 shadow-isla outline-none transition-all duration-200",
+        "group flex h-full flex-col gap-3 rounded-2xl vidrio p-5 outline-none transition-all duration-200",
         "hover:-translate-y-0.5 hover:border-primary/60 focus-visible:ring-[3px] focus-visible:ring-ring/30",
         className,
       )}

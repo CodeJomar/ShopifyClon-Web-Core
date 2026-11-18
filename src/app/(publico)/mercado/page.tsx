@@ -47,7 +47,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
         {hayFiltros ? " con estos filtros" : " de tiendas independientes"}.
       </p>
 
-      <div className="mt-8 space-y-4 rounded-3xl border border-island-border bg-card p-4 shadow-isla sm:p-5">
+      <div className="mt-8 space-y-4 rounded-3xl vidrio p-4 sm:p-5">
         <form action="/mercado" method="get" role="search" className="flex gap-2">
           {categoria && <input type="hidden" name="categoria" value={categoria} />}
           {orden !== "recientes" && <input type="hidden" name="orden" value={orden} />}
@@ -77,7 +77,7 @@ export default async function Mercado({ searchParams }: { searchParams: Promise<
                 aria-current={activa ? "true" : undefined}
                 className={cn(
                   "rounded-full border px-4 py-2 text-[13.5px] font-semibold outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/40",
-                  activa ? "border-transparent bg-primary text-sobre-marca" : "border-border bg-card text-foreground hover:border-primary hover:bg-primary/10",
+                  activa ? "border-transparent bg-primary text-sobre-marca" : "border-white/12 bg-white/[0.06] text-foreground backdrop-blur-md hover:border-primary hover:bg-primary/10",
                 )}
               >
                 {c.nombre}

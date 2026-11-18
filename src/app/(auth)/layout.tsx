@@ -30,7 +30,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <span className="text-[26px] font-extrabold tracking-tight text-foreground">OTemu</span>
         </Link>
 
-        <div className="otemu-auth-form-side otemu-auth-card w-full rounded-[28px] border border-white/12 bg-white/[0.06] p-6 shadow-[0_30px_80px_-24px_rgb(0_0_0/0.8),inset_0_1px_0_rgb(255_255_255/0.14)] backdrop-blur-2xl [--campo-exterior:#0b1519] sm:p-8">
+        <div className="otemu-auth-form-side otemu-auth-card vidrio neon-anim w-full rounded-[28px] p-6 sm:p-8">
           {children}
         </div>
 

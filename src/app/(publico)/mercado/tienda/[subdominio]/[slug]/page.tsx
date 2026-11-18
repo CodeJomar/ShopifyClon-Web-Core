@@ -89,7 +89,7 @@ export default async function DetalleProducto({ params }: Props) {
             <AgregarAlCarrito titulo={detalle.titulo} moneda={moneda} variantes={variantes} />
           </div>
 
-          <ul className="mt-8 space-y-3 rounded-2xl border border-island-border bg-card p-5 text-[14px] font-medium text-foreground">
+          <ul className="mt-8 space-y-3 rounded-2xl vidrio p-5 text-[14px] font-medium text-foreground">
             <li className="flex items-center gap-3">
               {producto.es_digital ? <Download aria-hidden="true" className="size-5 text-brand-text" /> : <Truck aria-hidden="true" className="size-5 text-brand-text" />}
               {producto.es_digital ? "Producto digital: lo recibes por correo, sin envío." : "Lo despacha la tienda y puedes seguir el envío en tu pedido."}

@@ -31,8 +31,8 @@ export default async function Planes() {
 
       <ul className="mt-10 grid gap-5 lg:grid-cols-3">
         {planes.map((plan) => (
-          <li key={plan.codigo} className={cn("rounded-[28px] p-px", plan.es_gratuito ? "bg-primary" : "bg-island-border")}>
-            <div className="flex h-full flex-col rounded-[27px] bg-card p-7">
+          <li key={plan.codigo} className={cn("vidrio rounded-[28px]", plan.es_gratuito && "neon-anim")}>
+            <div className="flex h-full flex-col rounded-[27px] p-7">
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-[20px] font-extrabold tracking-tight text-foreground">{plan.nombre}</h2>
                 {plan.es_gratuito && <span className="rounded-full bg-primary/15 px-3 py-1 text-[12px] font-extrabold text-brand-text">Sin costo</span>}
@@ -62,7 +62,7 @@ export default async function Planes() {
 
       <section className="mt-20 max-w-3xl" aria-labelledby="faq-titulo">
         <h2 id="faq-titulo" className="text-[28px] font-extrabold tracking-tight text-foreground">Preguntas frecuentes</h2>
-        <div className="mt-6 divide-y divide-border/60 rounded-3xl border border-island-border bg-card shadow-isla">
+        <div className="mt-6 divide-y divide-border/60 rounded-3xl vidrio">
           {PREGUNTAS.map((q) => (
             <details key={q.p} className="group px-6 py-5">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded text-[15.5px] font-bold text-foreground outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 [&::-webkit-details-marker]:hidden">

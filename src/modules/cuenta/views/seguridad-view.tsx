@@ -58,16 +58,16 @@ export function SeguridadView() {
         </Alert>
       )}
 
-      <section className="max-w-xl space-y-4 rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7" aria-labelledby="seg-contrasena">
+      <section className="max-w-xl space-y-4 rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-contrasena">
         <h2 id="seg-contrasena" className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Contraseña</h2>
         <ContrasenaForm />
       </section>
 
-      <section className="max-w-xl rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7">
+      <section className="max-w-xl rounded-3xl vidrio p-5 sm:p-7">
         {perfil ? <DosPasosSeccion perfil={perfil} onCambio={setPerfil} /> : <Skeleton className="h-24 rounded-2xl" aria-busy="true" aria-label="Cargando" />}
       </section>
 
-      <section className="max-w-xl rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7" aria-labelledby="seg-sesion">
+      <section className="max-w-xl rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-sesion">
         <h2 id="seg-sesion" className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Sesión y cuenta</h2>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>

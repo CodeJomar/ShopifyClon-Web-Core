@@ -117,7 +117,7 @@ function ReciboVidrio() {
         <motion.figure
           style={{ rotateX: rotarX, rotateY: rotarY, transformStyle: "preserve-3d" }}
           aria-label="Ejemplo de un pedido con productos de tres tiendas y un solo pago"
-          className="relative rounded-[28px] border border-black/10 bg-white/60 p-6 text-left shadow-[0_30px_80px_-24px_rgb(15_40_60/0.35),inset_0_1px_0_rgb(255_255_255/0.8)] backdrop-blur-2xl dark:border-white/15 dark:bg-white/[0.07] dark:shadow-[0_30px_80px_-20px_rgb(0_0_0/0.7),inset_0_1px_0_rgb(255_255_255/0.18)] sm:p-7"
+          className="vidrio neon-anim relative rounded-[28px] p-6 text-left sm:p-7"
         >
           {/* Reflejo de vidrio */}
           <span aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-[28px] bg-[linear-gradient(125deg,rgb(255_255_255/0.5),transparent_38%)] dark:bg-[linear-gradient(125deg,rgb(255_255_255/0.16),transparent_38%)]" />

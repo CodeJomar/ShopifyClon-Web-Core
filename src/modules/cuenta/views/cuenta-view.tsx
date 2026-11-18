@@ -36,7 +36,7 @@ export function CuentaView() {
 
       {perfil && (
         <>
-          <section className="flex items-center gap-4 rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-6" aria-label="Tu cuenta">
+          <section className="flex items-center gap-4 rounded-3xl vidrio p-5 sm:p-6" aria-label="Tu cuenta">
             <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/14 text-brand-text ring-1 ring-primary/32" aria-hidden="true">
               <User className="size-8" />
             </span>
@@ -46,7 +46,7 @@ export function CuentaView() {
             </div>
           </section>
 
-          <section className="@container rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7">
+          <section className="@container rounded-3xl vidrio p-5 sm:p-7">
             <PerfilForm
               perfil={perfil}
               onGuardado={setPerfil}
@@ -64,7 +64,7 @@ export function CuentaView() {
           </section>
 
           {!TEMA_UNICO && (
-          <section className="rounded-3xl border border-island-border bg-card p-5 shadow-isla sm:p-7" aria-labelledby="tema-titulo">
+          <section className="rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="tema-titulo">
             <h2 className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Preferencias</h2>
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0">

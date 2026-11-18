@@ -182,7 +182,7 @@ export function CheckoutGlobalView() {
 
       <form onSubmit={confirmar} noValidate className="mt-8 grid items-start gap-8 lg:grid-cols-[1fr_390px]">
         <div className="space-y-6">
-          <section className="space-y-5 rounded-3xl border border-island-border bg-card p-6 shadow-isla" aria-labelledby="contacto-titulo">
+          <section className="space-y-5 rounded-3xl vidrio p-6" aria-labelledby="contacto-titulo">
             <h2 id="contacto-titulo" className="text-[18px] font-extrabold tracking-tight text-foreground">Tus datos</h2>
             <FloatingInput label="Nombre y apellido" autoComplete="name" value={nombre} onChange={(e) => setNombre(e.target.value)} state={errores.nombre ? "error" : "default"} mensajeError={errores.nombre} />
             <FloatingInput label="Correo electrónico" type="email" autoComplete="email" value={correo} onChange={(e) => setCorreo(e.target.value)} state={errores.correo ? "error" : "default"} mensajeError={errores.correo} ayuda="Aquí te avisamos del avance de cada despacho." />
@@ -190,7 +190,7 @@ export function CheckoutGlobalView() {
           </section>
 
           {hayFisicos && (
-            <section className="space-y-5 rounded-3xl border border-island-border bg-card p-6 shadow-isla" aria-labelledby="entrega-titulo">
+            <section className="space-y-5 rounded-3xl vidrio p-6" aria-labelledby="entrega-titulo">
               <div>
                 <h2 id="entrega-titulo" className="text-[18px] font-extrabold tracking-tight text-foreground">Entrega</h2>
                 <p className="mt-1 text-[13.5px] text-muted-foreground">Una misma dirección para todas las tiendas; cada una te envía lo suyo.</p>
@@ -206,7 +206,7 @@ export function CheckoutGlobalView() {
           )}
 
           {hayFisicos && (
-            <section className="space-y-5 rounded-3xl border border-island-border bg-card p-6 shadow-isla" aria-labelledby="envio-titulo">
+            <section className="space-y-5 rounded-3xl vidrio p-6" aria-labelledby="envio-titulo">
               <h2 id="envio-titulo" className="flex items-center gap-2 text-[18px] font-extrabold tracking-tight text-foreground">
                 <Truck aria-hidden="true" className="size-5 text-brand-text" /> Envío de cada tienda
               </h2>
@@ -241,7 +241,7 @@ export function CheckoutGlobalView() {
             </section>
           )}
 
-          <section className="rounded-3xl border border-island-border bg-card p-6 shadow-isla" aria-labelledby="pago-titulo">
+          <section className="rounded-3xl vidrio p-6" aria-labelledby="pago-titulo">
             <h2 id="pago-titulo" className="text-[18px] font-extrabold tracking-tight text-foreground">Forma de pago</h2>
             <RadioGroup aria-label="Forma de pago" value={metodo} onValueChange={(v) => setMetodo(v as MetodoPago)} className="mt-4">
               <OpcionPago valor="TARJETA" icono={CreditCard} titulo="Tarjeta: un solo pago" detalle={`Se hace un solo cobro de ${formatearDinero(vista.total_general, moneda)} y repartimos el dinero entre las ${vista.tiendas.length === 1 ? "tienda" : `${vista.tiendas.length} tiendas`}.`} />
@@ -256,8 +256,8 @@ export function CheckoutGlobalView() {
           </section>
         </div>
 
-        <aside aria-label="Resumen del pedido" className="rounded-3xl bg-primary/60 p-px lg:sticky lg:top-24">
-          <div className="rounded-[23px] bg-card p-6">
+        <aside aria-label="Resumen del pedido" className="lg:sticky lg:top-24">
+          <div className="vidrio neon-anim rounded-3xl p-6">
             <h2 className="text-[18px] font-extrabold tracking-tight text-foreground">Tu pedido</h2>
             <ul className="mt-4 space-y-4">
               {carrito.tiendas.map((g) => {
