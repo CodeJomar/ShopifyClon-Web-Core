@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Anexo WebSocket (Sem. 11) · Chuleta OTemu</title>
+<style>
+  @page { size: A4; margin: 12mm 12mm 13mm; }
+  :root { --ink:#16202a; --mut:#5b6773; --line:#d9dfe5; --bg:#f4f7f9; --acc:#0f766e; --acc2:#115e59; --ok:#166534; --okb:#dcfce7; --par:#92400e; --parb:#fef3c7; --no:#991b1b; --nob:#fee2e2; --blue:#1d4ed8; --blueb:#dbeafe; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); font-size: 9.5pt; line-height: 1.42; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 4pt; letter-spacing: -.4px; color: var(--ink); }
+  h2 { font-size: 14.5pt; margin: 0 0 7pt; padding-bottom: 4pt; border-bottom: 2.5px solid var(--acc); color: var(--acc2); }
+  h3 { font-size: 10.8pt; margin: 10pt 0 4pt; color: var(--acc2); }
+  p { margin: 3pt 0 5pt; }
+  ul, ol { margin: 3pt 0 6pt; padding-left: 15pt; }
+  li { margin: 2pt 0; }
+  code, .m { font-family: Consolas, "Courier New", monospace; font-size: 8.5pt; background: #eef2f5; padding: 0 3px; border-radius: 3px; }
+  th code { background: rgba(255,255,255,.18); color: #fff; }
+  .pb { page-break-before: always; }
+  .avoid { page-break-inside: avoid; }
+  .sub { color: var(--mut); font-size: 8.8pt; }
+  table { border-collapse: collapse; width: 100%; margin: 3pt 0 6pt; font-size: 8.6pt; }
+  th { background: var(--acc2); color: #fff; text-align: left; padding: 3pt 5pt; font-weight: 600; }
+  td { border-bottom: 1px solid var(--line); padding: 2.8pt 5pt; vertical-align: top; }
+  tr { page-break-inside: avoid; }
+  .chip { display: inline-block; font-size: 7.7pt; font-weight: 700; padding: 1pt 6pt; border-radius: 9pt; vertical-align: 1px; white-space: nowrap; }
+  .ok { background: var(--okb); color: var(--ok); } .par { background: var(--parb); color: var(--par); } .no { background: var(--nob); color: var(--no); } .bl { background: var(--blueb); color: var(--blue); }
+  .card { border: 1px solid var(--line); border-left: 4px solid var(--acc); border-radius: 5px; padding: 7pt 10pt; margin: 6pt 0; background: #fff; page-break-inside: avoid; }
+  .card.ok { border-left-color: #16a34a; }
+  .card h3 { margin: 0 0 3pt; display: flex; justify-content: space-between; align-items: center; }
+  .lbl { font-size: 7.7pt; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--mut); margin-top: 4pt; display: block; }
+  .q { background: var(--bg); border-radius: 5px; padding: 4pt 8pt; margin: 3.5pt 0; page-break-inside: avoid; }
+  .q b { color: var(--acc2); }
+  .note { background: var(--parb); border-left: 4px solid #d97706; padding: 4.5pt 8.5pt; border-radius: 4px; margin: 5pt 0; page-break-inside: avoid; }
+  .tip { background: var(--blueb); border-left: 4px solid var(--blue); padding: 5.5pt 9pt; border-radius: 4px; margin: 6pt 0; page-break-inside: avoid; }
+  .step { display: grid; grid-template-columns: 18pt 1fr; gap: 7pt; margin: 5pt 0; page-break-inside: avoid; }
+  .step .n { background: var(--acc); color: #fff; font-weight: 700; border-radius: 50%; width: 18pt; height: 18pt; text-align: center; line-height: 18pt; font-size: 8.5pt; }
+  .ep { font-family: Consolas, monospace; font-size: 8.2pt; background: #eef2f5; border-radius: 3px; padding: 0 3px; white-space: nowrap; }
+  .ep b { color: var(--acc2); }
+  .banner { border: 1px solid var(--line); border-radius: 7px; padding: 8pt 11pt; background: var(--bg); margin-bottom: 9pt; page-break-inside: avoid; }
+  .tag { color: var(--acc); font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; font-size: 8.4pt; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt; margin: 6pt 0; page-break-inside: avoid; }
+  .box { border: 1px solid var(--line); border-radius: 6px; padding: 6pt 8pt; background: #fff; }
+  .box h4 { margin: 0 0 3pt; font-size: 9.5pt; color: var(--acc2); }
+  svg { width: 100%; height: auto; display: block; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+</style>
+</head>
+<body>
+
+<!-- ==================== PÁGINA 1: RESUMEN + ARQUITECTURA + 5 EVENTOS ==================== -->
+<section>
+  <div class="banner">
+    <div class="tag">Anexo de actualización · Chuleta OTemu · Semana 11</div>
+    <h1>Notificaciones en tiempo real (WebSocket STOMP)</h1>
+    <p class="sub" style="margin:0">Este archivo complementa sin tocar <code>chuleta-fullstack-otemu.pdf</code>: la Semana 11 pasa de <span class="chip no">NO IMPLEMENTADO</span> a <span class="chip ok">IMPLEMENTADO EN PRODUCCIÓN</span>.</p>
+  </div>
+
+  <div class="card ok">
+    <h3>Sem. 11 · Aplicaciones en tiempo real y WebSockets <span class="chip ok">IMPLEMENTADO</span></h3>
+    <span class="lbl">Concepto en 20 segundos (para la exposición)</span>
+    <p>En <b>HTTP normal</b> el cliente pregunta una y otra vez («¿ya se pagó?», eso es <i>polling</i>). Con <b>WebSocket</b> se abre una conexión persistente y bidireccional (<code>ws://</code> en local, <code>wss://</code> en Railway): en cuanto ocurre un evento en el backend, el servidor lo <b>empuja</b> al instante sin que el navegador pregunte.</p>
+    <span class="lbl">Cómo está resuelto en nuestro proyecto</span>
+    <p>Backend Spring Boot con <b>WebSocket nativo + STOMP</b> sobre un broker en memoria (<code>/api/v1/ws</code>). Cuando una orden cambia en PostgreSQL (creación, pago, envío o cancelación), el backend avisa en tiempo real por <b>dos canales</b>: uno privado para el dueño de la tienda y otro público (protegido por el código secreto de la orden) para el comprador.</p>
+  </div>
+
+  <h3>Arquitectura en una mirada (qué habla con qué)</h3>
+  <svg viewBox="0 0 740 242" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo WebSocket STOMP">
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0f766e"/></marker></defs>
+    <rect x="6" y="14" width="185" height="96" rx="8" fill="#dbeafe" stroke="#1d4ed8"/>
+    <text x="98" y="34" text-anchor="middle" font-size="11" font-weight="700" fill="#1d4ed8">1. Comerciante (Panel)</text>
+    <text x="98" y="51" text-anchor="middle" font-size="9" fill="#16202a">Pide ticket 1 uso (60 s):</text>
+    <text x="98" y="64" text-anchor="middle" font-size="8.7" font-family="Consolas,monospace" fill="#1e3a8a">POST /api/v1/auth/ws-ticket</text>
+    <text x="98" y="82" text-anchor="middle" font-size="9" fill="#16202a">Conecta STOMP con</text>
+    <text x="98" y="96" text-anchor="middle" font-size="8.7" font-family="Consolas,monospace" fill="#1e3a8a">X-Ws-Ticket (o Bearer JWT)</text>
+
+    <rect x="6" y="132" width="185" height="96" rx="8" fill="#fef3c7" stroke="#d97706"/>
+    <text x="98" y="152" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">2. Comprador invitado</text>
+    <text x="98" y="169" text-anchor="middle" font-size="9" fill="#16202a">Sin cuenta ni login.</text>
+    <text x="98" y="184" text-anchor="middle" font-size="9" fill="#16202a">Usa el token_acceso que</text>
+    <text x="98" y="197" text-anchor="middle" font-size="9" fill="#16202a">le devolvió el checkout.</text>
+    <text x="98" y="214" text-anchor="middle" font-size="8.7" font-family="Consolas,monospace" fill="#92400e">CONNECT anónimo</text>
+
+    <rect x="235" y="24" width="215" height="194" rx="8" fill="#fff" stroke="#0f766e" stroke-width="1.6"/>
+    <text x="342" y="45" text-anchor="middle" font-size="11" font-weight="700" fill="#115e59">Backend · wss://…/api/v1/ws</text>
+    <rect x="249" y="56" width="187" height="36" rx="5" fill="#eef2f5"/>
+    <text x="342" y="71" text-anchor="middle" font-size="9.2" font-weight="700">AutenticacionStompInterceptor</text>
+    <text x="342" y="84" text-anchor="middle" font-size="8.5" fill="#5b6773">Valida origen CORS, ticket/JWT y permisos</text>
+    <rect x="249" y="100" width="187" height="36" rx="5" fill="#dcfce7"/>
+    <text x="342" y="115" text-anchor="middle" font-size="9.2" font-weight="700" fill="#166534">Broker STOMP (/topic)</text>
+    <text x="342" y="128" text-anchor="middle" font-size="8.5" fill="#166534">Heartbeats c/ 10 s · Bloquea SEND</text>
+    <rect x="249" y="144" width="187" height="62" rx="5" fill="#f4f7f9" stroke="#d9dfe5"/>
+    <text x="342" y="160" text-anchor="middle" font-size="9" font-weight="700">NotificacionesTiempoRealEscuchador</text>
+    <text x="342" y="174" text-anchor="middle" font-size="8.3" fill="#5b6773">@Async + @TransactionalEventListener</text>
+    <text x="342" y="187" text-anchor="middle" font-size="8.3" fill="#5b6773">(phase = AFTER_COMMIT):</text>
+    <text x="342" y="200" text-anchor="middle" font-size="8.3" fill="#115e59">emite SOLO si PostgreSQL guardó OK</text>
+
+    <rect x="495" y="28" width="238" height="82" rx="8" fill="#fff" stroke="#1d4ed8"/>
+    <text x="614" y="47" text-anchor="middle" font-size="10" font-weight="700" fill="#1d4ed8">Canal de la tienda</text>
+    <text x="614" y="62" text-anchor="middle" font-size="8.6" font-family="Consolas,monospace">/topic/tienda/{tiendaId}/ordenes</text>
+    <text x="614" y="79" text-anchor="middle" font-size="8.6" fill="#5b6773">Exige permiso ORDENES_VER en esa tienda.</text>
+    <text x="614" y="94" text-anchor="middle" font-size="8.6" fill="#5b6773">Recibe: ordenId, cliente, total, guía…</text>
+
+    <rect x="495" y="132" width="238" height="82" rx="8" fill="#fff" stroke="#d97706"/>
+    <text x="614" y="151" text-anchor="middle" font-size="10" font-weight="700" fill="#92400e">Canal del comprador</text>
+    <text x="614" y="166" text-anchor="middle" font-size="8.6" font-family="Consolas,monospace">/topic/ordenes/{tokenAcceso}</text>
+    <text x="614" y="183" text-anchor="middle" font-size="8.6" fill="#5b6773">Solo si existe esa orden activa.</text>
+    <text x="614" y="198" text-anchor="middle" font-size="8.6" fill="#5b6773">Sin datos internos (no tiendaId ni cliente).</text>
+
+    <g stroke="#0f766e" marker-end="url(#arr)" fill="none">
+      <line x1="191" y1="68" x2="233" y2="74"/><line x1="191" y1="176" x2="233" y2="140"/>
+      <line x1="450" y1="74" x2="493" y2="68"/><line x1="450" y1="158" x2="493" y2="170"/>
+    </g>
+  </svg>
+
+  <h3>Los 5 eventos reales que dispara el backend</h3>
+  <table>
+    <tr><th style="width:20%">Evento (<code>tipo</code>)</th><th style="width:25%">Cuándo se dispara</th><th style="width:21%">Quién lo recibe</th><th>Qué datos clave trae el JSON</th></tr>
+    <tr><td><code>ORDEN_CREADA</code></td><td>Checkout exitoso</td><td>Solo Comerciante</td><td><code>numero_orden</code>, <code>nombre_cliente</code>, <code>total</code>, <code>moneda</code>, <code>PENDIENTE</code></td></tr>
+    <tr><td><code>ORDEN_PAGADA</code></td><td>Pago manual o webhook Stripe</td><td>Tienda + Comprador</td><td><code>estado_pago: PAGADO</code>, <code>estado</code>, total (tienda)</td></tr>
+    <tr><td><code>ENVIO_DESPACHADO</code></td><td>Al despachar envío / iniciar ruta</td><td>Tienda + Comprador</td><td><code>estado_preparacion: DESPACHADO</code>, <code>numero_guia</code>, <code>transportista</code></td></tr>
+    <tr><td><code>ENVIO_ENTREGADO</code></td><td>Al marcar envío entregado</td><td>Tienda + Comprador</td><td><code>estado_preparacion: ENTREGADO</code>, <code>numero_guia</code>, <code>ocurrido_en</code></td></tr>
+    <tr><td><code>ORDEN_CANCELADA</code></td><td>Al cancelar (o anular) orden</td><td>Tienda + Comprador</td><td><code>estado</code>, <code>motivo</code> (<code>CLIENTE</code>, <code>FRAUDE</code>…)</td></tr>
+  </table>
+</section>
+
+<!-- ==================== PÁGINA 2: GUÍA DE LA PANTALLA tiempo-real.html ==================== -->
+<section class="pb">
+  <h2>Cómo entender y usar la pestaña <code>tiempo-real.html</code></h2>
+  <p>En <b>Notificaciones WebSocket</b> (<span class="m">…/api/v1/laboratorio/tiempo-real.html</span>) no ves una página de tienda común: es una <b>consola todo-en-uno</b> que junta <b>3 piezas en la misma pantalla</b> para que demuestres el tiempo real tú solo:</p>
+
+  <div class="grid3">
+    <div class="box">
+      <h4>Izquierda · 1. Panel del comerciante</h4>
+      <p style="margin:0">Simula la pantalla del dueño mirando su bandeja de órdenes en vivo. Se autentica con ticket efímero y escucha <code>/topic/tienda/{tiendaId}/ordenes</code>.</p>
+    </div>
+    <div class="box">
+      <h4>Derecha · 2. Vista del comprador</h4>
+      <p style="margin:0">Simula al cliente sin cuenta mirando «Tu orden». Conecta anónimo con <code>tokenAcceso</code> y actualiza Pago/Preparación/Guía sin refrescar (F5).</p>
+    </div>
+  </div>
+  <div class="box" style="margin-bottom:6pt">
+    <h4>Abajo · Disparadores rápidos en vivo + arriba · Preparación rápida</h4>
+    <p style="margin:0">Arriba preparas tienda, tarifa y producto en un clic. Abajo es tu «control remoto» para crear una orden, pagarla, despacharla, entregarla o cancelarla desde aquí mismo y ver caer las tarjetas arriba al instante.</p>
+  </div>
+
+  <div class="note"><b>¿Por qué a veces dice «Falta tiendaId» o «Primero inicia sesión»?</b> El laboratorio guarda tu sesión (<code>token</code>), tu <code>tiendaId</code> y tu último <code>tokenAcceso</code> en <code>localStorage</code>. Si entras directo a <code>tiempo-real.html</code> sin haber hecho login primero, esos campos arrancan vacíos.</div>
+
+  <h3>Paso a paso para probarlo en Railway en 2 minutos</h3>
+  <div class="step"><div class="n">1</div><div><b>Inicia sesión una vez:</b> en el menú abre <b>Cuenta y sesión</b> (<code>cuenta.html</code>) → haz <i>Login</i> (o registra una cuenta nueva y actívala con el código de 6 dígitos de tu correo). Eso deja tu JWT guardado para todas las pestañas.</div></div>
+  <div class="step"><div class="n">2</div><div><b>Prepara tienda + tarifa + producto (si aún no tienes):</b> vuelve a <b>Notificaciones WebSocket</b> (<code>tiempo-real.html</code>). Arriba en <b>Preparación rápida</b> pulsa en orden: <i>Usar mi primera tienda operativa</i> (o <i>Crear una tienda de prueba</i>) → <i>Crear una tarifa de envío</i> → <i>Crear producto publicado (con stock)</i>. El campo <code>tiendaId</code> de la tarjeta izquierda se llena solo.</div></div>
+  <div class="step"><div class="n">3</div><div><b>Conecta al Comerciante (tarjeta izquierda):</b> deja seleccionado <i>Ticket efímero (POST /auth/ws-ticket)</i> y pulsa <b>Conectar y suscribir</b>. La pastilla cambia a verde: <code>Conectado (ticket)</code> y sube el contador <i>Heartbeats</i> cada 10 s (señal de conexión viva con Railway).</div></div>
+  <div class="step"><div class="n">4</div><div><b>Dispara una compra real:</b> baja a <b>Disparadores rápidos en vivo</b> y pulsa <b>1. Nueva orden (carrito + checkout)</b>. En ~1 s aparece la tarjeta <code>ORDEN_CREADA</code> en el panel izquierdo y el casillero <code>tokenAcceso (invitado)</code> de la derecha se llena automáticamente.</div></div>
+  <div class="step"><div class="n">5</div><div><b>Conecta al Comprador (tarjeta derecha):</b> con el <code>tokenAcceso</code> ya cargado, pulsa <b>Conectar y suscribir</b> en el panel derecho (<code>Conectado (anónimo)</code>).</div></div>
+  <div class="step"><div class="n">6</div><div><b>Mira llegar los eventos a ambos lados:</b> pulsa abajo en orden <b>2. Pagar orden manual</b> → <b>3. Preparar + Despachar envío</b> → <b>4. Entregar envío</b> (o <b>Cancelar orden actual</b> en otra orden). Verás llegar <code>ORDEN_PAGADA</code>, <code>ENVIO_DESPACHADO</code> y <code>ENVIO_ENTREGADO</code> en los dos feeds y actualizarse el resumen del comprador (<code>Pago: PAGADO</code>, <code>Preparación: DESPACHADO</code>, <code>Guía: OT-...</code>) sin recargar la página.</div></div>
+
+  <div class="tip"><b>Qué botones usar para demostrar seguridad ante el docente:</b> en la tarjeta izquierda pulsa <b>Probar tienda ajena (seguridad)</b> y <b>Probar SEND directo (bloqueado)</b>; en la derecha pulsa <b>Probar token falso (seguridad)</b>. Los tres muestran tarjeta roja <code>ERROR</code> porque el servidor los bloquea.</div>
+</section>
+
+<!-- ==================== PÁGINA 3: SEGURIDAD, CÓDIGO Y PREGUNTAS ==================== -->
+<section class="pb">
+  <h2>Seguridad, código clave y preguntas del docente</h2>
+  <table>
+    <tr><th style="width:24%">Mecanismo</th><th>Cómo funciona y por qué se diseñó así</th></tr>
+    <tr><td><b>Ticket efímero</b><br><span class="ep"><b>POST</b> /auth/ws-ticket</span></td><td>Nuestro Next.js guarda el JWT en una cookie <code>httpOnly</code> que JavaScript no puede leer. Para abrir el WebSocket sin exponer el JWT, el servidor web pide un <b>ticket de un solo uso (TTL 60 s, guardado como hash SHA-256 en memoria, límite 30/min)</b> y se lo entrega al navegador en <code>X-Ws-Ticket</code>.</td></tr>
+    <tr><td><b>Cero suplantación (<code>SEND</code> bloqueado)</b></td><td><code>AutenticacionStompInterceptor</code> bloquea todo frame <code>SEND</code> que venga del cliente: los navegadores solo escuchan (<code>SUBSCRIBE</code>); únicamente <code>NotificacionesTiempoRealEscuchador</code> en Java puede publicar avisos.</td></tr>
+    <tr><td><b>Revalidación y aislamiento</b></td><td>Al suscribirse a <code>/topic/tienda/{id}/ordenes</code> se vuelve a verificar que la sesión esté vigente (no haya cerrado sesiones) y que el usuario tenga permiso <code>ORDENES_VER</code> en esa tienda. Al comprador solo se le permite si existe la orden activa de ese <code>tokenAcceso</code>.</td></tr>
+    <tr><td><b>After-commit + Heartbeats</b></td><td><code>@TransactionalEventListener(AFTER_COMMIT)</code> garantiza que nunca salga un aviso «PAGADO» si la transacción en PostgreSQL falla. Los <b>heartbeats cada 10 s</b> (<code>WS_HEARTBEAT_MS=10000</code>) mantienen vivo el túnel tras el proxy TLS de Railway.</td></tr>
+    <tr><td><b>Variables en Railway</b></td><td><code>WS_HEARTBEAT_MS=10000</code> · <code>WS_TICKET_TTL_SEGUNDOS=60</code> · <code>FORWARD_HEADERS_STRATEGY=native</code> · <code>CORS_ORIGENES_PERMITIDOS</code> (acepta solo orígenes configurados; otros orígenes reciben <code>403</code> en el handshake).</td></tr>
+    <tr><td><b>Archivos clave (código)</b></td><td><code>WebSocketConfig.java</code> · <code>AutenticacionStompInterceptor.java</code> · <code>TicketWebSocketServicio.java</code> · <code>AutenticacionControlador.java</code> · <code>NotificacionesTiempoRealEscuchador.java</code> · <code>NotificacionOrdenTienda.java</code> · <code>NotificacionOrdenComprador.java</code> · <code>laboratorio/tiempo-real.html</code> · <code>stomp-cliente.js</code>.</td></tr>
+  </table>
+
+  <h3>Preguntas probables del docente (Semana 11 · WebSockets)</h3>
+  <div class="q"><b>¿Por qué usaron STOMP sobre WebSocket en lugar de WebSocket «pelado»?</b> WebSocket puro solo manda texto o bytes sin formato. STOMP añade comandos estándar (<code>CONNECT</code>, <code>SUBSCRIBE</code>, <code>DISCONNECT</code>), canales por tema (<code>/topic/…</code>), cabeceras de autenticación y heartbeats soportados nativamente por Spring Boot.</div>
+  <div class="q"><b>¿Por qué no pasan el JWT en la URL del WebSocket (<code>?token=…</code>)?</b> Porque las URLs quedan en los logs del servidor/proxy (como Railway) y en el historial del navegador. Usamos un <b>ticket efímero de un solo uso</b> (<code>POST /auth/ws-ticket</code>, vence en 60 s) o cabecera STOMP <code>Authorization</code>, más validación de origen por <code>CORS_ORIGENES_PERMITIDOS</code>.</div>
+  <div class="q"><b>¿Funciona en Railway con HTTPS?</b> Sí: detrás del proxy TLS de Railway viaja sobre <b><code>wss://</code></b> (WebSocket seguro), comprobado en vivo en <code>wss://otemu-api-core-production.up.railway.app/api/v1/ws</code> con HTTP <code>101</code>, STOMP <code>CONNECTED</code> (v1.2) y heartbeats reales cada 10 s cruzando el proxy.</div>
+  <div class="q"><b>¿Qué pasa si la app escala a varios servidores (múltiples réplicas)?</b> Hoy usa el <i>SimpleBroker</i> en memoria (igual que el limitador de peticiones), suficiente para 1 réplica en Railway. Para escalar horizontalmente, se cambia una línea en <code>WebSocketConfig</code> (<code>enableStompBrokerRelay</code>) por RabbitMQ o Redis Pub/Sub y los tickets se mueven a Redis.</div>
+  <div class="q"><b>¿El frontend Next.js ya usa el WebSocket?</b> En esta entrega está completo el backend + laboratorio (669 pruebas backend pasando en verde). En Next.js sigue el <i>polling</i> cada 1,5 s para confirmar pagos y queda listo para conectarse con <code>@stomp/stompjs</code> pidiendo su ticket a <code>/auth/ws-ticket</code>.</div>
+
+  <div class="note" style="margin-top:8pt"><b>Pruebas reales comprobadas tras desplegar en Railway (commit <code>c92cddf</code>):</b><br>
+    • En vivo sobre <code>wss://otemu-api-core-production.up.railway.app/api/v1/ws</code>: handshake <b>HTTP 101</b>, frame STOMP <b>CONNECTED v1.2</b>, recepción de <b>heartbeat real a los 10 s</b>, bloqueo <b>403</b> a orígenes no autorizados, rechazo con <code>ERROR</code> al intentar suscribirse sin permiso o enviar <code>SEND</code>, y <code>POST /auth/ws-ticket</code> respondiendo <code>401 SEG-007</code> sin sesión.<br>
+    • Adicionalmente, en entorno local aislado con PostgreSQL real antes de subir a <code>prod</code>, se verificaron los <b>5 eventos en vivo</b> y la suite completa de integración (<b>669 pruebas</b>, 0 fallos).</div>
+</section>
+
+</body>
+</html>

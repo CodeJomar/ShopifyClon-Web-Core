@@ -1,0 +1,98 @@
+# ==============================================================================
+# docker-compose.yml — ShopifyClon / OTemu (todo el entorno local en un solo proyecto)
+# Ubicación: Desarrollo/        Proyecto en Docker Desktop: utp-desarrollo-shfy
+#
+#   docker compose up -d --build         levanta api + web + stripe-cli
+#   docker compose up -d --build api-core    solo un servicio
+#   docker compose logs -f api-core          ver logs
+#   docker compose down                      apaga todo
+#
+# Servicios (contenedor · puerto):
+#   shfy-api-core    · 8080  API Spring Boot   (http://localhost:8080/api/v1, laboratorio: /api/v1/laboratorio/)
+#   shfy-web-core    · 3000  Web Next.js       (http://localhost:3000)
+#   shfy-stripe-cli  · —     Reenvía los webhooks de Stripe (modo prueba) a la API
+#
+# La base de datos es Supabase (remota): no hay contenedor de Postgres.
+# Secretos: ShopifyClon-Api-Core/.env (API y Stripe). Valores públicos del build: Desarrollo/.env.
+# ==============================================================================
+
+name: utp-desarrollo-shfy
+
+x-comun: &comun
+  restart: unless-stopped
+  networks: [shfy-net]
+
+services:
+
+  # ----------------------------------------------------------------------------
+  # Backend: Spring Boot 3.3.4 + Java 17
+  # ----------------------------------------------------------------------------
+  api-core:
+    <<: *comun
+    build:
+      context: ./ShopifyClon-Api-Core
+      dockerfile: Dockerfile
+    image: shfy-api-core
+    container_name: shfy-api-core
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./ShopifyClon-Api-Core/.env
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:8080/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+
+  # ----------------------------------------------------------------------------
+  # Frontend: Next.js 16 (build standalone). Habla con la API por la red interna (api-core:8080).
+  # ----------------------------------------------------------------------------
+  web-core:
+    <<: *comun
+    build:
+      context: ./ShopifyClon-Web-Core
+      dockerfile: Dockerfile
+      args:
+        API_INTERNAL_URL: http://api-core:8080
+        NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:-}
+    image: shfy-web-core
+    container_name: shfy-web-core
+    ports:
+      - "3000:3000"
+    environment:
+      API_INTERNAL_URL: http://api-core:8080
+    depends_on:
+      api-core:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:3000/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  # ----------------------------------------------------------------------------
+  # Stripe CLI: escucha payment_intent.succeeded / payment_failed y los reenvía a la API.
+  # Usa STRIPE_SECRET_KEY del .env de la API. Su whsec_ debe ser el STRIPE_WEBHOOK_SECRET de ese mismo .env.
+  # ----------------------------------------------------------------------------
+  stripe-cli:
+    <<: *comun
+    image: stripe/stripe-cli:latest
+    container_name: shfy-stripe-cli
+    env_file:
+      - ./ShopifyClon-Api-Core/.env
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - >-
+        exec stripe listen --api-key "$$STRIPE_SECRET_KEY"
+        --events payment_intent.succeeded,payment_intent.payment_failed
+        --forward-to http://api-core:8080/api/v1/webhooks/stripe
+    depends_on:
+      api-core:
+        condition: service_healthy
+
+networks:
+  shfy-net:
+    name: shfy-net
+    driver: bridge

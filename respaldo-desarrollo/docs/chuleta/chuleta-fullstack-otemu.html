@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Chuleta Full Stack · OTemu</title>
+<style>
+  @page { size: A4; margin: 13mm 12mm 14mm; }
+  :root { --ink:#16202a; --mut:#5b6773; --line:#d9dfe5; --bg:#f4f7f9; --acc:#0f766e; --acc2:#115e59; --ok:#166534; --okb:#dcfce7; --par:#92400e; --parb:#fef3c7; --no:#991b1b; --nob:#fee2e2; --blue:#1d4ed8; --blueb:#dbeafe; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); font-size: 9.6pt; line-height: 1.42; margin: 0; }
+  h1 { font-size: 26pt; margin: 0 0 4pt; letter-spacing: -.5px; }
+  h2 { font-size: 15pt; margin: 0 0 7pt; padding-bottom: 4pt; border-bottom: 2.5px solid var(--acc); color: var(--acc2); }
+  h3 { font-size: 11pt; margin: 10pt 0 4pt; color: var(--acc2); }
+  h4 { font-size: 9.8pt; margin: 8pt 0 3pt; }
+  p { margin: 3pt 0 5pt; }
+  ul, ol { margin: 3pt 0 6pt; padding-left: 15pt; }
+  li { margin: 1.5pt 0; }
+  code, .m { font-family: Consolas, "Courier New", monospace; font-size: 8.6pt; background: #eef2f5; padding: 0 3px; border-radius: 3px; }
+  .pb { page-break-before: always; }
+  .avoid { page-break-inside: avoid; }
+  .sub { color: var(--mut); font-size: 9pt; }
+  table { border-collapse: collapse; width: 100%; margin: 4pt 0 8pt; font-size: 8.8pt; }
+  th { background: var(--acc2); color: #fff; text-align: left; padding: 3.5pt 5pt; font-weight: 600; }
+  td { border-bottom: 1px solid var(--line); padding: 3pt 5pt; vertical-align: top; }
+  tr { page-break-inside: avoid; }
+  .chip { display: inline-block; font-size: 7.8pt; font-weight: 700; padding: 1pt 6pt; border-radius: 9pt; vertical-align: 1px; white-space: nowrap; }
+  .ok { background: var(--okb); color: var(--ok); } .par { background: var(--parb); color: var(--par); } .no { background: var(--nob); color: var(--no); } .bl { background: var(--blueb); color: var(--blue); }
+  .card { border: 1px solid var(--line); border-left: 4px solid var(--acc); border-radius: 5px; padding: 6pt 9pt; margin: 6pt 0; background: #fff; page-break-inside: avoid; }
+  .card.ok { border-left-color: #16a34a; background: #fff; } .card.par { border-left-color: #d97706; background: #fff; } .card.no { border-left-color: #dc2626; background: #fff; }
+  .card h3 { margin: 0 0 3pt; display: flex; justify-content: space-between; align-items: center; }
+  .lbl { font-size: 7.8pt; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: var(--mut); margin-top: 4pt; display: block; }
+  .q { background: var(--bg); border-radius: 5px; padding: 4pt 8pt; margin: 4pt 0; page-break-inside: avoid; }
+  .q b { color: var(--acc2); }
+  .note { background: var(--parb); border-left: 4px solid #d97706; padding: 5pt 9pt; border-radius: 4px; margin: 6pt 0; page-break-inside: avoid; }
+  .tip { background: var(--blueb); border-left: 4px solid var(--blue); padding: 5pt 9pt; border-radius: 4px; margin: 6pt 0; page-break-inside: avoid; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8pt; }
+  .step { display: grid; grid-template-columns: 17pt 1fr; gap: 6pt; margin: 4pt 0; page-break-inside: avoid; }
+  .step .n { background: var(--acc); color: #fff; font-weight: 700; border-radius: 50%; width: 17pt; height: 17pt; text-align: center; line-height: 17pt; font-size: 8.5pt; }
+  .ep { font-family: Consolas, monospace; font-size: 8.3pt; background: #eef2f5; border-radius: 3px; padding: 0 3px; white-space: nowrap; }
+  .ep b { color: var(--acc2); }
+  .cover { height: 255mm; display: flex; flex-direction: column; justify-content: center; }
+  .cover .tag { color: var(--acc); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 9pt; }
+  .cover .lead { font-size: 12pt; color: var(--mut); max-width: 150mm; margin-top: 8pt; }
+  svg { width: 100%; height: auto; }
+  svg text { font-family: "Segoe UI", Arial, sans-serif; }
+  .legend span { margin-right: 6pt; }
+</style>
+</head>
+<body>
+
+<!-- ============================ PORTADA ============================ -->
+<section class="cover">
+  <div class="tag">Desarrollo Full Stack · UTP · 2026-2</div>
+  <h1>Chuleta del proyecto OTemu</h1>
+  <div class="lead">Qué pide cada semana del sílabo (1 a 14), cómo está resuelto en nuestro proyecto, qué endpoints usar, el flujo de negocio completo con sus caminos alternativos y las preguntas probables del docente.</div>
+  <div style="margin-top:22pt" class="legend">
+    <p><b>Cómo leer los semáforos</b></p>
+    <p><span class="chip ok">IMPLEMENTADO</span> está hecho y se puede demostrar &nbsp; <span class="chip par">PARCIAL</span> existe una parte; se explica con honestidad &nbsp; <span class="chip no">NO IMPLEMENTADO</span> no está; se sabe responder qué es y cómo se haría</p>
+  </div>
+  <table style="max-width:150mm; margin-top:14pt">
+    <tr><th colspan="2">Dónde probar todo</th></tr>
+    <tr><td>API (producción, Railway)</td><td><span class="m">https://otemu-api-core-production.up.railway.app/api/v1</span></td></tr>
+    <tr><td>Laboratorio de endpoints</td><td><span class="m">…/api/v1/laboratorio/index.html</span> (casos con un clic)</td></tr>
+    <tr><td>Swagger (documentación viva)</td><td><span class="m">…/api/v1/swagger-ui/index.html</span></td></tr>
+    <tr><td>Salud de la API</td><td><span class="m">…/api/v1/health</span></td></tr>
+    <tr><td>Local con Docker</td><td>API <span class="m">:8080</span> · Web <span class="m">:3000</span> (<span class="m">docker compose up -d --build</span>)</td></tr>
+  </table>
+  <p class="sub" style="margin-top:10pt">Regla de oro: si no se sabe una respuesta, decir qué parte del proyecto lo cubre y mostrarlo en el laboratorio. Nunca afirmar algo que no está hecho: la sección 5 dice qué falta y cómo contestarlo.</p>
+</section>
+
+<!-- ============================ 1. MAPA ============================ -->
+<section class="pb">
+<h2>1. El proyecto en una página</h2>
+<p><b>OTemu</b> es una plataforma de tiendas en línea (estilo Shopify): un comerciante crea su tienda, publica productos y gestiona pedidos, pagos, envíos y rutas de reparto; un comprador compra en la vitrina pública. La parte que se evalúa es el <b>backend (API REST)</b>; el frontend la consume.</p>
+
+<svg viewBox="0 0 720 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arquitectura">
+  <defs><marker id="a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6773"/></marker></defs>
+  <rect x="8" y="110" width="104" height="70" rx="8" fill="#dbeafe" stroke="#1d4ed8"/>
+  <text x="60" y="138" text-anchor="middle" font-size="12" font-weight="700" fill="#1d4ed8">Navegador</text><text x="60" y="156" text-anchor="middle" font-size="10" fill="#1d4ed8">comprador / comerciante</text>
+  <rect x="150" y="95" width="150" height="100" rx="8" fill="#fff" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="225" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#115e59">Frontend Next.js 16</text>
+  <text x="225" y="136" text-anchor="middle" font-size="9.5" fill="#5b6773">React 19 · Tailwind 4</text><text x="225" y="150" text-anchor="middle" font-size="9.5" fill="#5b6773">react-hook-form + zod</text>
+  <text x="225" y="164" text-anchor="middle" font-size="9.5" fill="#5b6773">proxy /api · cookies httpOnly</text><text x="225" y="182" text-anchor="middle" font-size="9" fill="#5b6773">Docker :3000</text>
+  <rect x="345" y="55" width="190" height="180" rx="8" fill="#fff" stroke="#0f766e" stroke-width="1.5"/>
+  <text x="440" y="78" text-anchor="middle" font-size="12" font-weight="700" fill="#115e59">Backend Spring Boot 3.3 / Java 17</text>
+  <rect x="360" y="88" width="160" height="22" rx="4" fill="#eef2f5"/><text x="440" y="103" text-anchor="middle" font-size="10">Controlador (REST + validación)</text>
+  <rect x="360" y="114" width="160" height="22" rx="4" fill="#eef2f5"/><text x="440" y="129" text-anchor="middle" font-size="10">Servicio (reglas de negocio)</text>
+  <rect x="360" y="140" width="160" height="22" rx="4" fill="#eef2f5"/><text x="440" y="155" text-anchor="middle" font-size="10">Repositorio (JPA) · Entidad</text>
+  <rect x="360" y="166" width="160" height="22" rx="4" fill="#fef3c7"/><text x="440" y="181" text-anchor="middle" font-size="10">Seguridad: JWT · roles · límites</text>
+  <text x="440" y="208" text-anchor="middle" font-size="9.5" fill="#5b6773">DTO · mapeador · eventos · programadores</text><text x="440" y="224" text-anchor="middle" font-size="9" fill="#5b6773">Docker :8080 · Railway</text>
+  <rect x="585" y="20" width="128" height="62" rx="8" fill="#fff" stroke="#16a34a"/>
+  <text x="649" y="44" text-anchor="middle" font-size="11" font-weight="700" fill="#166534">Supabase</text><text x="649" y="60" text-anchor="middle" font-size="9.5" fill="#5b6773">PostgreSQL (~29 tablas)</text><text x="649" y="73" text-anchor="middle" font-size="9.5" fill="#5b6773">Storage de imágenes</text>
+  <rect x="585" y="102" width="128" height="50" rx="8" fill="#fff" stroke="#7c3aed"/>
+  <text x="649" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#6d28d9">Stripe (modo prueba)</text><text x="649" y="141" text-anchor="middle" font-size="9.5" fill="#5b6773">pagos con tarjeta + webhook</text>
+  <rect x="585" y="172" width="128" height="50" rx="8" fill="#fff" stroke="#d97706"/>
+  <text x="649" y="195" text-anchor="middle" font-size="11" font-weight="700" fill="#92400e">Brevo</text><text x="649" y="211" text-anchor="middle" font-size="9.5" fill="#5b6773">correos (códigos, avisos)</text>
+  <line x1="112" y1="145" x2="148" y2="145" stroke="#5b6773" marker-end="url(#a)"/><line x1="300" y1="145" x2="343" y2="145" stroke="#5b6773" marker-end="url(#a)"/>
+  <line x1="535" y1="85" x2="583" y2="55" stroke="#5b6773" marker-end="url(#a)"/><line x1="535" y1="135" x2="583" y2="127" stroke="#5b6773" marker-end="url(#a)"/><line x1="535" y1="185" x2="583" y2="195" stroke="#5b6773" marker-end="url(#a)"/>
+  <path d="M583,140 C565,250 530,262 520,236" fill="none" stroke="#7c3aed" stroke-dasharray="4 3" marker-end="url(#a)"/><text x="570" y="268" font-size="9" fill="#6d28d9" text-anchor="middle">webhook (Stripe → API)</text>
+  <rect x="150" y="262" width="240" height="30" rx="6" fill="#eef2f5"/><text x="270" y="281" text-anchor="middle" font-size="10">Git (develop → prod) · Docker · Railway</text>
+</svg>
+
+<h3>Datos duros para citar</h3>
+<table>
+  <tr><th style="width:30%">Qué</th><th>Detalle</th></tr>
+  <tr><td>Tamaño</td><td>16 módulos, 36 controladores, unos 118 endpoints REST, 6 migraciones Flyway (V1 a V6), pruebas de integración con PostgreSQL real (Testcontainers), pruebas de arquitectura (ArchUnit) y e2e del frontend (Playwright).</td></tr>
+  <tr><td>Respuesta estándar</td><td>Todo responde con el mismo sobre: <span class="m">{exito, codigo_estado, codigo, mensaje, datos, validaciones, detalles, ruta, id_correlacion}</span>, JSON en <i>snake_case</i>. Las listas vienen paginadas en <span class="m">datos.datos</span>.</td></tr>
+  <tr><td>Capas (backend)</td><td><span class="m">controlador → servicio → repositorio → entidad</span>, más <span class="m">dto</span>, <span class="m">modelo</span> y <span class="m">mapeador</span>. Una prueba ArchUnit impide que un controlador toque repositorios o entidades.</td></tr>
+  <tr><td>Módulos</td><td>usuario, tienda, suscripcion, catalogo, inventario, cupon, carrito, checkout, orden, pago, envio, ruta, seguimiento, balance (métricas), notificacion, totales.</td></tr>
+  <tr><td>Multi-tienda</td><td>Cada petición del panel lleva <span class="m">X-Tienda-Id</span>. Si la tienda no es tuya la API responde <b>404</b> (no 403) para no revelar que existe.</td></tr>
+  <tr><td>Tareas asíncronas</td><td>Eventos internos de Spring + <span class="m">@Async</span> (correos), y 3 programadores <span class="m">@Scheduled</span> (anular órdenes vencidas cada 5 min; renovar/vencer suscripciones cada hora; desactivar tiendas vencidas &gt; 30 días).</td></tr>
+</table>
+</section>
+
+<!-- ============================ 2. SEMANAS ============================ -->
+<section class="pb">
+<h2>2. Semana por semana: concepto → cómo lo tenemos → endpoint/archivo</h2>
+<p class="sub">Los temas salen del sílabo (Desarrollo Full Stack, 2026-2). Las semanas 1 a 8 son frontend; 9 a 14 son backend (lo que se evalúa en el APF2).</p>
+
+<h3>Unidad 1 · Introducción al Full Stack (semanas 1 y 2)</h3>
+<div class="card ok"><h3>Sem. 1 · Full Stack y gestión de proyectos <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p>Full Stack = construir cliente (lo que ve el usuario) y servidor (reglas y datos) y conectarlos. Arquitectura <b>cliente-servidor</b>: el navegador pide, la API responde JSON por HTTP.</p>
+<span class="lbl">En el proyecto</span><p>Frontend Next.js (repo <span class="m">ShopifyClon-Web-Core</span>) + backend Spring Boot (<span class="m">ShopifyClon-Api-Core</span>). Gestión: tareas numeradas con documento y reporte por tarea (W-xxx frontend, A-/T- backend), tablero y ramas por tarea en GitHub.</p></div>
+
+<div class="card ok"><h3>Sem. 2 · Entorno, Git, contenedores y despliegue <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p><b>Git</b>: control de versiones. <b>Contenedor</b> (Docker): empaqueta app + dependencias y corre igual en cualquier máquina; ligero porque comparte el kernel. <b>Máquina virtual</b>: simula un equipo completo con su propio sistema operativo (más pesada). <b>Serverless</b>: funciones que se ejecutan bajo demanda sin administrar servidor.</p>
+<span class="lbl">En el proyecto</span>
+<ul><li><b>Gitflow simple:</b> ramas <span class="m">tarea/…</span> y <span class="m">ajuste/…</span> → <span class="m">develop</span> (integración) → <span class="m">prod</span> (despliegue automático). Commits con prefijo <span class="m">feat / fix / chore</span>.</li>
+<li><b>Docker:</b> <span class="m">Dockerfile</span> multi-etapa (compila con JDK, corre con JRE liviano) y <span class="m">docker-compose.yml</span> con 3 servicios: <span class="m">shfy-api-core</span>, <span class="m">shfy-web-core</span> y <span class="m">shfy-stripe-cli</span>, en un solo proyecto <span class="m">utp-desarrollo-shfy</span>.</li>
+<li><b>Nube:</b> Railway despliega la API desde la rama <span class="m">prod</span>; la base está en Supabase.</li>
+<li><b>Serverless:</b> no lo usamos. Vercel (serverless) no sirve para este backend: un Spring Boot es un proceso Java siempre encendido, no una función efímera.</li></ul>
+<div class="q"><b>P: ¿Por qué Docker y no instalar todo?</b> R: Para que cualquier compañera levante el proyecto con un solo comando y el entorno sea idéntico al de producción.</div></div>
+
+<h3>Unidad 2 · Front-end (semanas 3 a 8)</h3>
+<div class="card ok"><h3>Sem. 3 · Frameworks front-end, navegación y estado <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p>Un framework front-end organiza la interfaz en componentes, rutas y estado. <b>Estado</b> = datos que cambian y hacen que la pantalla se repinte.</p>
+<span class="lbl">En el proyecto</span><p><b>Next.js 16 (App Router)</b> sobre React 19. Rutas por carpetas: <span class="m">/tienda/[subdominio]</span> (vitrina), <span class="m">/panel/…</span> (comerciante), <span class="m">/cuenta</span>, <span class="m">/plataforma</span>, <span class="m">/seguimiento</span>. Estado global ligero con <b>zustand</b> (carrito, sesión). Código organizado por módulos en <span class="m">src/modules/*</span>.</p></div>
+
+<div class="card ok"><h3>Sem. 4 · Bibliotecas de estilos y frameworks CSS <span class="chip ok">IMPLEMENTADO</span></h3>
+<p><b>Tailwind CSS 4</b> (clases utilitarias) + componentes base tipo shadcn/ui (botón, tarjeta, alerta…) + iconos <b>lucide</b>. Tema claro/oscuro. Ventaja: consistencia visual y menos CSS propio.</p></div>
+
+<div class="card ok"><h3>Sem. 5 · Reactividad <span class="chip ok">IMPLEMENTADO</span></h3>
+<p>Reactividad = cuando cambia un dato, la interfaz se actualiza sola. En React: <span class="m">useState</span>/<span class="m">useEffect</span>, y <b>zustand</b> para estado compartido. Ejemplo: al agregar al carrito, el contador del encabezado cambia sin recargar.</p></div>
+
+<div class="card ok"><h3>Sem. 6 · Consumo de APIs y formularios <span class="chip ok">IMPLEMENTADO</span></h3>
+<p><b>axios</b> para las solicitudes HTTP asíncronas; <b>react-hook-form + zod</b> para formularios con validación (el error de la API <span class="m">validaciones</span> se muestra junto al campo). El navegador nunca habla directo con la API: pasa por un <b>proxy</b> de Next (<span class="m">/api/…</span>) que reenvía y añade la sesión.</p></div>
+
+<div class="card ok"><h3>Sem. 7 · Autenticación en el front y despliegue del front <span class="chip ok">IMPLEMENTADO</span></h3>
+<p><b>Sesión:</b> el JWT se guarda en una cookie <b>httpOnly</b> (el JavaScript de la página no puede leerla, protege contra XSS) con <span class="m">sameSite=lax</span> y <span class="m">secure</span> en producción. La tienda activa y el token del carrito van también en cookies httpOnly.</p>
+<p><b>Despliegue:</b> <span class="m">Dockerfile</span> del front en 3 etapas con salida <i>standalone</i> de Next (imagen mínima, usuario sin privilegios). Hoy solo el backend está en Railway.</p></div>
+<p class="sub">Semana 8: APF1 (avance del frontend integrado con la API).</p>
+</section>
+
+<section class="pb">
+<h3 style="margin-top:0">Unidad 3 · Back-end (semanas 9 a 14)</h3>
+
+<div class="card ok"><h3>Sem. 9 · Bases de datos relacionales, noSQL y Back-end como servicio <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p><b>Relacional (SQL):</b> tablas con relaciones y garantías ACID; ideal para dinero, stock y pedidos. <b>NoSQL:</b> documentos/clave-valor sin esquema fijo; ideal para logs, cachés o datos muy variables. <b>BaaS</b> (Backend as a Service): un proveedor te da base, autenticación y almacenamiento ya montados.</p>
+<span class="lbl">En el proyecto</span>
+<ul><li><b>PostgreSQL</b> alojado en <b>Supabase</b>. Elegimos relacional porque órdenes, pagos, stock y suscripciones necesitan integridad (una orden no puede existir sin su tienda; el stock no puede quedar negativo).</li>
+<li><b>Construcción de la BD:</b> migraciones <b>Flyway</b> versionadas: <span class="m">V1</span> esquema inicial, <span class="m">V2</span> suscripciones, <span class="m">V3</span> identidad, <span class="m">V4</span> pago pendiente de suscripción, <span class="m">V5</span> rutas y seguimiento, <span class="m">V6</span> seguridad (bloqueo, dos pasos, revocación de sesiones). Al arrancar, la API aplica lo que falte.</li>
+<li><b>BaaS:</b> usamos Supabase como Postgres gestionado y como <i>Storage</i> para las imágenes. La lógica y la seguridad siguen en nuestra API (no dependemos de las reglas de Supabase).</li>
+<li><b>NoSQL:</b> no lo usamos; se justificaría para auditoría/eventos masivos o catálogo en caché.</li></ul>
+<span class="lbl">Dónde verlo</span><p><span class="m">src/main/resources/db/migration/V1__esquema_inicial.sql</span> · tablas como <span class="m">Tiendas, Productos, Variantes, Ordenes, Pagos, Envios, Rutas, Suscripciones, RegistroAuditoria</span>.</p></div>
+
+<div class="card ok"><h3>Sem. 10 · Framework back-end y CRUD con base de datos <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p>CRUD = Create, Read, Update, Delete ↔ <span class="m">POST, GET, PUT, DELETE</span>. Spring Boot + <b>Spring Data JPA</b> mapea tablas a clases (entidades) y genera las consultas.</p>
+<span class="lbl">En el proyecto (ejemplo: cupones)</span>
+<table><tr><th>Operación</th><th>Endpoint</th><th>Capa que trabaja</th></tr>
+<tr><td>Crear</td><td><span class="ep"><b>POST</b> /panel/cupones</span></td><td>CuponControlador → CuponServicio → CuponRepositorio → CuponEntidad</td></tr>
+<tr><td>Listar / ver</td><td><span class="ep"><b>GET</b> /panel/cupones</span> · <span class="ep"><b>GET</b> /panel/cupones/{id}</span></td><td>paginado, con filtros</td></tr>
+<tr><td>Editar</td><td><span class="ep"><b>PUT</b> /panel/cupones/{id}</span></td><td>valida reglas (no cambiar valor con usos)</td></tr>
+<tr><td>Eliminar</td><td><span class="ep"><b>DELETE</b> /panel/cupones/{id}</span></td><td>eliminación <b>lógica</b> (campo Eliminado), no borra la fila</td></tr></table>
+<p><b>DTO</b> = objeto que viaja por la API (no se expone la entidad); <b>mapeador</b> (MapStruct) convierte entidad ↔ DTO; la validación (<span class="m">@Valid</span>, <span class="m">@NotBlank</span>…) corta antes de llegar al servicio y devuelve <span class="m">422</span> con <span class="m">validaciones</span>.</p></div>
+
+<div class="card no"><h3>Sem. 11 · Aplicaciones en tiempo real y WebSockets <span class="chip no">NO IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p>HTTP normal = el cliente pregunta y el servidor responde. <b>WebSocket</b> = una conexión abierta y bidireccional: el servidor puede <i>empujar</i> datos sin que el cliente pregunte (chat, notificaciones, estados en vivo). Se negocia con un <i>handshake</i> HTTP y luego se mantiene (<span class="m">ws://</span>/<span class="m">wss://</span>). En Spring: <span class="m">spring-boot-starter-websocket</span> con STOMP sobre un broker simple.</p>
+<span class="lbl">Cómo está hoy</span><p>La dependencia <span class="m">spring-boot-starter-websocket</span> está declarada en el <span class="m">pom.xml</span>, pero no hay código de WebSocket. Lo más parecido a "tiempo real" que tenemos: webhook de Stripe (Stripe avisa al servidor), eventos internos asíncronos y la página de la orden que consulta cada 1,5 s hasta ver <span class="m">PAGADO</span> (<i>polling</i>).</p>
+<div class="q"><b>Si preguntan:</b> "No lo implementamos en esta entrega; la dependencia está lista. El caso natural sería notificar en vivo al comerciante cuando entra o se paga una orden (<span class="m">/topic/tienda/{id}/ordenes</span>) y al comprador el cambio de estado del envío. Hoy lo resolvemos con webhook + consulta periódica."</div></div>
+
+<div class="card ok"><h3>Sem. 12 · Autenticación y autorización <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto</span><p><b>Autenticación</b> = ¿quién eres? (login). <b>Autorización</b> = ¿qué puedes hacer? (permisos).</p>
+<span class="lbl">En el proyecto</span>
+<ul><li><b>Autenticación:</b> registro → código de 6 dígitos por correo → activación → login con correo y contraseña. Contraseñas con <b>BCrypt</b> (nunca en claro). Cuenta sin activar no entra (<span class="m">USR-003</span>).</li>
+<li><b>Autorización por roles y permisos:</b> 4 roles de tienda con matriz fija en código — <b>PROPIETARIO</b> (todo), <b>ADMINISTRADOR</b> (todo menos suscripción), <b>GESTOR_CATALOGO</b> (catálogo e inventario), <b>GESTOR_PEDIDOS</b> (ver/gestionar/cancelar órdenes). 12 permisos (p. ej. <span class="m">CATALOGO_GESTIONAR</span>, <span class="m">REEMBOLSOS_EMITIR</span>). Cada endpoint del panel declara <span class="m">@RequierePermiso(...)</span>.</li>
+<li><b>Administrador de plataforma:</b> rol global (<span class="m">@SoloAdministradorPlataforma</span>) para planes y suspensión de tiendas.</li>
+<li><b>Aislamiento entre tiendas</b> con <span class="m">X-Tienda-Id</span> (404 si no eres miembro).</li>
+<li><b>Más defensas:</b> límite de peticiones por minuto <b>por IP del visitante</b> (<span class="m">429</span>) en login, registro, carrito, checkout y pagos; validación de entradas; auditoría de acciones sensibles.</li>
+<li><b>Bloqueo por fuerza bruta:</b> 5 contraseñas incorrectas seguidas bloquean <b>esa cuenta</b> 15 minutos (<span class="m">409 USR-014</span>). El dueño recibe un correo con un código y la desbloquea en <span class="ep"><b>POST</b> /auth/desbloquear</span>, así nadie puede dejarlo fuera a propósito.</li>
+<li><b>Contraseñas:</b> 8 a 72 caracteres con letra y número; se rechazan las más comunes (<span class="m">Password123</span>…) y las que contienen el correo (<span class="m">USR-015</span>).</li>
+<li><b>Revocación de sesiones:</b> cambiar o restablecer la contraseña invalida todos los tokens emitidos; también <span class="ep"><b>POST</b> /cuenta/cerrar-sesiones</span>.</li></ul>
+<table><tr><th>Código</th><th>Significado</th></tr>
+<tr><td><span class="m">401 SEG-007</span></td><td>Sin sesión o token inválido/expirado (también si la cuenta fue desactivada)</td></tr>
+<tr><td><span class="m">403 SEG-002</span></td><td>Estás en la tienda, pero tu rol no tiene ese permiso</td></tr>
+<tr><td><span class="m">404 SEG-001</span></td><td>La tienda no existe o no eres miembro</td></tr>
+<tr><td><span class="m">409 USR-014</span></td><td>Cuenta bloqueada temporalmente por intentos fallidos</td></tr></table></div>
+
+<div class="card ok"><h3>Sem. 13 · JSON Web Token (JWS) y seguridad en dos pasos <span class="chip ok">IMPLEMENTADO</span></h3>
+<span class="lbl">Concepto JWT</span><p>Un JWT son 3 partes en base64 separadas por puntos: <b>header</b> (algoritmo) · <b>payload</b> (claims: quién, cuándo vence) · <b>firma</b>. Si está firmado se llama <b>JWS</b> (JSON Web Signature): cualquiera puede leerlo, pero nadie puede modificarlo sin romper la firma. Es <i>stateless</i>: el servidor no guarda sesiones.</p>
+<span class="lbl">En el proyecto (JWT)</span>
+<ul><li>Librería <b>JJWT</b>. Firma <b>HMAC-SHA</b> (HS256 o mayor según el tamaño de la clave) con el secreto <span class="m">JWT_SECRET_KEY</span> (variable de entorno, nunca en el código).</li>
+<li><b>Claims:</b> <span class="m">sub</span> = UUID del usuario, <span class="m">correo</span>, <span class="m">iat</span> (emisión) y <span class="m">exp</span> = 24 horas.</li>
+<li><b>Flujo:</b> <span class="ep"><b>POST</b> /auth/login</span> devuelve <span class="m">token</span> → el cliente lo manda en <span class="m">Authorization: Bearer …</span> → el filtro <span class="m">JwtFiltroAutenticacion</span> lo valida y comprueba que el usuario siga existiendo y activo.</li>
+<li><b>Revocación sin lista negra:</b> el usuario guarda la fecha <span class="m">SesionesValidasDesde</span>; un token emitido antes de esa fecha se rechaza (401). Se actualiza al cambiar la contraseña o al cerrar sesiones. Así un token robado deja de servir.</li></ul>
+<span class="lbl">Concepto 2FA</span><p><b>Autenticación en dos pasos / dos factores (2FA):</b> combinar dos pruebas distintas, algo que <b>sabes</b> (la contraseña) y algo que <b>tienes</b> (acceso a tu correo o a tu teléfono). Aunque roben la contraseña, no entran sin el segundo factor.</p>
+<span class="lbl">En el proyecto (dos pasos por correo, opcional por usuario)</span>
+<table><tr><th style="width:5%">#</th><th style="width:40%">Endpoint</th><th>Qué pasa</th></tr>
+<tr><td>0</td><td><span class="ep"><b>PUT</b> /cuenta/dos-pasos</span></td><td>El usuario lo activa con <span class="m">{activo: true, contrasena_actual}</span>. El perfil muestra <span class="m">dos_pasos_activo</span>. Por defecto está apagado.</td></tr>
+<tr><td>1</td><td><span class="ep"><b>POST</b> /auth/login</span></td><td>Correo y contraseña correctos → <b>no entrega token</b>: responde <span class="m">requiere_segundo_factor: true</span> y envía un código de 6 dígitos al correo.</td></tr>
+<tr><td>2</td><td><span class="ep"><b>POST</b> /auth/login/verificar</span></td><td><span class="m">{correo_electronico, codigo}</span> → ahora sí llega el <b>token</b>.</td></tr></table>
+<ul><li>El código es de <b>un solo uso</b>, vence en <b>10 minutos</b>, admite <b>5 intentos</b> y se guarda como <b>hash SHA-256</b> (nunca en claro). Solo se emite después de una contraseña correcta.</li>
+<li>Los mismos códigos de un solo uso protegen la <b>activación</b> de la cuenta, la <b>recuperación</b> de contraseña y el <b>desbloqueo</b>.</li>
+<li>Se pide <b>solo al iniciar sesión</b>; después el token vale 24 horas.</li></ul>
+<div class="q"><b>Si preguntan «¿es 2FA de verdad?»:</b> "Sí: contraseña más un código de un solo uso enviado al correo. Es verificación en dos pasos por correo; el nivel siguiente sería TOTP con una app autenticadora (Google Authenticator) o una llave física, que no implementamos."</div>
+<div class="q"><b>Si preguntan «¿por qué es opcional?»:</b> "Para no obligar a todos los compradores; el comerciante o el administrador pueden activarlo en su cuenta. Se podría forzar para el rol de administrador de plataforma."</div></div>
+<p class="sub">Semana 14: APF2 (avance del backend: CRUD, seguridad, JWT; presentar API y base funcionando).</p>
+</section>
+
+<section class="pb">
+<h3 style="margin-top:0">Unidad 4 · Integración, despliegue y monitoreo (semanas 15 a 18)</h3>
+<p class="sub">Por si la sesión integradora pregunta por ello:</p>
+<div class="card ok"><h3>Integración cliente-servidor <span class="chip ok">IMPLEMENTADO</span></h3>
+<p>El front llama a la API por el proxy <span class="m">/api</span>; tipos TypeScript (DTO) reflejan el contrato de Swagger. 11 pruebas <b>e2e con Playwright</b> recorren compra, pago con Stripe, panel y rutas contra la API real.</p></div>
+<div class="card ok"><h3>Despliegue <span class="chip ok">IMPLEMENTADO (backend)</span></h3>
+<p>Rama <span class="m">prod</span> → Railway construye el Dockerfile y publica; el <b>healthcheck</b> <span class="m">/api/v1/health</span> decide si el despliegue es válido. Variables de entorno (secretos) solo en Railway, nunca en el repo. El panel de Stripe envía los webhooks a la URL pública.</p></div>
+<div class="card par"><h3>Monitoreo y registro <span class="chip par">BÁSICO</span></h3>
+<p>Cada petición lleva un <span class="m">id_correlacion</span> (cabecera <span class="m">X-Correlacion-Id</span>) que aparece en la respuesta y en los logs, para rastrear un error. Logs en Railway (Deploy Logs), <span class="m">/health</span> y Swagger. Auditoría en base de datos (<span class="m">RegistroAuditoria</span>) de acciones sensibles (cambios de rol, cancelaciones, pagos tardíos). No hay Prometheus/Grafana.</p></div>
+</section>
+
+<!-- ============================ 3. FLUJOS ============================ -->
+<section class="pb">
+<h2>3. Flujo de negocio completo (con endpoints)</h2>
+<p>El negocio tiene <b>un camino feliz</b> y varios <b>caminos alternativos</b>. El camino feliz es la compra de punta a punta; las ramas son lo que pasa cuando algo falla o el cliente cambia de opinión.</p>
+
+<svg viewBox="0 0 740 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flujo principal">
+  <defs><marker id="b" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#0f766e"/></marker></defs>
+  <text x="6" y="14" font-size="11" font-weight="700" fill="#115e59">A · COMERCIANTE prepara la tienda</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="6" y="22" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="60" y="42">Registro y</text><text x="60" y="55">activación (código)</text>
+    <rect x="132" y="22" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="186" y="42">Login (JWT)</text><text x="186" y="55">+ crear tienda</text>
+    <rect x="258" y="22" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="312" y="42">Suscripción</text><text x="312" y="55">PRUEBA 14 días</text>
+    <rect x="384" y="22" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="438" y="42">Tarifa de envío</text><text x="438" y="55">+ cupón (opc.)</text>
+    <rect x="510" y="22" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="564" y="42">Producto + stock</text><text x="564" y="55">+ imagen</text>
+    <rect x="636" y="22" width="98" height="46" rx="7" fill="#bbf7d0" stroke="#16a34a"/><text x="685" y="42">Publicar</text><text x="685" y="55">(en vitrina)</text>
+  </g>
+  <g stroke="#0f766e" marker-end="url(#b)"><line x1="114" y1="45" x2="130" y2="45"/><line x1="240" y1="45" x2="256" y2="45"/><line x1="366" y1="45" x2="382" y2="45"/><line x1="492" y1="45" x2="508" y2="45"/><line x1="618" y1="45" x2="634" y2="45"/></g>
+
+  <text x="6" y="102" font-size="11" font-weight="700" fill="#115e59">B · COMPRADOR compra (sin cuenta o con cuenta)</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="6" y="110" width="108" height="46" rx="7" fill="#fef3c7" stroke="#d97706"/><text x="60" y="130">Carrito + ítems</text><text x="60" y="143">+ cupón</text>
+    <rect x="132" y="110" width="108" height="46" rx="7" fill="#fef3c7" stroke="#d97706"/><text x="186" y="130">Cotizar con envío</text><text x="186" y="143">(total exacto)</text>
+    <rect x="258" y="110" width="108" height="46" rx="7" fill="#fef3c7" stroke="#d97706"/><text x="312" y="130">Checkout</text><text x="312" y="143">Orden PENDIENTE</text>
+    <polygon points="438,108 492,133 438,158 384,133" fill="#fff" stroke="#6b7280"/><text x="438" y="130">¿Cómo</text><text x="438" y="143">paga?</text>
+    <rect x="510" y="106" width="108" height="26" rx="7" fill="#ede9fe" stroke="#7c3aed"/><text x="564" y="123">Stripe (tarjeta)</text>
+    <rect x="510" y="136" width="108" height="26" rx="7" fill="#fce7f3" stroke="#be185d"/><text x="564" y="153">Manual (Yape…)</text>
+    <rect x="636" y="110" width="98" height="46" rx="7" fill="#bbf7d0" stroke="#16a34a"/><text x="685" y="130">PAGADO</text><text x="685" y="143">stock descontado</text>
+  </g>
+  <g stroke="#0f766e" marker-end="url(#b)"><line x1="114" y1="133" x2="130" y2="133"/><line x1="240" y1="133" x2="256" y2="133"/><line x1="366" y1="133" x2="382" y2="133"/><line x1="492" y1="124" x2="508" y2="119"/><line x1="492" y1="142" x2="508" y2="149"/><line x1="618" y1="119" x2="634" y2="126"/><line x1="618" y1="149" x2="634" y2="140"/></g>
+  <path d="M685,68 L685,108" stroke="#0f766e" marker-end="url(#b)" fill="none" stroke-dasharray="3 3"/><text x="690" y="92" font-size="8.5" fill="#5b6773">vitrina</text>
+
+  <text x="6" y="190" font-size="11" font-weight="700" fill="#115e59">C · COMERCIANTE entrega</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="6" y="198" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="60" y="218">Preparar orden</text><text x="60" y="231">envío CREADO + guía</text>
+    <rect x="132" y="198" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="186" y="218">Ruta de reparto</text><text x="186" y="231">BORRADOR (chofer)</text>
+    <rect x="258" y="198" width="108" height="46" rx="7" fill="#dbeafe" stroke="#1d4ed8"/><text x="312" y="218">Iniciar ruta</text><text x="312" y="231">EN_TRANSITO</text>
+    <polygon points="438,196 492,221 438,246 384,221" fill="#fff" stroke="#6b7280"/><text x="438" y="218">¿Se</text><text x="438" y="231">entregó?</text>
+    <rect x="510" y="198" width="108" height="46" rx="7" fill="#bbf7d0" stroke="#16a34a"/><text x="564" y="218">ENTREGADO</text><text x="564" y="231">(foto opcional)</text>
+    <rect x="636" y="198" width="98" height="46" rx="7" fill="#bbf7d0" stroke="#16a34a"/><text x="685" y="218">Orden CERRADA</text><text x="685" y="231">ruta FINALIZADA</text>
+  </g>
+  <g stroke="#0f766e" marker-end="url(#b)"><line x1="114" y1="221" x2="130" y2="221"/><line x1="240" y1="221" x2="256" y2="221"/><line x1="366" y1="221" x2="382" y2="221"/><line x1="492" y1="221" x2="508" y2="221"/><line x1="618" y1="221" x2="634" y2="221"/></g>
+  <path d="M685,156 C720,170 730,185 700,196" stroke="#0f766e" fill="none" marker-end="url(#b)" stroke-dasharray="3 3"/>
+  <rect x="384" y="262" width="108" height="34" rx="7" fill="#fee2e2" stroke="#dc2626"/><text x="438" y="276" font-size="9" text-anchor="middle">No entregado: intento</text><text x="438" y="288" font-size="9" text-anchor="middle">fallido (sigue en tránsito)</text>
+  <rect x="510" y="262" width="108" height="34" rx="7" fill="#fee2e2" stroke="#dc2626"/><text x="564" y="276" font-size="9" text-anchor="middle">Devuelto (DEVUELTO)</text><text x="564" y="288" font-size="9" text-anchor="middle">+ reembolso si aplica</text>
+  <path d="M438,246 L438,260" stroke="#dc2626" marker-end="url(#b)" fill="none"/><path d="M492,221 C500,245 530,250 540,260" stroke="#dc2626" fill="none" marker-end="url(#b)"/>
+  <text x="6" y="322" font-size="11" font-weight="700" fill="#115e59">D · El COMPRADOR sigue su pedido (sin sesión): GET /seguimiento/{guía} → estado + eventos</text>
+  <rect x="6" y="332" width="728" height="50" rx="7" fill="#f4f7f9" stroke="#d9dfe5"/>
+  <text x="16" y="350" font-size="9.5">Ramas que cortan el camino feliz:  sin stock (INV-002) · total cambió (CHK-004) · sin punto en el mapa (ENV-007) · orden vence sin pagar (se anula sola) ·</text>
+  <text x="16" y="364" font-size="9.5">pago rechazado · cancelación (sin pagar o pagada) · reembolso total/parcial · suscripción vencida bloquea escrituras (SUS-017).</text>
+  <text x="16" y="377" font-size="9.5" fill="#5b6773">Todas están detalladas en la sección 4.</text>
+</svg>
+
+<h3>Flujo A · El comerciante deja la tienda lista para vender</h3>
+<table>
+<tr><th style="width:4%">#</th><th style="width:38%">Endpoint</th><th>Qué pasa / regla</th></tr>
+<tr><td>1</td><td><span class="ep"><b>POST</b> /auth/registro</span></td><td>Crea la cuenta <b>sin activar</b> y envía un código de 6 dígitos por correo.</td></tr>
+<tr><td>2</td><td><span class="ep"><b>POST</b> /auth/activar</span></td><td>Con el código la cuenta pasa a activa. (<span class="ep"><b>POST</b> /auth/reenviar-activacion</span> si no llegó.)</td></tr>
+<tr><td>3</td><td><span class="ep"><b>POST</b> /auth/login</span></td><td>Devuelve el <b>JWT</b> y las tiendas del usuario. El token va en <span class="m">Authorization: Bearer</span>. Con dos pasos activo: código por correo y <span class="ep"><b>POST</b> /auth/login/verificar</span>.</td></tr>
+<tr><td>4</td><td><span class="ep"><b>GET</b> /planes</span> → <span class="ep"><b>POST</b> /cuenta/tiendas</span></td><td>Crea la tienda (subdominio único). Queda como <b>PROPIETARIO</b>. La primera tienda recibe <b>14 días de prueba</b>; las siguientes nacen vencidas.</td></tr>
+<tr><td>5</td><td><span class="ep"><b>POST</b> /panel/envios/tarifas</span></td><td>Al menos una tarifa activa: sin ella ningún carrito con envío puede pagar (<span class="m">ENV-001</span>). Cabecera <span class="m">X-Tienda-Id</span> en todo el panel.</td></tr>
+<tr><td>6</td><td><span class="ep"><b>POST</b> /panel/catalogo/productos</span></td><td>Producto con variantes (precio, SKU, <span class="m">cantidad_inicial</span> = stock). Nace <b>no publicado</b>.</td></tr>
+<tr><td>7</td><td><span class="ep"><b>POST</b> /panel/catalogo/productos/{id}/imagenes</span></td><td>La primera imagen es la principal (opcional subir antes con <span class="ep"><b>POST</b> /panel/archivos/imagenes</span>).</td></tr>
+<tr><td>8</td><td><span class="ep"><b>POST</b> /panel/catalogo/productos/{id}/publicar</span></td><td>Exige título, variante con precio &gt; 0 e <b>imagen principal</b> (<span class="m">CAT-007</span>). Opcional: <span class="ep"><b>POST</b> /panel/cupones</span>.</td></tr>
+<tr><td>✔</td><td><span class="ep"><b>GET</b> /vitrina/{sub}/productos</span></td><td>Comprobación pública: el producto ya se ve.</td></tr>
+</table>
+
+<h3>Flujo B · Una compra (camino feliz con pago manual)</h3>
+<table>
+<tr><th style="width:4%">#</th><th style="width:40%">Endpoint</th><th>Qué pasa / regla</th></tr>
+<tr><td>1</td><td><span class="ep"><b>POST</b> /vitrina/{sub}/carrito</span></td><td>Crea el carrito; devuelve su <span class="m">token</span> (identidad del carrito, cabecera <span class="m">X-Carrito-Token</span>). No requiere cuenta.</td></tr>
+<tr><td>2</td><td><span class="ep"><b>POST</b> /vitrina/{sub}/carrito/items</span></td><td><span class="m">{variante_id, cantidad}</span>. Si pides más que el stock, avisa en <span class="m">advertencias</span> pero no falla.</td></tr>
+<tr><td>3</td><td><span class="ep"><b>PUT</b> /vitrina/{sub}/carrito/cupon</span></td><td>Aplica un cupón (porcentaje, monto fijo o envío gratis). Si no aplica: <span class="m">CUP-003</span>.</td></tr>
+<tr><td>4</td><td><span class="ep"><b>GET</b> /vitrina/{sub}/tarifas-envio</span> → <span class="ep"><b>GET</b> /vitrina/{sub}/carrito?tarifa_envio_id=</span></td><td>Elige tarifa y <b>cotiza</b>: el <span class="m">total_estimado</span> es exactamente el que cobrará el checkout.</td></tr>
+<tr><td>5</td><td><span class="ep"><b>POST</b> /vitrina/{sub}/checkout</span></td><td>Cabeceras <span class="m">X-Carrito-Token</span> + <span class="m">Idempotency-Key</span> (UUID). Cuerpo con datos, dirección <b>con latitud/longitud</b>, <span class="m">tarifa_envio_id</span>, <span class="m">pasarela</span> y <span class="m">total_esperado</span>. Crea la <b>orden PENDIENTE</b>, <b>reserva el stock</b>, consume el cupón y devuelve <span class="m">token_acceso</span>.</td></tr>
+<tr><td>6</td><td><span class="ep"><b>POST</b> /panel/ordenes/{id}/pagos/manual</span></td><td>El personal registra el pago: la orden pasa a <b>PAGADO</b>, se <b>descuenta el stock</b> y se suma al balance de la tienda.</td></tr>
+<tr><td>7</td><td><span class="ep"><b>GET</b> /vitrina/{sub}/ordenes/{token_acceso}</span></td><td>El comprador (invitado) ve el estado de su orden.</td></tr>
+</table>
+
+<h3>Flujo B' · Misma compra pagando con tarjeta (Stripe)</h3>
+<table>
+<tr><th style="width:4%">#</th><th style="width:40%">Endpoint</th><th>Qué pasa / regla</th></tr>
+<tr><td>5</td><td><span class="ep"><b>POST</b> /vitrina/{sub}/checkout</span> con <span class="m">pasarela: "STRIPE"</span></td><td>La orden vence en <b>30 minutos</b> si no se paga (manual: 48 h).</td></tr>
+<tr><td>6</td><td><span class="ep"><b>POST</b> /vitrina/{sub}/ordenes/{token}/pagar</span></td><td>La API crea un <b>PaymentIntent</b> solo con tarjeta y devuelve <span class="m">client_secret</span>. Stripe.js del navegador lo usa para cobrar (tarjeta de prueba <span class="m">4242 4242 4242 4242</span>).</td></tr>
+<tr><td>7</td><td><span class="ep"><b>POST</b> /webhooks/stripe</span></td><td>Stripe avisa (<span class="m">payment_intent.succeeded</span>) con una <b>firma</b> que la API verifica; recién ahí la orden pasa a <b>PAGADO</b>. Es idempotente: si Stripe repite el aviso, no se duplica nada.</td></tr>
+</table>
+
+<h3>Flujo C · Entregar el pedido</h3>
+<table>
+<tr><th style="width:4%">#</th><th style="width:44%">Endpoint</th><th>Qué pasa / regla</th></tr>
+<tr><td>1</td><td><span class="ep"><b>POST</b> /panel/ordenes/{id}/envio</span></td><td>La orden debe estar <b>pagada</b>. Crea el envío <b>CREADO</b> con guía <span class="m">OT-AAAAMMDD-XXXXXX</span>.</td></tr>
+<tr><td>2</td><td><span class="ep"><b>GET</b> /panel/envios/disponibles-para-ruta</span> → <span class="ep"><b>POST</b> /panel/rutas</span></td><td>Arma la hoja de ruta <b>BORRADOR</b> con chofer, placa y envíos (el orden del arreglo = orden de paradas).</td></tr>
+<tr><td>3</td><td><span class="ep"><b>POST</b> /panel/rutas/{id}/iniciar</span></td><td><b>EN_CURSO</b>: despacha los envíos (<b>EN_TRANSITO</b>). <span class="ep"><b>GET</b> /panel/rutas/{id}</span> da la <b>guía de remisión</b> imprimible.</td></tr>
+<tr><td>4</td><td><span class="ep"><b>POST</b> /panel/envios/{id}/entregar</span></td><td><b>ENTREGADO</b> (foto y nota opcionales); la orden pasa a entregada y a <b>CERRADA</b> si ya está cobrada.</td></tr>
+<tr><td>5</td><td><span class="ep"><b>POST</b> /panel/rutas/{id}/finalizar</span></td><td>Ruta <b>FINALIZADA</b>.</td></tr>
+<tr><td>6</td><td><span class="ep"><b>GET</b> /seguimiento/{guía}</span></td><td>El comprador sigue el envío <b>sin sesión</b> (sin ver dirección ni teléfono).</td></tr>
+</table>
+</section>
+
+<!-- ============================ 4. RAMAS ============================ -->
+<section class="pb">
+<h2>4. Caminos alternativos (cuando algo no sale como el camino feliz)</h2>
+<p>Un buen flujo de negocio no es una línea recta. Estas son las bifurcaciones y qué endpoint/código las produce. Todas se pueden <b>demostrar en el laboratorio</b> (cada módulo tiene el caso).</p>
+
+<h3>Estados que conviene dibujar en la pizarra</h3>
+<svg viewBox="0 0 740 232" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Estados">
+  <defs><marker id="c" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#5b6773"/></marker></defs>
+  <text x="6" y="14" font-size="11" font-weight="700" fill="#115e59">ORDEN (pago)</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="6" y="24" width="96" height="30" rx="15" fill="#fef3c7" stroke="#d97706"/><text x="54" y="43">PENDIENTE</text>
+    <rect x="170" y="10" width="96" height="30" rx="15" fill="#bbf7d0" stroke="#16a34a"/><text x="218" y="29">PAGADO</text>
+    <rect x="170" y="48" width="96" height="30" rx="15" fill="#fee2e2" stroke="#dc2626"/><text x="218" y="67">ANULADO</text>
+    <rect x="334" y="10" width="140" height="30" rx="15" fill="#e0e7ff" stroke="#4f46e5"/><text x="404" y="29">PARC. REEMBOLSADO</text>
+    <rect x="520" y="10" width="110" height="30" rx="15" fill="#fee2e2" stroke="#dc2626"/><text x="575" y="29">REEMBOLSADO</text>
+  </g>
+  <g stroke="#5b6773" marker-end="url(#c)" fill="none"><line x1="102" y1="34" x2="168" y2="25"/><line x1="102" y1="44" x2="168" y2="60"/><line x1="266" y1="25" x2="332" y2="25"/><line x1="474" y1="25" x2="518" y2="25"/><path d="M266,20 C300,-4 560,-4 575,8"/></g>
+  <text x="130" y="22" font-size="8" fill="#5b6773">pago</text><text x="106" y="72" font-size="8" fill="#5b6773">vence / se cancela</text><text x="272" y="20" font-size="8" fill="#5b6773">reembolso</text>
+  <text x="6" y="108" font-size="11" font-weight="700" fill="#115e59">ENVÍO</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="6" y="118" width="92" height="30" rx="15" fill="#fef3c7" stroke="#d97706"/><text x="52" y="137">CREADO</text>
+    <rect x="160" y="118" width="108" height="30" rx="15" fill="#dbeafe" stroke="#1d4ed8"/><text x="214" y="137">EN_TRANSITO</text>
+    <rect x="340" y="104" width="100" height="30" rx="15" fill="#bbf7d0" stroke="#16a34a"/><text x="390" y="123">ENTREGADO</text>
+    <rect x="340" y="144" width="100" height="30" rx="15" fill="#fee2e2" stroke="#dc2626"/><text x="390" y="163">DEVUELTO</text>
+  </g>
+  <g stroke="#5b6773" marker-end="url(#c)" fill="none"><line x1="98" y1="133" x2="158" y2="133"/><line x1="268" y1="128" x2="338" y2="119"/><line x1="268" y1="138" x2="338" y2="159"/><path d="M230,118 C240,96 190,96 200,116"/></g>
+  <text x="124" y="128" font-size="8" fill="#5b6773">despachar</text><text x="206" y="96" font-size="8" fill="#5b6773">no entregado (evento)</text>
+  <text x="490" y="108" font-size="11" font-weight="700" fill="#115e59">RUTA</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="490" y="118" width="80" height="30" rx="15" fill="#fef3c7" stroke="#d97706"/><text x="530" y="137">BORRADOR</text>
+    <rect x="592" y="118" width="70" height="30" rx="15" fill="#dbeafe" stroke="#1d4ed8"/><text x="627" y="137">EN_CURSO</text>
+    <rect x="490" y="160" width="92" height="30" rx="15" fill="#bbf7d0" stroke="#16a34a"/><text x="536" y="179">FINALIZADA</text>
+  </g>
+  <g stroke="#5b6773" marker-end="url(#c)" fill="none"><line x1="570" y1="133" x2="590" y2="133"/><path d="M627,148 C627,170 600,176 584,176"/></g>
+  <text x="6" y="208" font-size="11" font-weight="700" fill="#115e59">SUSCRIPCIÓN de la tienda</text>
+  <g font-size="9.5" text-anchor="middle">
+    <rect x="190" y="194" width="70" height="28" rx="14" fill="#e0e7ff" stroke="#4f46e5"/><text x="225" y="212">PRUEBA</text>
+    <rect x="290" y="194" width="70" height="28" rx="14" fill="#bbf7d0" stroke="#16a34a"/><text x="325" y="212">ACTIVA</text>
+    <rect x="390" y="194" width="70" height="28" rx="14" fill="#fee2e2" stroke="#dc2626"/><text x="425" y="212">VENCIDA</text>
+    <rect x="490" y="194" width="80" height="28" rx="14" fill="#f3f4f6" stroke="#6b7280"/><text x="530" y="212">CANCELADA</text>
+    <rect x="600" y="194" width="90" height="28" rx="14" fill="#fde68a" stroke="#d97706"/><text x="645" y="212">SUSPENDIDA</text>
+  </g>
+  <g stroke="#5b6773" marker-end="url(#c)" fill="none"><line x1="260" y1="208" x2="288" y2="208"/><line x1="360" y1="208" x2="388" y2="208"/><line x1="460" y1="208" x2="488" y2="208"/></g>
+</svg>
+
+<h3>Ramas de compra y pago</h3>
+<table>
+<tr><th style="width:24%">Situación</th><th style="width:30%">Cómo se dispara (endpoint)</th><th>Resultado</th></tr>
+<tr><td><b>Sin stock</b></td><td><span class="ep"><b>POST</b> /vitrina/{sub}/checkout</span></td><td>409 <span class="m">INV-002</span> "No hay stock suficiente para reservar". No se crea orden.</td></tr>
+<tr><td><b>Cambió el precio / total</b></td><td>checkout con <span class="m">total_esperado</span> viejo</td><td>409 <span class="m">CHK-004</span> con <span class="m">detalles.total_recalculado</span>: se vuelve a cotizar y confirmar.</td></tr>
+<tr><td><b>Sin punto en el mapa</b></td><td>checkout con envío y sin lat/long</td><td>422 <span class="m">ENV-007</span> "Marca en el mapa el punto de entrega". Carrito 100% digital no lo pide.</td></tr>
+<tr><td><b>Reintento del checkout</b></td><td>mismo <span class="m">Idempotency-Key</span></td><td>200 con la <b>misma orden</b> (no duplica). Con otro carrito: <span class="m">CHK-006</span>.</td></tr>
+<tr><td><b>Cupón ya no sirve</b></td><td>checkout / <span class="ep"><b>PUT</b> …/carrito/cupon</span></td><td>422 <span class="m">CUP-003</span> / <span class="m">CHK-005</span> con el motivo (vencido, sin usos, mínimo no alcanzado).</td></tr>
+<tr><td><b>Tarjeta rechazada</b></td><td>Stripe.js con <span class="m">4000 0000 0000 0002</span></td><td>Stripe emite <span class="m">payment_failed</span>; la orden sigue <b>PENDIENTE</b> y el comprador puede <b>reintentar con otra tarjeta</b> (mismo intento).</td></tr>
+<tr><td><b>Orden vence sin pagarse</b></td><td>programador cada 5 min</td><td>Se <b>anula sola</b> (<b>ANULADO</b>) y <b>libera el stock reservado</b>. Un pago tardío queda auditado (<span class="m">PAGO_TARDIO_RECIBIDO</span>).</td></tr>
+<tr><td><b>Cancelar sin pagar</b></td><td><span class="ep"><b>POST</b> /panel/ordenes/{id}/cancelar</span></td><td>Motivo <span class="m">CLIENTE | FRAUDE | SIN_STOCK | OTRO</span> (OTRO exige detalle). Libera el stock reservado.</td></tr>
+<tr><td><b>Cancelar una orden pagada</b></td><td>mismo endpoint (rol con <span class="m">REEMBOLSOS_EMITIR</span>)</td><td>Devuelve el dinero y, por defecto, <b>repone el stock</b>. Solo si <b>no está preparada</b> (<span class="m">ORD-007</span>).</td></tr>
+<tr><td><b>Reembolso parcial/total</b></td><td><span class="ep"><b>POST</b> /panel/ordenes/{id}/reembolsos</span></td><td><span class="m">PARCIALMENTE_REEMBOLSADO</span> → <span class="m">REEMBOLSADO</span>. No puede superar lo cobrado (<span class="m">PAG-007</span>). Opción de reponer stock por variante.</td></tr>
+<tr><td><b>Pagar dos veces</b></td><td>pago manual repetido</td><td>409 <span class="m">PAG-004</span>.</td></tr>
+</table>
+
+<h3>Ramas de entrega</h3>
+<table>
+<tr><th style="width:24%">Situación</th><th style="width:30%">Cómo se dispara</th><th>Resultado</th></tr>
+<tr><td><b>Orden sin pagar</b></td><td><span class="ep"><b>POST</b> /panel/ordenes/{id}/envio</span></td><td>Rechaza (<span class="m">ENV-003</span> / <span class="m">ORD-006</span>): solo se prepara una orden pagada.</td></tr>
+<tr><td><b>Cliente ausente</b></td><td><span class="ep"><b>POST</b> /panel/envios/{id}/no-entregado</span></td><td>Registra un <b>intento fallido</b> con nota obligatoria. El envío <b>sigue EN_TRANSITO</b> (se puede reintentar).</td></tr>
+<tr><td><b>Devolución</b></td><td><span class="ep"><b>POST</b> /panel/envios/{id}/devolver</span></td><td>EN_TRANSITO → <b>DEVUELTO</b>; luego se puede reembolsar.</td></tr>
+<tr><td><b>Envío ya en otra ruta</b></td><td><span class="ep"><b>POST</b> /panel/rutas</span></td><td>409 <span class="m">RUT-002</span>. Fecha pasada: <span class="m">VAL-001</span>.</td></tr>
+<tr><td><b>Editar ruta iniciada</b></td><td><span class="ep"><b>PUT</b> /panel/rutas/{id}</span></td><td><span class="m">RUT-005</span>: solo se edita en BORRADOR.</td></tr>
+<tr><td><b>Finalizar con paradas pendientes</b></td><td><span class="ep"><b>POST</b> /panel/rutas/{id}/finalizar</span></td><td>Se puede; esos envíos quedan <b>disponibles</b> para otra ruta.</td></tr>
+<tr><td><b>Editar un envío entregado</b></td><td><span class="ep"><b>PUT</b> /panel/envios/{id}</span></td><td><span class="m">ENV-006</span>: no se puede.</td></tr>
+</table>
+
+<h3>Ramas de suscripción y permisos</h3>
+<table>
+<tr><th style="width:24%">Situación</th><th style="width:30%">Cómo se dispara</th><th>Resultado</th></tr>
+<tr><td><b>Prueba terminada / sin pago</b></td><td>programador cada hora</td><td>Suscripción <b>VENCIDA</b>. Toda <b>escritura del panel</b> responde 409 <span class="m">SUS-017</span> (leer sigue funcionando). La vitrina deja de mostrar la tienda.</td></tr>
+<tr><td><b>Recuperar la tienda</b></td><td><span class="ep"><b>POST</b> /panel/suscripcion/pagar</span></td><td>Pago (pasarela simulada: <span class="m">tok_lab</span> acepta, <span class="m">tok_rechazar</span> da <span class="m">SUS-004</span>) → <b>ACTIVA</b>.</td></tr>
+<tr><td><b>Cambiar de plan</b></td><td><span class="ep"><b>POST</b> /panel/suscripcion/cambiar-plan</span></td><td>No se puede bajar a un plan cuyos límites ya superas (<span class="m">SUS-008</span>). Planes: límite de productos y personal, comisión ≤ 10 %.</td></tr>
+<tr><td><b>Cancelar</b></td><td><span class="ep"><b>POST</b> /panel/suscripcion/cancelar</span></td><td>En prueba: inmediata. Activa: al final del período y se puede <span class="ep"><b>POST</b> …/revertir-cancelacion</span>.</td></tr>
+<tr><td><b>Suspensión</b></td><td><span class="ep"><b>POST</b> /plataforma/tiendas/{id}/suspender</span></td><td>Solo administrador de plataforma. <b>SUSPENDIDA</b> y reversible con <span class="ep"><b>POST</b> …/reactivar</span>.</td></tr>
+<tr><td><b>Personal con límites</b></td><td><span class="ep"><b>POST</b> /panel/personal</span></td><td>Agrega usuarios con rol; el plan limita cuántos (<span class="m">PER-002</span>). Un ADMINISTRADOR no gestiona a otro ADMINISTRADOR (<span class="m">PER-004</span>).</td></tr>
+<tr><td><b>Sin permiso</b></td><td>cualquier endpoint del panel</td><td>403 <span class="m">SEG-002</span> (rol insuficiente) / 404 <span class="m">SEG-001</span> (tienda ajena) / 401 <span class="m">SEG-007</span> (sin sesión).</td></tr>
+</table>
+</section>
+
+<!-- ============================ 5. LAGUNAS ============================ -->
+<section class="pb">
+<h2>5. Lo que NO tenemos (y cómo contestar con honestidad)</h2>
+<table>
+<tr><th style="width:22%">Tema del sílabo</th><th style="width:14%">Estado</th><th>Respuesta sugerida</th></tr>
+<tr><td><b>WebSockets (sem. 11)</b></td><td><span class="chip no">NO</span></td><td>"No está implementado en esta entrega. La dependencia <span class="m">spring-boot-starter-websocket</span> ya está en el proyecto. Lo usaríamos para avisar en vivo al comerciante de una orden nueva o pagada. Hoy lo cubrimos con webhook de Stripe y consulta periódica."</td></tr>
+<tr><td><b>2FA con app (TOTP)</b></td><td><span class="chip par">POR CORREO</span></td><td>"El segundo factor es un código por correo, opcional por usuario. No hay app autenticadora (TOTP) ni llave física; sería el siguiente paso."</td></tr>
+<tr><td><b>NoSQL (sem. 9)</b></td><td><span class="chip no">NO</span></td><td>"Usamos solo relacional porque órdenes, stock y pagos necesitan integridad transaccional. NoSQL lo usaríamos para logs, eventos o cachés."</td></tr>
+<tr><td><b>Serverless (sem. 2)</b></td><td><span class="chip no">NO</span></td><td>"Un Spring Boot es un proceso siempre encendido; por eso va en contenedor (Railway), no en funciones serverless."</td></tr>
+<tr><td><b>Pantallas de seguridad en la web</b></td><td><span class="chip par">SOLO API</span></td><td>"El login en dos pasos, el desbloqueo y el cierre de sesiones están en la API y se demuestran en el laboratorio; las pantallas del frontend están pendientes (tarea W-021)."</td></tr>
+<tr><td><b>Frontend desplegado</b></td><td><span class="chip par">LOCAL</span></td><td>"El frontend corre con Docker en local; en la nube desplegamos el backend, que es lo evaluado. El Dockerfile del front ya está listo."</td></tr>
+<tr><td><b>Monitoreo avanzado</b></td><td><span class="chip par">BÁSICO</span></td><td>"Logs con id de correlación, health check y auditoría en base de datos. Prometheus/Grafana sería el siguiente paso."</td></tr>
+<tr><td><b>Pagos reales</b></td><td><span class="chip par">PRUEBA</span></td><td>"Stripe está en modo de prueba (tarjetas de test). La pasarela de suscripciones es simulada."</td></tr>
+</table>
+<div class="note"><b>Importante:</b> mejor decir "esto no está, así sería" que afirmar algo que no se puede demostrar. El docente suele pedir ver el código o la pantalla.</div>
+
+<h2 style="margin-top:14pt">6. Preguntas probables del docente</h2>
+<div class="q"><b>¿Cómo se protege la API?</b> JWT firmado (24 h) y revocable, contraseñas con BCrypt y rechazo de las comunes, verificación en dos pasos opcional, bloqueo de la cuenta tras 5 fallos, roles y permisos por endpoint (<span class="m">@RequierePermiso</span>), aislamiento por tienda (<span class="m">X-Tienda-Id</span>), límite de peticiones por IP, CORS con lista de orígenes, cabeceras de seguridad (HSTS, nosniff, X-Frame-Options), validación de entradas y firma verificada en el webhook de Stripe.</div>
+<div class="q"><b>¿Qué pasa si me roban el token?</b> Sirve como máximo 24 horas, y deja de servir en cuanto cambio la contraseña o uso «cerrar sesiones»: el servidor rechaza los tokens emitidos antes de esa fecha.</div>
+<div class="q"><b>¿Y un ataque de fuerza bruta al login?</b> Dos barreras: 10 intentos por minuto por IP (429) y, si usan muchas IP, la cuenta se bloquea 15 minutos tras 5 fallos (USR-014) y se avisa al dueño por correo con un código para desbloquearla.</div>
+<div class="q"><b>¿Qué es CORS y cómo lo tienen?</b> Es la regla del navegador que decide qué sitios web pueden llamar a la API. Solo aceptamos los orígenes de una lista (<span class="m">CORS_ORIGENES_PERMITIDOS</span>); cualquier otro recibe 403.</div>
+<div class="q"><b>¿Qué es un JWT y por qué no hay sesión en el servidor?</b> Un token firmado con la identidad del usuario y su vencimiento. El servidor solo verifica la firma (y que el usuario siga activo), no guarda sesiones: la API escala sin estado compartido.</div>
+<div class="q"><b>¿Dónde guardan el token en el frontend?</b> En cookie <span class="m">httpOnly</span> (JavaScript no la lee, mitiga XSS), <span class="m">sameSite=lax</span> y <span class="m">secure</span> en producción; un proxy de Next la convierte en <span class="m">Authorization: Bearer</span>.</div>
+<div class="q"><b>¿Qué pasa si dos personas compran el último producto a la vez?</b> El stock se <b>reserva al crear la orden</b> con bloqueo en base de datos; el segundo recibe <span class="m">INV-002</span>. Hay prueba de concurrencia. Se descuenta al confirmar el pago y se libera si la orden vence.</div>
+<div class="q"><b>¿Qué es la idempotencia y para qué el <span class="m">Idempotency-Key</span>?</b> Repetir la misma petición no repite el efecto: si el comprador hace doble clic en "Confirmar", se devuelve la misma orden en vez de crear dos.</div>
+<div class="q"><b>¿Por qué el webhook de Stripe y no confiar en el navegador?</b> El navegador puede mentir o cerrarse. Stripe avisa servidor a servidor con una firma que verificamos; solo entonces la orden pasa a PAGADO.</div>
+<div class="q"><b>¿Cómo se evita que una tienda vea datos de otra?</b> Cada consulta del panel filtra por la tienda de la cabecera y se valida que el usuario sea miembro; si no, 404.</div>
+<div class="q"><b>¿Qué arquitectura usa el backend?</b> Por capas (controlador, servicio, repositorio, entidad) más DTO y mapeador; un test de ArchUnit impide saltarse capas. Modular por contexto de negocio.</div>
+<div class="q"><b>¿Cómo versionan la base de datos?</b> Con Flyway: scripts <span class="m">V1…V6</span> que se aplican en orden al arrancar; nadie toca la base a mano.</div>
+<div class="q"><b>¿Cómo prueban?</b> Pruebas de integración contra PostgreSQL real (Testcontainers), pruebas de arquitectura (ArchUnit), pruebas unitarias y e2e del frontend (Playwright). Además el laboratorio de endpoints ejecuta ~370 casos contra la API.</div>
+<div class="q"><b>¿Qué hace el eliminar? ¿Borra de verdad?</b> Eliminación lógica: marca el registro como eliminado, así no se rompen órdenes históricas.</div>
+<div class="q"><b>¿Cómo se despliega?</b> Push a la rama <span class="m">prod</span> → Railway construye el Dockerfile, valida <span class="m">/health</span> y publica. Secretos solo en variables de entorno.</div>
+<div class="q"><b>¿Qué pasa si falla el correo o Stripe?</b> El envío de correo es asíncrono y su fallo no rompe el registro (se registra en el log); los webhooks de Stripe se reintentan y son idempotentes.</div>
+<div class="q"><b>¿Cómo calculan los totales?</b> Solo el servidor: nunca se confía en montos del cliente; el cliente envía <span class="m">total_esperado</span> y la API lo compara con su cálculo (<span class="m">CHK-004</span> si difiere).</div>
+<div class="q"><b>¿Cómo manejan los errores?</b> Excepciones de negocio con código (<span class="m">INV-002</span>, <span class="m">SUS-017</span>…) y un manejador global que arma el sobre estándar con HTTP correcto: 400, 401, 403, 404, 409, 422 y 429.</div>
+
+<h3>Códigos HTTP que usa la API</h3>
+<table><tr><th>HTTP</th><th>Cuándo</th><th>HTTP</th><th>Cuándo</th></tr>
+<tr><td>200 / 201</td><td>OK / creado</td><td>409</td><td>Conflicto de estado (stock, total, ya pagado, suscripción)</td></tr>
+<tr><td>400</td><td>Falta cabecera o parámetro inválido</td><td>422</td><td>Validación o regla de negocio</td></tr>
+<tr><td>401</td><td>Sin sesión / token vencido</td><td>429</td><td>Demasiadas peticiones</td></tr>
+<tr><td>403</td><td>Rol sin permiso</td><td>404</td><td>No existe o no es tuyo</td></tr></table>
+</section>
+
+<!-- ============================ 7. DEMO ============================ -->
+<section class="pb">
+<h2>7. Guion de demostración (10 minutos)</h2>
+<p>Usar el <b>laboratorio</b> en Railway: <span class="m">…/api/v1/laboratorio/index.html</span>. Cada paso es un botón; lo que se genera se guarda y lo usa el siguiente.</p>
+<div class="step"><div class="n">1</div><div><b>Cuenta y sesión</b> → <i>Registro</i> (llega el código al correo) → <i>Activar</i> → <i>Login</i>. Mostrar el token y explicar el JWT. Mostrar un 401 sin sesión. <b>Seguridad:</b> «Verificación en dos pasos» (activar → login sin token → canjear el código del correo), «Provocar el bloqueo (5 fallos)» y «Cerrar todas mis sesiones». Los correos pueden caer en spam.</div></div>
+<div class="step"><div class="n">2</div><div><b>Tienda y personal</b> → «Crear una tienda de prueba». Mostrar la configuración, la vitrina pública y un 404 al usar el <span class="m">X-Tienda-Id</span> de otra tienda (aislamiento).</div></div>
+<div class="step"><div class="n">3</div><div><b>Suscripción</b> → ver estado PRUEBA, pagar con <span class="m">tok_lab</span>; mostrar <span class="m">tok_rechazar</span> (rechazo). Explicar <span class="m">SUS-017</span>.</div></div>
+<div class="step"><div class="n">4</div><div><b>Tarifas</b> → crear tarifa. <b>Catálogo</b> → «Crear producto publicado»; probar el caso de publicar sin imagen (<span class="m">CAT-007</span>). <b>Cupones</b> → crear uno.</div></div>
+<div class="step"><div class="n">5</div><div><b>Carrito</b> → crear carrito, agregar 2 unidades, aplicar cupón, cotizar con envío. <b>Checkout</b> → probar error <span class="m">CHK-004</span> y <span class="m">ENV-007</span>, luego «Compra exitosa». Explicar reserva de stock e idempotencia.</div></div>
+<div class="step"><div class="n">6</div><div><b>Pagos</b> → pago manual y ver <span class="m">PAGADO</span>; mostrar reembolso parcial. (Opcional en el frontend: pagar con tarjeta 4242 y ver el webhook.)</div></div>
+<div class="step"><div class="n">7</div><div><b>Envíos y Rutas</b> → preparar (guía), crear ruta, iniciar, «no entregado», entregar, finalizar. <b>Seguimiento</b> → consultar la guía sin sesión.</div></div>
+<div class="step"><div class="n">8</div><div><b>Métricas</b> y <b>Swagger</b>. Cierre: mostrar <span class="m">/health</span>, el Dockerfile, <span class="m">docker compose</span> y el despliegue de Railway.</div></div>
+
+<h3>Atajos útiles</h3>
+<ul>
+<li>Receta <b>«Todo de una vez»</b> (en Envíos/Órdenes): crea tienda, tarifa, producto, carrito, orden pagada y envío en un clic.</li>
+<li><b>«Ejecutar todo el módulo»</b> corre todos los casos del módulo y muestra ✔/✘ (se omiten los casos manuales).</li>
+<li>Si da <span class="m">429</span> el laboratorio espera y reintenta solo. Si da <span class="m">SUS-017</span>, la tienda está vencida: usar «Crear una tienda de prueba».</li>
+</ul>
+
+<h2 style="margin-top:14pt">8. Mapa rápido de endpoints por módulo</h2>
+<table>
+<tr><th style="width:16%">Módulo</th><th>Endpoints principales</th></tr>
+<tr><td><b>Cuenta</b></td><td><span class="ep">POST /auth/registro</span> <span class="ep">/auth/activar</span> <span class="ep">/auth/login</span> <span class="ep">/auth/login/verificar</span> <span class="ep">/auth/desbloquear</span> <span class="ep">/auth/recuperar-clave/solicitar|confirmar</span> · <span class="ep">GET/PUT /cuenta/perfil</span> <span class="ep">PUT /cuenta/contrasena</span> <span class="ep">PUT /cuenta/dos-pasos</span> <span class="ep">POST /cuenta/cerrar-sesiones</span> · <span class="ep">/cuenta/direcciones</span></td></tr>
+<tr><td><b>Tienda</b></td><td><span class="ep">POST/GET /cuenta/tiendas</span> · <span class="ep">GET/PUT /panel/tienda</span> · <span class="ep">POST /panel/tienda/activar|desactivar</span> · <span class="ep">/panel/personal</span> · <span class="ep">GET /vitrina/{sub}</span></td></tr>
+<tr><td><b>Suscripción</b></td><td><span class="ep">GET /planes</span> · <span class="ep">GET /panel/suscripcion</span> · <span class="ep">POST …/pagar | cambiar-plan | cancelar | revertir-cancelacion</span> · <span class="ep">/plataforma/planes</span> <span class="ep">/plataforma/suscripciones</span></td></tr>
+<tr><td><b>Catálogo</b></td><td><span class="ep">/panel/catalogo/categorias</span> <span class="ep">/panel/catalogo/productos</span> <span class="ep">/panel/catalogo/variantes</span> <span class="ep">/panel/catalogo/imagenes</span> <span class="ep">POST /panel/archivos/imagenes</span> · <span class="ep">GET /vitrina/{sub}/productos</span></td></tr>
+<tr><td><b>Inventario</b></td><td><span class="ep">GET/PUT /panel/inventario/variantes/{id}</span> <span class="ep">…/configuracion</span> <span class="ep">…/movimientos</span></td></tr>
+<tr><td><b>Cupones / Tarifas</b></td><td><span class="ep">/panel/cupones</span> · <span class="ep">/panel/envios/tarifas</span> · <span class="ep">GET /vitrina/{sub}/tarifas-envio</span></td></tr>
+<tr><td><b>Carrito / Checkout</b></td><td><span class="ep">/vitrina/{sub}/carrito</span> <span class="ep">…/carrito/items</span> <span class="ep">…/carrito/cupon</span> <span class="ep">…/carrito/vincular</span> · <span class="ep">POST /vitrina/{sub}/checkout</span></td></tr>
+<tr><td><b>Órdenes</b></td><td><span class="ep">GET /panel/ordenes</span> <span class="ep">/panel/ordenes/{id}</span> · <span class="ep">GET /cuenta/ordenes</span> · <span class="ep">GET /vitrina/{sub}/ordenes/{token}</span></td></tr>
+<tr><td><b>Pagos</b></td><td><span class="ep">POST /panel/ordenes/{id}/pagos/manual</span> <span class="ep">/cancelar</span> <span class="ep">/reembolsos</span> · <span class="ep">POST /vitrina/{sub}/ordenes/{token}/pagar</span> · <span class="ep">POST /webhooks/stripe</span></td></tr>
+<tr><td><b>Envíos y rutas</b></td><td><span class="ep">POST /panel/ordenes/{id}/envio</span> · <span class="ep">/panel/envios/{id}/despachar | entregar | no-entregado | devolver | eventos</span> · <span class="ep">/panel/rutas</span> <span class="ep">…/iniciar | finalizar</span> · <span class="ep">GET /seguimiento/{guía}</span></td></tr>
+<tr><td><b>Métricas / Salud</b></td><td><span class="ep">GET /panel/metricas?desde&amp;hasta</span> · <span class="ep">GET /health</span> · <span class="ep">GET /plataforma/diagnostico/red</span> (solo admin)</td></tr>
+</table>
+<p class="sub">Documento generado a partir del código del proyecto (rama <span class="m">develop</span>/<span class="m">prod</span>). Guía completa de endpoints: <span class="m">docs/api/guia-de-endpoints.md</span>.</p>
+</section>
+
+</body>
+</html>
