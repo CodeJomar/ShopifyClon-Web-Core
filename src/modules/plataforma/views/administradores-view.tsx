@@ -123,6 +123,13 @@ function ListaAdministradores({ permisos, roles, admins, recargar }: { permisos:
   const confirmar = useConfirm()
   const [alta, setAlta] = React.useState(false)
   const [editando, setEditando] = React.useState<AdministradorDto | null>(null)
+  // Nadie modifica su propia cuenta de administrador (la API responde ADM-003): en la propia tarjeta no se ofrecen acciones.
+  const [miId, setMiId] = React.useState<string | null>(null)
+  React.useEffect(() => {
+    void llamar<{ id: string }>({ method: "GET", url: "/cuenta/perfil" }).then((res) => {
+      if (res.ok) setMiId(res.datos.id)
+    })
+  }, [])
 
   const quitar = async (a: AdministradorDto) => {
     const ok = await confirmar({
@@ -160,7 +167,9 @@ function ListaAdministradores({ permisos, roles, admins, recargar }: { permisos:
                     <li key={p} className="flex items-start gap-2"><ShieldCheck aria-hidden="true" className="mt-0.5 size-3.5 shrink-0 text-brand-text" />{etiquetaPermiso(permisos, p)}</li>
                   ))}
                 </ul>
-                {!a.es_superadministrador && (
+                {a.usuario_id === miId ? (
+                  <p className="pt-1 text-[12.5px] font-semibold text-muted-foreground">Esta es tu cuenta: nadie cambia ni quita su propia administración. Otro administrador puede hacerlo.</p>
+                ) : !a.es_superadministrador && (
                   <div className="flex gap-2 pt-1">
                     <Button size="sm" variant="soft" onClick={() => setEditando(a)} leftIcon={<Pencil aria-hidden="true" />}>Cambiar rol</Button>
                     <Button size="sm" variant="danger-outline" onClick={() => quitar(a)} leftIcon={<Trash2 aria-hidden="true" />}>Quitar</Button>
@@ -275,6 +284,64 @@ function PanelAlta({ abierto, roles, alCerrar, alGuardar }: { abierto: boolean; 
           ) : null}
         </div>
         <SelectorRol roles={roles} valor={rolId} onCambiar={setRolId} />
+        {error && <p role="alert" className="text-[12.5px] font-bold text-destructive-text">{error}</p>}
+      </div>
+    </FormPanel>
+  )
+}
+
+/** Desde Usuarios: convierte a una persona concreta en administradora eligiendo su rol (mismo endpoint que «Nuevo administrador»). */
+export function PanelHacerAdministrador({ usuario, alCerrar, alGuardar }: { usuario: UsuarioAdminDto | null; alCerrar: () => void; alGuardar: () => void }) {
+  const [roles, setRoles] = React.useState<RolDto[] | null>(null)
+  const [rolId, setRolId] = React.useState("")
+  const [error, setError] = React.useState<string | null>(null)
+  const [enviando, setEnviando] = React.useState(false)
+  const idUsuario = usuario?.id
+
+  React.useEffect(() => {
+    if (!idUsuario) return
+    let cancelado = false
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- limpia el formulario al abrirlo
+    setRoles(null)
+    setError(null)
+    void llamar<RolDto[]>({ method: "GET", url: "/plataforma/roles" }).then((res) => {
+      if (cancelado) return
+      if (res.ok) {
+        setRoles(res.datos)
+        setRolId(res.datos.find((r) => !r.es_sistema || r.codigo !== "ADMIN_PLATAFORMA")?.id ?? res.datos[0]?.id ?? "")
+      } else setError(res.error.message)
+    })
+    return () => {
+      cancelado = true
+    }
+  }, [idUsuario])
+
+  const guardar = async () => {
+    if (!usuario) return
+    if (!rolId) return setError("Elige un rol.")
+    setEnviando(true)
+    const res = await llamar<AdministradorDto>({ method: "POST", url: "/plataforma/administradores", data: { usuario_id: usuario.id, rol_id: rolId } })
+    setEnviando(false)
+    if (!res.ok) return setError(res.error.message)
+    toast.add({ type: "success", title: "Administrador agregado", description: usuario.correo })
+    alGuardar()
+  }
+
+  return (
+    <FormPanel
+      open={usuario !== null}
+      onOpenChange={(o) => !o && alCerrar()}
+      title={`Hacer administrador a ${usuario?.nombres ?? ""}`}
+      description={`${usuario?.nombres ?? ""} ${usuario?.apellidos ?? ""} · ${usuario?.correo ?? ""}. Sus permisos rigen de inmediato.`}
+      footer={
+        <>
+          <Button type="button" variant="neutral" onClick={alCerrar}>Cancelar</Button>
+          <Button type="button" loading={enviando} onClick={guardar} disabled={!roles}>Hacer administrador</Button>
+        </>
+      }
+    >
+      <div className="space-y-5">
+        {roles ? <SelectorRol roles={roles} valor={rolId} onCambiar={setRolId} /> : !error && <Skeleton className="h-32 rounded-xl" />}
         {error && <p role="alert" className="text-[12.5px] font-bold text-destructive-text">{error}</p>}
       </div>
     </FormPanel>

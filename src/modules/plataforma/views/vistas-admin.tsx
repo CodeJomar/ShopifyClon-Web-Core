@@ -23,6 +23,7 @@ import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import type { EventoAuditoriaDto, TiendaAdminDto, UsuarioAdminDto } from "@/dtos/administracion"
 import { reactivarTiendaAction, suspenderTiendaAction } from "../actions/plataforma.actions"
+import { PanelHacerAdministrador } from "./administradores-view"
 import { TarjetaRespaldos } from "../components/tarjeta-respaldos"
 import { useListaAdmin } from "../hooks/use-lista-admin"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
@@ -292,6 +293,8 @@ export function UsuariosAdminView() {
   const [accion, setAccion] = React.useState<AccionUsuario | null>(null)
   const { permisosPlataforma } = usePanel()
   const puedeSeguridad = permisosPlataforma.includes("PLATAFORMA_SEGURIDAD")
+  const puedeAdministradores = permisosPlataforma.includes("PLATAFORMA_ADMINISTRADORES")
+  const [haciendoAdmin, setHaciendoAdmin] = React.useState<UsuarioAdminDto | null>(null)
 
   const ejecutar = async (motivo?: string) => {
     if (!accion) return null
@@ -353,13 +356,20 @@ export function UsuariosAdminView() {
                         <TableCell className="text-[13px]">{u.dos_pasos_activo ? "Activos" : "No"}</TableCell>
                         <TableCell className="whitespace-nowrap text-[12.5px] text-muted-foreground">{formatearFecha(u.fecha_creacion)}</TableCell>
                         <TableCell className="pr-6 text-right">
-                          {puedeSeguridad && u.esta_activo && !u.es_administrador_plataforma && (
-                            <div className="flex justify-end gap-2">
-                              <Button size="sm" variant="ghost" onClick={() => setAccion({ tipo: "sesiones", usuario: u })} leftIcon={<LogOut aria-hidden="true" />}>Cerrar sesiones</Button>
-                              {u.bloqueado ? (
-                                <Button size="sm" variant="soft" onClick={() => setAccion({ tipo: "desbloquear", usuario: u })} leftIcon={<UserCheck aria-hidden="true" />}>Desbloquear</Button>
-                              ) : (
-                                <Button size="sm" variant="danger-outline" onClick={() => setAccion({ tipo: "bloquear", usuario: u })} leftIcon={<Ban aria-hidden="true" />}>Bloquear</Button>
+                          {(puedeSeguridad || puedeAdministradores) && u.esta_activo && !u.es_administrador_plataforma && (
+                            <div className="flex flex-wrap justify-end gap-2">
+                              {puedeAdministradores && !u.bloqueado && (
+                                <Button size="sm" variant="soft" onClick={() => setHaciendoAdmin(u)} leftIcon={<ShieldCheck aria-hidden="true" />}>Hacer administrador</Button>
+                              )}
+                              {puedeSeguridad && (
+                                <>
+                                  <Button size="sm" variant="ghost" onClick={() => setAccion({ tipo: "sesiones", usuario: u })} leftIcon={<LogOut aria-hidden="true" />}>Cerrar sesiones</Button>
+                                  {u.bloqueado ? (
+                                    <Button size="sm" variant="soft" onClick={() => setAccion({ tipo: "desbloquear", usuario: u })} leftIcon={<UserCheck aria-hidden="true" />}>Desbloquear</Button>
+                                  ) : (
+                                    <Button size="sm" variant="danger-outline" onClick={() => setAccion({ tipo: "bloquear", usuario: u })} leftIcon={<Ban aria-hidden="true" />}>Bloquear</Button>
+                                  )}
+                                </>
                               )}
                             </div>
                           )}
@@ -374,6 +384,7 @@ export function UsuariosAdminView() {
           </Card>
         )
       )}
+      <PanelHacerAdministrador usuario={haciendoAdmin} alCerrar={() => setHaciendoAdmin(null)} alGuardar={() => { setHaciendoAdmin(null); recargar() }} />
       <MotivoPanel
         abierto={accion?.tipo === "bloquear"}
         titulo={`Bloquear a ${accion?.usuario.nombres ?? ""}`}
