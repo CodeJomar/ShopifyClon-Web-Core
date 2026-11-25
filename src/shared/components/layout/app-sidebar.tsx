@@ -4,7 +4,6 @@ import { MarcaOtemu } from "@/shared/components/marketing/marca-otemu"
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Store } from "lucide-react"
 
 import { HOME_HREF, PERFIL_HREF, type NavItem } from "@/shared/constants/navegacion"
 import { SidebarNavItem } from "@/shared/components/composed/sidebar-nav-item"
