@@ -7,19 +7,47 @@ import { toast } from "@/shared/components/ui/toast"
 import { cn } from "@/shared/utils/cn"
 
 /**
- * Etiqueta flotante SIN fondo: centrada dentro del campo vacío; al enfocar o tener valor sube a la parte superior del propio campo
- * (queda dentro, no corta el borde) y el texto escrito baja debajo de ella. Sin rectángulo detrás, así funciona sobre cualquier
- * superficie (vidrio, tarjeta, lienzo). Los selectores `peer-[...]` son el mismo estado para input, select y textarea.
+ * Etiqueta "outlined cut" SIN fondo: centrada dentro del campo vacío; al enfocar o tener valor sube y queda sobre el borde superior,
+ * que se interrumpe justo detrás de ella. El corte no lo hace un rectángulo de color detrás de la etiqueta sino un `<fieldset>` con
+ * `<legend>` (el navegador deja un hueco en el borde del ancho de la leyenda), así que funciona sobre cualquier superficie: vidrio,
+ * tarjeta o lienzo. Los selectores `peer-[...]` son el mismo estado para input, select y textarea.
  */
-/** Espacio superior del texto escrito para dejar sitio a la etiqueta subida (input y select de 44 px). */
-export const clasePadCampoConEtiqueta = "pt-[15px]"
-
 export const claseEtiqueta = cn(
-  "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 text-[13px] font-medium text-muted-foreground transition-all duration-200",
-  "peer-focus:top-[9px] peer-focus:translate-y-0 peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-primary",
-  "peer-[:not(:placeholder-shown)]:top-[9px] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
+  "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
+  "peer-focus:top-0 peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-primary",
+  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
   "peer-disabled:text-muted-foreground"
 )
+
+const claseBordeEstado: Record<EstadoCampo, string> = {
+  default: "border-input peer-hover:border-border-hover peer-focus:border-primary peer-disabled:border-input",
+  error: "border-destructive",
+  success: "border-primary",
+}
+
+/**
+ * Dibuja el borde del campo (el campo mismo lleva el borde transparente) y lo interrumpe tras la etiqueta subida. Va como hermano
+ * posterior del campo (`peer`). `flotado` son las clases `peer-...:max-w-full` que abren el hueco, según el estado de cada tipo de campo.
+ */
+export function BordeCortado({ label, state = "default", izquierda, flotado }: { label: string; state?: EstadoCampo; izquierda: boolean; flotado: string }) {
+  return (
+    <fieldset
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none absolute inset-x-0 -top-[5px] bottom-0 m-0 min-w-0 rounded-xl border-[1.8px] pr-2 transition-colors duration-200",
+        izquierda ? "pl-[42px]" : "pl-[18px]",
+        claseBordeEstado[state]
+      )}
+    >
+      <legend className={cn("invisible block h-[11px] max-w-[0.01px] p-0 text-[10.5px] font-bold transition-[max-width] duration-150", flotado)}>
+        <span className="inline-block px-1 opacity-0">{label}</span>
+      </legend>
+    </fieldset>
+  )
+}
+
+/** Clases del campo para que no dibuje su propio borde (lo dibuja `BordeCortado`). */
+export const claseCampoSinBorde = "border-transparent! hover:border-transparent! focus-visible:border-transparent!"
 
 /** Botón de acción a la derecha del campo (§4.2): 28 px, hover con --primary al 12 %. */
 export const claseBotonAccion =
@@ -88,9 +116,11 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             type={esContrasena && mostrar ? "text" : type}
             placeholder=" "
             aria-describedby={mensaje ? `${inputId}-ayuda` : undefined}
-            className={cn("peer h-11", clasePadCampoConEtiqueta, izquierda ? "pl-11" : "pl-[22px]", hayAccion ? "pr-11" : "")}
+            className={cn("peer h-11", claseCampoSinBorde, izquierda ? "pl-11" : "pl-[22px]", hayAccion ? "pr-11" : "")}
             {...props}
           />
+
+          <BordeCortado label={label} state={state} izquierda={Boolean(izquierda)} flotado="peer-focus:max-w-full peer-[:not(:placeholder-shown)]:max-w-full" />
 
           <label htmlFor={inputId} className={cn(claseEtiqueta, izquierda ? "left-11" : "left-5", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-primary")}>
             {label}
