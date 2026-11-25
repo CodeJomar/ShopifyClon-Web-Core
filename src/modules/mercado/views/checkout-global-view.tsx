@@ -1,5 +1,6 @@
 "use client"
 
+import { useAcceso } from "@/modules/acceso/acceso"
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -35,6 +36,14 @@ export function CheckoutGlobalView() {
   const [nombre, setNombre] = React.useState("")
   const [correo, setCorreo] = React.useState("")
   const [telefono, setTelefono] = React.useState("")
+  // Con sesión iniciada, nombre y correo se rellenan con los de la cuenta (la persona puede cambiarlos).
+  const { acceso } = useAcceso()
+  React.useEffect(() => {
+    if (acceso.estado !== "autenticado") return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- precarga una sola vez los datos de la cuenta, sin pisar lo que la persona ya escribió
+    setNombre((n) => n || `${acceso.nombres} ${acceso.apellidos}`.trim())
+    setCorreo((c) => c || acceso.correo)
+  }, [acceso])
   const [direccion, setDireccion] = React.useState("")
   const [ciudad, setCiudad] = React.useState("")
   const [provincia, setProvincia] = React.useState("")

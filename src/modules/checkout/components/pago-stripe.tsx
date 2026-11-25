@@ -1,5 +1,6 @@
 "use client"
 
+import { useAcceso } from "@/modules/acceso/acceso"
 import * as React from "react"
 import { loadStripe, type Appearance } from "@stripe/stripe-js"
 import { useTheme } from "next-themes"
@@ -75,6 +76,12 @@ export function PagoStripe({ iniciar: iniciarPago, alPagar }: { iniciar: Iniciar
 function FormularioTarjeta({ alPagar }: { alPagar: () => Promise<boolean> }) {
   const stripe = useStripe()
   const elements = useElements()
+  // Con sesión iniciada, Stripe recibe nombre y correo de la cuenta para no pedirlos de nuevo.
+  const { acceso } = useAcceso()
+  const datosPrecargados =
+    acceso.estado === "autenticado"
+      ? { defaultValues: { billingDetails: { name: `${acceso.nombres} ${acceso.apellidos}`.trim(), email: acceso.correo } } }
+      : undefined
   const [procesando, setProcesando] = React.useState(false)
   const [mensaje, setMensaje] = React.useState<string | null>(null)
 
@@ -101,7 +108,7 @@ function FormularioTarjeta({ alPagar }: { alPagar: () => Promise<boolean> }) {
 
   return (
     <form onSubmit={pagar} className="space-y-4">
-      <PaymentElement />
+      <PaymentElement options={datosPrecargados} />
       {mensaje && <p className="text-[13px] text-muted-foreground">{mensaje}</p>}
       <Button type="submit" className="w-full" disabled={!stripe || procesando}>
         {procesando ? "Procesando…" : "Pagar"}
