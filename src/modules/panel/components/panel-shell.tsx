@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ShieldCheck, TriangleAlert } from "lucide-react"
+import { ShieldCheck, Store, TriangleAlert } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
 import { AppSidebar } from "@/shared/components/layout/app-sidebar"
 import { WorkspaceHeader } from "@/shared/components/layout/workspace-header"
@@ -21,6 +21,7 @@ import {
 } from "@/shared/constants/navegacion"
 import { PERMISO, ROL } from "@/shared/constants/permisos"
 import { cerrarSesionAction } from "@/modules/auth"
+import { misTiendasAction } from "@/modules/tienda/actions/tienda.actions"
 import { cn } from "@/shared/utils/cn"
 import { usePanel } from "../hooks/use-panel"
 import { TiempoRealPanelProvider } from "../context/tiempo-real"
@@ -52,10 +53,27 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
   const esRutaPlataforma = pathname.startsWith("/plataforma")
   const esRutaPropietario = pathname.startsWith("/propietario")
 
+  // Un administrador que además tiene tiendas propias ve «Mi negocio» en el menú de la plataforma.
+  const [tieneNegocio, setTieneNegocio] = React.useState(false)
+  React.useEffect(() => {
+    if (!esRutaPlataforma) return
+    let cancelado = false
+    void misTiendasAction().then((res) => {
+      if (!cancelado && res.ok) setTieneNegocio(res.datos.length > 0)
+    })
+    return () => {
+      cancelado = true
+    }
+  }, [esRutaPlataforma])
+
   const items = React.useMemo(() => {
     if (esRutaPlataforma) {
       // Cada sección pide su permiso de plataforma (B9): un administrador con rol de soporte o de finanzas ve solo lo suyo.
-      return NAVEGACION_PLATAFORMA.filter((i) => !i.permisoPlataforma || permisosPlataforma.includes(i.permisoPlataforma))
+      const base = NAVEGACION_PLATAFORMA.filter((i) => !i.permisoPlataforma || permisosPlataforma.includes(i.permisoPlataforma))
+      if (!tieneNegocio) return base
+      const negocio = { id: "plataforma-mi-negocio", label: "Mi negocio", icon: Store, href: "/cuenta/mi-negocio" }
+      const i = base.findIndex((x) => x.id === "plataforma-mercado")
+      return i === -1 ? [...base, negocio] : [...base.slice(0, i), negocio, ...base.slice(i)]
     }
     if (esRutaPropietario) return NAVEGACION_PROPIETARIO
     const base = tienda ? filtrarNavegacion(NAVEGACION, puede) : [...NAVEGACION_SIN_TIENDA]
@@ -68,7 +86,7 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
       })
     }
     return base
-  }, [tienda, puede, esRutaPlataforma, esRutaPropietario, esAdministradorPlataforma, permisosPlataforma])
+  }, [tienda, puede, esRutaPlataforma, esRutaPropietario, esAdministradorPlataforma, permisosPlataforma, tieneNegocio])
 
   const etiquetaRol = esRutaPlataforma
     ? (rolPlataforma ?? "Administrador de plataforma")
