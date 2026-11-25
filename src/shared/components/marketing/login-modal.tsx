@@ -22,8 +22,8 @@ export function LoginModal({ alEntrar }: { alEntrar?: () => void }) {
         <div className="vidrio neon-anim flex max-h-[calc(100dvh-2rem)] flex-col rounded-[28px] bg-[#0b1519]/85 backdrop-blur-2xl">
           <DialogTitle className="sr-only">Iniciar sesión</DialogTitle>
           <DialogDescription className="sr-only">Entra a tu cuenta de OTemu.</DialogDescription>
-          {/* Solo el cuerpo se desplaza (y solo en vertical); el vidrio y el neón no. */}
-          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-7 sm:p-8">
+          {/* Sin barra visible: solo si la ventana es muy baja el cuerpo (no el vidrio ni el neón) se desplaza con la rueda o el dedo. */}
+          <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-6 sm:p-7">
             <LoginView
               alEntrar={() => {
                 setAbierto(false)

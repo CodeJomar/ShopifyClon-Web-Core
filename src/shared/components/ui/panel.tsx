@@ -90,7 +90,7 @@ function PanelHeader({ className, ...props }: React.ComponentProps<"div">) {
 
 /** Zona central desplazable (el formulario o el detalle). */
 function PanelBody({ className, ...props }: React.ComponentProps<"div">) {
-  return <div data-slot="panel-body" className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-6 py-5", className)} {...props} />
+  return <div data-slot="panel-body" className={cn("no-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto px-6 py-5", className)} {...props} />
 }
 
 function PanelFooter({ className, ...props }: React.ComponentProps<"div">) {

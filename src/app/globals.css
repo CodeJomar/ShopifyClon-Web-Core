@@ -241,7 +241,8 @@
 }
 
 /* Barra de desplazamiento fina con la paleta OTemu: pista transparente y pulgar verde tenue que se enciende al pasar el cursor.
-   Va con la especificidad más baja (`*`): `no-scrollbar` y cualquier clase propia la sobreescriben. */
+   Va dentro de `@layer base` para que `no-scrollbar` y cualquier utilidad la sobreescriban (el CSS sin capa le gana a las capas). */
+@layer base {
 * {
   scrollbar-width: thin;
   scrollbar-color: rgb(var(--brand-rgb) / 0.35) transparent;
@@ -260,6 +261,7 @@
 }
 *::-webkit-scrollbar-thumb:hover {
   background-color: rgb(var(--brand-rgb) / 0.7);
+}
 }
 
 /* Los buscadores ya traen su propio botón para limpiar: se oculta la "x" nativa del navegador (si no, salen dos). */
