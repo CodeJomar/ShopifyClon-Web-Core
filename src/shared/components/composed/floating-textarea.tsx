@@ -35,7 +35,7 @@ const FloatingTextarea = React.forwardRef<HTMLTextAreaElement, FloatingTextareaP
           {...props}
         />
 
-        <BordeCortado label={label} state={state} izquierda={false} flotado="peer-focus:max-w-full peer-[:not(:placeholder-shown)]:max-w-full" />
+        <BordeCortado label={label} state={state} izquierda={false} flotado="peer-focus:[&>legend]:max-w-full peer-[:not(:placeholder-shown)]:[&>legend]:max-w-full" />
 
         <label
           htmlFor={textareaId}

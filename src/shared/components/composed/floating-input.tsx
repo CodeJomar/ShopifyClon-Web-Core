@@ -27,7 +27,7 @@ const claseBordeEstado: Record<EstadoCampo, string> = {
 
 /**
  * Dibuja el borde del campo (el campo mismo lleva el borde transparente) y lo interrumpe tras la etiqueta subida. Va como hermano
- * posterior del campo (`peer`). `flotado` son las clases `peer-...:max-w-full` que abren el hueco, según el estado de cada tipo de campo.
+ * posterior del campo (`peer`). `flotado` son las clases `peer-...:[&>legend]:max-w-full` (van en el fieldset, hermano del campo; la leyenda es su hija) que abren el hueco, según el estado de cada tipo de campo.
  */
 export function BordeCortado({ label, state = "default", izquierda, flotado }: { label: string; state?: EstadoCampo; izquierda: boolean; flotado: string }) {
   return (
@@ -36,10 +36,11 @@ export function BordeCortado({ label, state = "default", izquierda, flotado }: {
       className={cn(
         "pointer-events-none absolute inset-x-0 -top-[5px] bottom-0 m-0 min-w-0 rounded-xl border-[1.8px] pr-2 transition-colors duration-200",
         izquierda ? "pl-[42px]" : "pl-[18px]",
-        claseBordeEstado[state]
+        claseBordeEstado[state],
+        flotado
       )}
     >
-      <legend className={cn("invisible block h-[11px] max-w-[0.01px] p-0 text-[10.5px] font-bold transition-[max-width] duration-150", flotado)}>
+      <legend className="invisible block h-[11px] max-w-[0.01px] p-0 text-[10.5px] font-bold transition-[max-width] duration-150">
         <span className="inline-block px-1 opacity-0">{label}</span>
       </legend>
     </fieldset>
@@ -120,7 +121,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             {...props}
           />
 
-          <BordeCortado label={label} state={state} izquierda={Boolean(izquierda)} flotado="peer-focus:max-w-full peer-[:not(:placeholder-shown)]:max-w-full" />
+          <BordeCortado label={label} state={state} izquierda={Boolean(izquierda)} flotado="peer-focus:[&>legend]:max-w-full peer-[:not(:placeholder-shown)]:[&>legend]:max-w-full" />
 
           <label htmlFor={inputId} className={cn(claseEtiqueta, izquierda ? "left-11" : "left-5", state === "error" && "text-destructive-text peer-focus:text-destructive-text", state === "success" && "text-primary")}>
             {label}

@@ -31,7 +31,7 @@ export function FloatingSelect({
           <SelectValue placeholder=" " />
         </SelectTrigger>
 
-        <BordeCortado label={label} state={state} izquierda={Boolean(leftIcon)} flotado="peer-[:not([data-placeholder])]:max-w-full peer-data-popup-open:max-w-full" />
+        <BordeCortado label={label} state={state} izquierda={Boolean(leftIcon)} flotado="peer-[:not([data-placeholder])]:[&>legend]:max-w-full peer-data-popup-open:[&>legend]:max-w-full" />
 
         <label
           htmlFor={selectId}
