@@ -37,7 +37,7 @@ export interface ProductoMercado {
   cantidad_resenas?: number
   /** Descripción corta y variantes para la tarjeta (R-019). Si la API no los trae, la web los completa desde el detalle. */
   descripcion_corta?: string | null
-  variantes_resumen?: { titulo: string; precio: number }[]
+  variantes_resumen?: { titulo: string; precio: number; precio_comparacion?: number | null }[]
   cantidad_variantes?: number
   tienda: Pick<TiendaMercado, "nombre" | "subdominio"> & { logo_url?: string | null }
 }

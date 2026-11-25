@@ -24,6 +24,9 @@ export interface ProductoResumenVitrina {
   identificador_url: string
   precio_minimo: Dinero | number
   precio_comparacion?: Dinero | number | null
+  /** Campaña vigente (entero) y su código: `precio_minimo` ya viene con el descuento. */
+  descuento_campana_porcentaje?: number
+  campana?: string
   imagen_principal?: string | null
   disponible: boolean
 }

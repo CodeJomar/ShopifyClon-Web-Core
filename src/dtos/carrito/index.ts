@@ -8,6 +8,10 @@ export interface LineaCarrito {
   titulo_variante: string
   url_imagen?: string | null
   precio_unitario: Dinero | number
+  /** Precio de lista original (solo si hay campaña). */
+  precio_comparacion?: Dinero | number | null
+  descuento_campana_porcentaje?: number
+  campana?: string
   cantidad: number
   total_linea: Dinero | number
   disponible: boolean
@@ -34,6 +38,8 @@ export interface Carrito {
   cupon?: CuponCarrito | null
   subtotal: Dinero | number
   descuento_total: Dinero | number
+  /** Monto ahorrado en la tienda por la campaña vigente. */
+  ahorro_campana?: Dinero | number
   impuestos_total: Dinero | number
   /** Envío de la tarifa elegida (solo con `tarifa_envio_id`): la API lo incluye en `total_estimado`. */
   costo_envio?: Dinero | number | null
