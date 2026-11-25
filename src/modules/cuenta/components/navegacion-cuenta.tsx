@@ -20,9 +20,12 @@ export function NavegacionCuenta() {
     { href: "/cuenta/seguridad", etiqueta: "Seguridad", icono: ShieldCheck, activo: ruta.startsWith("/cuenta/seguridad") },
     { href: "/cuenta/direcciones", etiqueta: "Direcciones", icono: MapPin, activo: ruta.startsWith("/cuenta/direcciones") },
     { href: "/mis-pedidos", etiqueta: "Mis pedidos", icono: Receipt, activo: false },
-    esPropietario
-      ? { href: "/propietario", etiqueta: "Panel general", icono: LayoutDashboard, activo: false }
-      : { href: "/planes", etiqueta: "Vender en OTemu", icono: Store, activo: ruta.startsWith("/cuenta/tiendas") },
+    ...(esPropietario
+      ? [
+          { href: "/propietario", etiqueta: "Panel general", icono: LayoutDashboard, activo: ruta.startsWith("/propietario") },
+          { href: "/cuenta/tiendas", etiqueta: "Mis tiendas", icono: Store, activo: ruta.startsWith("/cuenta/tiendas") },
+        ]
+      : [{ href: "/planes", etiqueta: "Vender en OTemu", icono: Store, activo: false }]),
   ]
 
   return (

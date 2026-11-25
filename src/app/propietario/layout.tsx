@@ -1,15 +1,6 @@
-import { WorkspaceLayoutProvider } from "@/shared/context/workspace-layout-context"
-import { PanelProvider } from "@/modules/panel/hooks/use-panel"
-import { PanelShell } from "@/modules/panel/components/panel-shell"
+// El panel general del propietario comparte el diseño de «Mi cuenta» y del resto del sitio (cabecera y pie públicos, navegación de la
+// cuenta a la izquierda): así no cambia el armazón al pasar de la cuenta a Mis tiendas o al panel general. El armazón del dashboard
+// (barra lateral) aparece recién al abrir una tienda concreta.
+import CuentaLayout from "../cuenta/layout"
 
-// El panel general del propietario usa el mismo armazón (barra lateral + encabezado) que el panel de una tienda,
-// pero NO exige una tienda activa: es el resumen de todas.
-export default function PropietarioLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <WorkspaceLayoutProvider>
-      <PanelProvider exigirTienda={false}>
-        <PanelShell exigirTienda={false}>{children}</PanelShell>
-      </PanelProvider>
-    </WorkspaceLayoutProvider>
-  )
-}
+export default CuentaLayout
