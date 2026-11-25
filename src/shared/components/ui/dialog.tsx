@@ -79,6 +79,11 @@ function DialogContent({
   )
 }
 
+/** Zona central desplazable del diálogo: el contenedor no se desplaza, solo el cuerpo (y solo en vertical). */
+function DialogBody({ className, ...props }: React.ComponentProps<"div">) {
+  return <div data-slot="dialog-body" className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto p-5", className)} {...props} />
+}
+
 function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -150,6 +155,7 @@ function DialogDescription({
 }
 
 export {
+  DialogBody,
   Dialog,
   DialogClose,
   DialogContent,

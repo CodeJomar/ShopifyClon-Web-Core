@@ -19,15 +19,18 @@ export function LoginModal({ alEntrar }: { alEntrar?: () => void }) {
       </DialogTrigger>
       {/* El contenedor del modal conserva su posición fija; el vidrio y el neón van en un div interior (neon-anim fija position: relative). */}
       <DialogContent showCloseButton={false} className="overflow-visible border-0 bg-transparent p-0 shadow-none sm:max-w-[420px]">
-        <div className="vidrio neon-anim max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[28px] bg-[#0b1519]/85 p-7 backdrop-blur-2xl sm:p-8">
+        <div className="vidrio neon-anim flex max-h-[calc(100dvh-2rem)] flex-col rounded-[28px] bg-[#0b1519]/85 backdrop-blur-2xl">
           <DialogTitle className="sr-only">Iniciar sesión</DialogTitle>
           <DialogDescription className="sr-only">Entra a tu cuenta de OTemu.</DialogDescription>
-          <LoginView
-            alEntrar={() => {
-              setAbierto(false)
-              alEntrar?.()
-            }}
-          />
+          {/* Solo el cuerpo se desplaza (y solo en vertical); el vidrio y el neón no. */}
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-7 sm:p-8">
+            <LoginView
+              alEntrar={() => {
+                setAbierto(false)
+                alEntrar?.()
+              }}
+            />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
