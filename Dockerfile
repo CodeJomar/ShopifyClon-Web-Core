@@ -35,6 +35,12 @@ ENV API_INTERNAL_URL=$API_INTERNAL_URL
 # Clave pública de Stripe (modo prueba): Next la incrusta en el build, por eso es ARG y no variable de ejecución
 ARG NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 ENV NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=$NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+# WebSocket de tiempo real (wss://<host de la API>/ws): también se incrusta en el build y entra en la política de contenido
+ARG NEXT_PUBLIC_WS_URL=
+ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
+# Hosts de la API desde donde next/image carga fotos (opcional: por defecto local y Railway)
+ARG IMAGENES_HOSTS=
+ENV IMAGENES_HOSTS=$IMAGENES_HOSTS
 # La API se consume por el mismo origen (/api)
 ENV NEXT_PUBLIC_API_URL=/api
 
