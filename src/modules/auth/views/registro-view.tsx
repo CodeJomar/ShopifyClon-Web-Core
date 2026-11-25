@@ -4,11 +4,12 @@ import * as React from "react"
 import { Mail, Phone, TriangleAlert, User } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Button } from "@/shared/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { FloatingInput } from "@/shared/components/composed/floating-input"
+import { Checkbox } from "@/shared/components/ui/checkbox"
 import { toast } from "@/shared/components/ui/toast"
 import { CampoContrasena } from "../components/campo-contrasena"
 import { registroAction } from "../actions/auth.actions"
@@ -22,12 +23,20 @@ export function RegistroView({ siguiente }: { siguiente?: string }) {
 
   const form = useForm<RegistroValues>({
     resolver: zodResolver(registroSchema),
-    defaultValues: { nombres: "", apellidos: "", correo_electronico: "", telefono: "", contrasena: "" },
+    defaultValues: { nombres: "", apellidos: "", correo_electronico: "", telefono: "", contrasena: "", acepta_privacidad: false },
   })
+
+  const acepta = useWatch({ control: form.control, name: "acepta_privacidad" })
 
   const enviar = form.handleSubmit(async (valores) => {
     setError(null)
-    const res = await registroAction({ ...valores, telefono: valores.telefono || undefined })
+    const res = await registroAction({
+      nombres: valores.nombres,
+      apellidos: valores.apellidos,
+      correo_electronico: valores.correo_electronico,
+      contrasena: valores.contrasena,
+      telefono: valores.telefono || undefined,
+    })
     if (res.ok) {
       toast.add({ type: "success", title: "Cuenta creada", description: "Revisa tu correo y escribe el código de 6 dígitos." })
       router.push(`/activar-cuenta?correo=${encodeURIComponent(valores.correo_electronico)}${cola}`)
@@ -81,6 +90,31 @@ export function RegistroView({ siguiente }: { siguiente?: string }) {
           mensajeError={mensaje("contrasena")}
           {...form.register("contrasena")}
         />
+
+        <div>
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="acepta-privacidad"
+              checked={acepta}
+              onCheckedChange={(v) => form.setValue("acepta_privacidad", v === true, { shouldValidate: true })}
+              aria-invalid={!!form.formState.errors.acepta_privacidad}
+              aria-describedby={form.formState.errors.acepta_privacidad ? "acepta-privacidad-error" : undefined}
+              className="mt-0.5"
+            />
+            <label htmlFor="acepta-privacidad" className="text-[13px] leading-snug text-muted-foreground">
+              He leído y acepto la{" "}
+              <Link href="/privacidad" target="_blank" rel="noopener noreferrer" className="font-bold text-brand-text hover:underline">
+                política de privacidad
+              </Link>{" "}
+              de OTemu.
+            </label>
+          </div>
+          {form.formState.errors.acepta_privacidad && (
+            <p id="acepta-privacidad-error" role="alert" className="mt-1.5 text-[12.5px] font-semibold text-destructive">
+              {form.formState.errors.acepta_privacidad.message}
+            </p>
+          )}
+        </div>
 
         <Button type="submit" className="w-full" size="lg" loading={form.formState.isSubmitting}>
           Crear cuenta

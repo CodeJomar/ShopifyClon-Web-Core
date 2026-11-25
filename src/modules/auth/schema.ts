@@ -28,6 +28,7 @@ export const registroSchema = z.object({
     .trim()
     .refine((valor) => valor === "" || PATRON_TELEFONO.test(valor), "El teléfono solo admite números, espacios y + ( ) -."),
   contrasena: contrasenaSchema,
+  acepta_privacidad: z.boolean().refine((v) => v, "Debes aceptar la política de privacidad para crear tu cuenta."),
 })
 
 export const activarSchema = z.object({
