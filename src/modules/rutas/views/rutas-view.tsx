@@ -81,16 +81,16 @@ export function RutasView() {
       <Link href={`/panel/rutas/${r.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
         <Eye aria-hidden="true" /> Detalle
       </Link>
-      <Link href={`/panel/rutas/${r.id}/guia`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+      <Link href={`/panel/rutas/${r.id}/guia`} className={buttonVariants({ variant: "ghost", size: "sm", className: "accion-icono" })}>
         <Printer aria-hidden="true" /> Guía
       </Link>
       {r.estado === "BORRADOR" && (
-        <Button size="sm" variant="soft" loading={ocupada === r.id} onClick={() => cambiarEstado(r, "iniciar")} leftIcon={<Play aria-hidden="true" />}>
+        <Button size="sm" className="accion-icono" variant="soft" loading={ocupada === r.id} onClick={() => cambiarEstado(r, "iniciar")} leftIcon={<Play aria-hidden="true" />}>
           Iniciar
         </Button>
       )}
       {r.estado === "EN_CURSO" && (
-        <Button size="sm" variant="soft" loading={ocupada === r.id} onClick={() => cambiarEstado(r, "finalizar")} leftIcon={<Flag aria-hidden="true" />}>
+        <Button size="sm" className="accion-icono" variant="soft" loading={ocupada === r.id} onClick={() => cambiarEstado(r, "finalizar")} leftIcon={<Flag aria-hidden="true" />}>
           Finalizar
         </Button>
       )}

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Plus } from "lucide-react"
+import { Archive, Pencil, Plus } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
@@ -176,6 +176,8 @@ export function PlanesView() {
                       <Button
                         size="sm"
                         variant="neutral"
+                        className="accion-icono"
+                        leftIcon={<Pencil aria-hidden="true" />}
                         onClick={() => setPanelEditar({ abierto: true, plan })}
                       >
                         Editar
@@ -184,6 +186,8 @@ export function PlanesView() {
                         <Button
                           size="sm"
                           variant="neutral"
+                          className="accion-icono"
+                          leftIcon={<Archive aria-hidden="true" />}
                           onClick={() => setPanelEliminar({ abierto: true, plan })}
                         >
                           Retirar

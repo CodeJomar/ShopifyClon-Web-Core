@@ -265,10 +265,10 @@ export function CuponesView() {
 
                       {puedeEscribir && (
                         <div className="mt-auto flex flex-wrap gap-2 pt-1">
-                          <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: cupon })} leftIcon={<Pencil aria-hidden="true" />}>
+                          <Button size="sm" className="accion-icono" variant="neutral" onClick={() => setPanel({ abierto: true, editando: cupon })} leftIcon={<Pencil aria-hidden="true" />}>
                             Editar
                           </Button>
-                          <Button size="sm" variant="danger-outline" onClick={() => eliminar(cupon)} leftIcon={<Trash2 aria-hidden="true" />}>
+                          <Button size="sm" className="accion-icono" variant="danger-outline" onClick={() => eliminar(cupon)} leftIcon={<Trash2 aria-hidden="true" />}>
                             Eliminar
                           </Button>
                         </div>

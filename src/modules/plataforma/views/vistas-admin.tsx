@@ -254,7 +254,7 @@ export function TiendasAdminView() {
                         <p className="text-[12px] font-medium text-muted-foreground">{t.ordenes_pagadas} órdenes</p>
                       </TableCell>
                       <TableCell className="pr-6 text-right">
-                        {puedeSuspender && <Button size="sm" variant={t.esta_activa ? "danger-outline" : "soft"} onClick={() => setObjetivo(t)} leftIcon={t.esta_activa ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}>
+                        {puedeSuspender && <Button size="sm" className="accion-icono" variant={t.esta_activa ? "danger-outline" : "soft"} onClick={() => setObjetivo(t)} leftIcon={t.esta_activa ? <Ban aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}>
                           {t.esta_activa ? "Suspender" : "Reactivar"}
                         </Button>}
                       </TableCell>
@@ -359,15 +359,15 @@ export function UsuariosAdminView() {
                           {(puedeSeguridad || puedeAdministradores) && u.esta_activo && !u.es_administrador_plataforma && (
                             <div className="flex flex-wrap justify-end gap-2">
                               {puedeAdministradores && !u.bloqueado && (
-                                <Button size="sm" variant="soft" onClick={() => setHaciendoAdmin(u)} leftIcon={<ShieldCheck aria-hidden="true" />}>Hacer administrador</Button>
+                                <Button size="sm" className="accion-icono" variant="soft" onClick={() => setHaciendoAdmin(u)} leftIcon={<ShieldCheck aria-hidden="true" />}>Hacer administrador</Button>
                               )}
                               {puedeSeguridad && (
                                 <>
-                                  <Button size="sm" variant="ghost" onClick={() => setAccion({ tipo: "sesiones", usuario: u })} leftIcon={<LogOut aria-hidden="true" />}>Cerrar sesiones</Button>
+                                  <Button size="sm" className="accion-icono" variant="ghost" onClick={() => setAccion({ tipo: "sesiones", usuario: u })} leftIcon={<LogOut aria-hidden="true" />}>Cerrar sesiones</Button>
                                   {u.bloqueado ? (
-                                    <Button size="sm" variant="soft" onClick={() => setAccion({ tipo: "desbloquear", usuario: u })} leftIcon={<UserCheck aria-hidden="true" />}>Desbloquear</Button>
+                                    <Button size="sm" className="accion-icono" variant="soft" onClick={() => setAccion({ tipo: "desbloquear", usuario: u })} leftIcon={<UserCheck aria-hidden="true" />}>Desbloquear</Button>
                                   ) : (
-                                    <Button size="sm" variant="danger-outline" onClick={() => setAccion({ tipo: "bloquear", usuario: u })} leftIcon={<Ban aria-hidden="true" />}>Bloquear</Button>
+                                    <Button size="sm" className="accion-icono" variant="danger-outline" onClick={() => setAccion({ tipo: "bloquear", usuario: u })} leftIcon={<Ban aria-hidden="true" />}>Bloquear</Button>
                                   )}
                                 </>
                               )}

@@ -171,10 +171,10 @@ export function PersonalView() {
 
                     {tieneAcciones && (
                       <div className="mt-auto flex flex-wrap gap-2 border-t border-border/60 pt-3">
-                        <Button size="sm" variant="neutral" onClick={() => setPanelEditar({ abierto: true, miembro })} leftIcon={<Pencil aria-hidden="true" />}>
+                        <Button size="sm" className="accion-icono" variant="neutral" onClick={() => setPanelEditar({ abierto: true, miembro })} leftIcon={<Pencil aria-hidden="true" />}>
                           Cambiar rol
                         </Button>
-                        <Button size="sm" variant="danger-outline" onClick={() => setPanelQuitar({ abierto: true, miembro })} leftIcon={<UserMinus aria-hidden="true" />}>
+                        <Button size="sm" className="accion-icono" variant="danger-outline" onClick={() => setPanelQuitar({ abierto: true, miembro })} leftIcon={<UserMinus aria-hidden="true" />}>
                           Quitar
                         </Button>
                       </div>

@@ -264,6 +264,18 @@
 }
 }
 
+/* Acciones de las tablas: en pantallas angostas se ve solo el icono (el texto sigue disponible para lectores de pantalla). */
+@media (max-width: 767px) {
+  .accion-icono {
+    font-size: 0 !important;
+    gap: 0 !important;
+    padding-inline: 0 !important;
+    aspect-ratio: 1 / 1;
+    flex: none;
+    justify-content: center;
+  }
+}
+
 /* Los buscadores ya traen su propio botón para limpiar: se oculta la "x" nativa del navegador (si no, salen dos). */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration,

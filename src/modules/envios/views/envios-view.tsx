@@ -162,10 +162,10 @@ export function EnviosView() {
 
                   {puedeEscribir && (
                     <div className="mt-auto flex flex-wrap gap-2 border-t border-border/60 pt-3">
-                      <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: tarifa })} leftIcon={<Pencil aria-hidden="true" />}>
+                      <Button size="sm" className="accion-icono" variant="neutral" onClick={() => setPanel({ abierto: true, editando: tarifa })} leftIcon={<Pencil aria-hidden="true" />}>
                         Editar
                       </Button>
-                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(tarifa)} leftIcon={<Trash2 aria-hidden="true" />}>
+                      <Button size="sm" className="accion-icono" variant="danger-outline" onClick={() => eliminar(tarifa)} leftIcon={<Trash2 aria-hidden="true" />}>
                         Eliminar
                       </Button>
                     </div>

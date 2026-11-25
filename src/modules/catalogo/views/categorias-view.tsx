@@ -138,10 +138,10 @@ export function CategoriasView() {
                   </div>
                   {puedeEscribir && (
                     <div className="flex shrink-0 gap-2">
-                      <Button size="sm" variant="neutral" onClick={() => setPanel({ abierto: true, editando: categoria })} leftIcon={<Pencil aria-hidden="true" />}>
+                      <Button size="sm" className="accion-icono" variant="neutral" onClick={() => setPanel({ abierto: true, editando: categoria })} leftIcon={<Pencil aria-hidden="true" />}>
                         Editar
                       </Button>
-                      <Button size="sm" variant="danger-outline" onClick={() => eliminar(categoria)} leftIcon={<Trash2 aria-hidden="true" />}>
+                      <Button size="sm" className="accion-icono" variant="danger-outline" onClick={() => eliminar(categoria)} leftIcon={<Trash2 aria-hidden="true" />}>
                         Eliminar
                       </Button>
                     </div>

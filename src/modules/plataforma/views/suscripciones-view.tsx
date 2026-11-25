@@ -236,6 +236,7 @@ export function SuscripcionesView() {
                           <Button
                             variant="neutral"
                             size="sm"
+                            className="accion-icono"
                             onClick={() =>
                               setPanelEstado({
                                 abierto: true,
@@ -251,6 +252,7 @@ export function SuscripcionesView() {
                           <Button
                             variant="danger"
                             size="sm"
+                            className="accion-icono"
                             onClick={() =>
                               setPanelEstado({
                                 abierto: true,
