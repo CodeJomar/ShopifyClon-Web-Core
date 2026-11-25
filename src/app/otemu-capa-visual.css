@@ -452,3 +452,28 @@ body { background: var(--background); color: var(--foreground); }
 .otemu-landing-btn, .otemu-marketing-cta a, .otemu-landing-btn:hover { background: var(--primary); color: var(--primary-foreground); text-shadow: 0 1px 2px rgb(0 0 0 / .14); }
 .otemu-marketing-symbol { background: var(--primary); }
 .otemu-storefront .rounded-full.bg-destructive { background: var(--destructive); }
+
+/* Dashboard limpio: barra lateral, encabezado y contenido comparten un único fondo (el del tema). Solo las tarjetas se elevan sobre él;
+   sin franja de otro color en el encabezado, sin línea inferior ni divisor vertical junto a la barra lateral. */
+.otemu-header-holder,
+.dark .otemu-header-holder {
+  background: transparent;
+  border-bottom: 0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* Líneas del dashboard, un solo criterio:
+   1) Las tarjetas no llevan contorno ni sombra: se distinguen del fondo por su tono.
+   2) Las líneas que quedan son solo separadores internos (filas de tablas, listas con divisores, pie de paginación) y todas usan el
+      mismo trazo tenue: `--border` se redefine aquí, así que cada `border-border` del tablero lo toma sin tocar cada pantalla.
+   Los campos de formulario usan `--input` y conservan su borde. */
+.otemu-app-shell {
+  --border: rgb(255 255 255 / 0.07);
+  --island-border: rgb(255 255 255 / 0.07);
+}
+.otemu-app-shell [data-slot="card"],
+.otemu-app-shell [data-slot="table-container"] {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}

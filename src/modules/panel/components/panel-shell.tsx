@@ -109,8 +109,6 @@ export function PanelShell({ children, exigirTienda = true }: { children: React.
       {!isMobile && (
         <aside className={cn("otemu-rail sticky top-0 h-screen shrink-0 p-3 transition-[width] duration-200", isCollapsed ? "w-[88px]" : "w-[264px]")}>
           {menu}
-          {/* Divisor vertical: arranca a la altura del divisor del encabezado (76 px), queda centrado entre el menú (12 px) y el main (24 px) y deja aire abajo */}
-          <div aria-hidden="true" className="absolute -right-1 top-[76px] bottom-10 w-px bg-brand-strong/12" />
         </aside>
       )}
       {isMobile && (
