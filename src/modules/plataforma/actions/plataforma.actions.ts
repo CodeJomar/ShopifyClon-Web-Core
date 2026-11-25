@@ -5,8 +5,10 @@ import type {
   ComisionTiendaDto,
   ConsultaPaginadaDto,
   CrearPlanRequest,
+  EstadoRespaldosDto,
   MotivoTiendaRequest,
   PlanPlataformaDto,
+  ResultadoRespaldoDto,
   SuscripcionPlataformaDto,
 } from "@/dtos/plataforma"
 
@@ -60,3 +62,11 @@ export const listarComisionesAction = (params?: { pagina?: number }) =>
       },
     }),
   )
+
+/** Estado del respaldo programado y archivos guardados (permiso PLATAFORMA_SEGURIDAD). Los archivos no se descargan por la API. */
+export const estadoRespaldosAction = () =>
+  resultado(peticionApi<EstadoRespaldosDto>({ method: "GET", url: "/plataforma/respaldos" }))
+
+/** Crea un respaldo ahora; queda auditado en el servidor. */
+export const crearRespaldoAction = () =>
+  resultado(peticionApi<ResultadoRespaldoDto>({ method: "POST", url: "/plataforma/respaldos" }))

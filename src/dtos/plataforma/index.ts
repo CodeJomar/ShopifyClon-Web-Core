@@ -74,3 +74,33 @@ export interface ConsultaPaginadaDto<T> {
 export interface MotivoTiendaRequest {
   motivo: string
 }
+
+// ---------- Respaldos de la base (GET/POST /plataforma/respaldos, permiso PLATAFORMA_SEGURIDAD) ----------
+
+export interface ResultadoRespaldoDto {
+  nombre: string
+  bytes: number
+  tablas: number
+  filas: number
+  duracion_ms: number
+  creado_en: string
+  exito: boolean
+  error?: string
+}
+
+export interface ArchivoRespaldoDto {
+  nombre: string
+  bytes: number
+  fecha: string
+}
+
+export interface EstadoRespaldosDto {
+  habilitado: boolean
+  horas: string[]
+  zona: string
+  retencion_dias: number
+  directorio_escribible: boolean
+  proxima_ejecucion?: string
+  ultimo?: ResultadoRespaldoDto
+  archivos: ArchivoRespaldoDto[]
+}

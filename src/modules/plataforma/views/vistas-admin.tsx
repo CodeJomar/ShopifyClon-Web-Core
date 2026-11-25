@@ -23,6 +23,7 @@ import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import type { EventoAuditoriaDto, TiendaAdminDto, UsuarioAdminDto } from "@/dtos/administracion"
 import { reactivarTiendaAction, suspenderTiendaAction } from "../actions/plataforma.actions"
+import { TarjetaRespaldos } from "../components/tarjeta-respaldos"
 import { useListaAdmin } from "../hooks/use-lista-admin"
 import { usePanel } from "@/modules/panel/hooks/use-panel"
 
@@ -481,6 +482,7 @@ export function SeguridadAdminView() {
   const bloqueados = useListaAdmin<UsuarioAdminDto>("/plataforma/usuarios", { estado: "BLOQUEADO" })
   const usuarios = useListaAdmin<UsuarioAdminDto>("/plataforma/usuarios", {})
   const eventos = useListaAdmin<EventoAuditoriaDto>("/plataforma/auditoria", { categoria: "SEGURIDAD" })
+  const { permisosPlataforma } = usePanel()
   const error = eventos.error ?? usuarios.error
   return (
     <div className="space-y-5">
@@ -494,6 +496,7 @@ export function SeguridadAdminView() {
             <Kpi icono={ShieldAlert} titulo="Eventos de seguridad" valor={String(eventos.datos?.total ?? "…")} detalle="bloqueos, cierres de sesión y cambios de clave" />
             <Kpi icono={Users} titulo="Usuarios" valor={String(usuarios.datos?.total ?? "…")} detalle="personas con cuenta" />
           </div>
+          {permisosPlataforma.includes("PLATAFORMA_SEGURIDAD") && <TarjetaRespaldos />}
           <Card>
             <CardContent className="space-y-3">
               <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Eventos recientes</h2>
