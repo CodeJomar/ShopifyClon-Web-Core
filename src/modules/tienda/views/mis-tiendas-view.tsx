@@ -9,7 +9,7 @@ import { Badge } from "@/shared/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/shared/components/ui/alert"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
-import { fijarTiendaAction, misTiendasAction } from "../actions/tienda.actions"
+import { fijarTiendaAction, misTiendasAction, tiendaActivaAction } from "../actions/tienda.actions"
 import type { MiTiendaDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
 
@@ -25,6 +25,8 @@ export function MisTiendasView() {
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
   const [eligiendo, setEligiendo] = React.useState<string | null>(null)
+  // Tienda con la que trabaja la sesión (GET /panel/tienda). `esta_activa` del listado dice si la tienda está habilitada, no cuál es la elegida.
+  const [actualId, setActualId] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     let cancelado = false
@@ -32,6 +34,9 @@ export function MisTiendasView() {
       if (cancelado) return
       if (res.ok) setTiendas(res.datos)
       else setError(res.error)
+    })
+    tiendaActivaAction().then((res) => {
+      if (!cancelado && res.ok) setActualId(res.datos.id)
     })
     return () => {
       cancelado = true
@@ -87,7 +92,7 @@ export function MisTiendasView() {
         <ul className="grid gap-4 sm:grid-cols-2">
           {tiendas.map((tienda) => (
             <li key={tienda.tienda_id}>
-              <Card className={`h-full transition-colors ${tienda.esta_activa ? "border-primary ring-2 ring-primary/25" : ""}`}>
+              <Card className={`h-full transition-colors ${tienda.tienda_id === actualId ? "border-primary ring-2 ring-primary/25" : ""}`}>
                 <CardHeader>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
@@ -99,17 +104,18 @@ export function MisTiendasView() {
                 </CardHeader>
                 <CardContent className="flex items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    {tienda.esta_activa && <Badge variant="estado" tono="marca">Tienda actual</Badge>}
+                    {tienda.tienda_id === actualId && <Badge variant="estado" tono="marca">Tienda actual</Badge>}
+                    {!tienda.esta_activa && <Badge variant="estado" tono="neutro">Desactivada</Badge>}
                     {!tienda.operativa && <Badge variant="estado" tono="aviso">Requiere atención</Badge>}
                   </div>
                   <Button
-                    variant={tienda.esta_activa ? "default" : "soft"}
+                    variant={tienda.tienda_id === actualId ? "default" : "soft"}
                     size="sm"
                     loading={eligiendo === tienda.tienda_id}
                     disabled={eligiendo !== null}
                     onClick={() => elegir(tienda)}
                   >
-                    {tienda.esta_activa ? "Continuar" : "Abrir"}
+                    {tienda.tienda_id === actualId ? "Continuar" : "Abrir"}
                   </Button>
                 </CardContent>
               </Card>
