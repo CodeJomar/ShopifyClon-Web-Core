@@ -131,7 +131,7 @@ export function InicioView() {
 
       {datos && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div data-tour="kpis" className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <TarjetaMetrica destacada titulo="Ventas netas" valor={formatearDinero(ventasNetas, moneda)} ayuda="En el rango elegido" icono={<Banknote className="size-4.5" />} />
             <TarjetaMetrica titulo="Ventas históricas" valor={formatearDinero(datos.resumen.ventas_historicas, moneda)} ayuda="Desde que abriste tu tienda" icono={<Wallet className="size-4.5" />} />
             <TarjetaMetrica titulo="Saldo por cobrar" valor={formatearDinero(datos.resumen.saldo_por_cobrar, moneda)} ayuda="Pendiente de liberar" icono={<Coins className="size-4.5" />} />

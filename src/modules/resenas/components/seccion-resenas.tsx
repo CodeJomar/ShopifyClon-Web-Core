@@ -1,5 +1,6 @@
 "use client"
 
+import { useAcceso } from "@/modules/acceso/acceso"
 import * as React from "react"
 import Link from "next/link"
 import { BadgeCheck, MessageSquareText, Star } from "lucide-react"
@@ -161,11 +162,17 @@ function Formulario({ base, datos, alGuardar }: { base: string; datos: Respuesta
   const [comentario, setComentario] = React.useState(mia?.comentario ?? "")
   const [error, setError] = React.useState<string | null>(null)
   const [enviando, setEnviando] = React.useState(false)
+  const { acceso } = useAcceso()
+  const autenticado = acceso.estado === "autenticado"
 
   if (!datos.puedo_resenar && !mia) {
     return (
       <p className="rounded-2xl border border-white/12 bg-white/[0.05] px-4 py-3 text-[13px] font-medium leading-relaxed text-muted-foreground backdrop-blur-xl">
-        Solo quien compró este producto puede calificarlo. <Link href="/login" className="font-bold text-brand-text hover:underline">Inicia sesión</Link> si ya lo compraste.
+        {autenticado ? (
+          <>Aún no puedes calificar este producto: la reseña se habilita cuando lo compras y la tienda marca tu pedido como <strong className="font-bold text-foreground">entregado</strong>.</>
+        ) : (
+          <>Solo quien compró este producto y ya lo recibió puede calificarlo. <Link href="/login" className="font-bold text-brand-text hover:underline">Inicia sesión</Link> si ya lo compraste.</>
+        )}
       </p>
     )
   }
@@ -212,7 +219,7 @@ function Formulario({ base, datos, alGuardar }: { base: string; datos: Respuesta
           onChange={(e) => setComentario(e.target.value)}
           maxLength={1000}
           rows={4}
-          className="w-full resize-y rounded-xl border-[1.8px] border-input bg-transparent px-3.5 py-3 text-[14px] text-foreground outline-none transition-colors hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18"
+          className="w-full resize-y rounded-xl border-[1.8px] border-input bg-secondary px-3.5 py-3 text-[14px] text-foreground outline-none transition-colors hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18"
         />
         <span className="block text-right text-[11.5px] text-muted-foreground">{comentario.length} / 1000</span>
       </label>

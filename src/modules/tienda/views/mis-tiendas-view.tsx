@@ -56,7 +56,7 @@ export function MisTiendasView() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div data-tour="encabezado" className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="text-[18px] font-extrabold tracking-tight text-foreground">Mis tiendas</h1>
           <p className="mt-1 text-[13px] text-muted-foreground">Elige con cuál quieres trabajar.</p>
@@ -89,7 +89,7 @@ export function MisTiendasView() {
       )}
 
       {tiendas && tiendas.length > 0 && (
-        <ul className="grid gap-4 sm:grid-cols-2">
+        <ul data-tour="tiendas" className="grid gap-4 sm:grid-cols-2">
           {tiendas.map((tienda) => (
             <li key={tienda.tienda_id}>
               <Card className={`h-full transition-colors ${tienda.tienda_id === actualId ? "border-primary ring-2 ring-primary/25" : ""}`}>

@@ -38,35 +38,51 @@ const PUBLICOS_FIN: PasoTour[] = [
   { ruta: "/planes", titulo: "Planes para vender", texto: "Hay un plan gratuito para empezar y planes de pago con más productos y personal." },
 ]
 
+// Marcas que se reutilizan en las pantallas del panel (ver `data-tour` en EncabezadoPagina y las tablas).
+const ENCABEZADO = '[data-tour="encabezado"]'
+const ACCIONES = '[data-tour="acciones"], [data-tour="encabezado"]'
+const FILTROS = '[data-slot="card"]:has(input[type="search"]), [data-slot="card"]:has([role="group"])'
+const TABLA = '[data-slot="table-container"]'
+const LISTA = "main ul.grid"
+const KPIS = '[data-tour="kpis"]'
+
 const PROPIETARIO: PasoTour[] = [
-  { ruta: "/propietario", titulo: "Bienvenido al panel del propietario", texto: "Aquí gestionas tus tiendas. Este recorrido muestra cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
-  { ruta: "/propietario", titulo: "Panel general", texto: "Un resumen de todas tus tiendas: ventas, saldo, suscripción y alertas (órdenes por preparar, stock bajo), con totales por moneda." },
-  { ruta: "/cuenta/tiendas", titulo: "Mis tiendas", texto: "La lista de las tiendas donde participas y tu rol en cada una. Desde aquí eliges la tienda activa para entrar a su panel." },
-  { ruta: "/panel", titulo: "Dashboard de la tienda", texto: "Métricas de la tienda activa: ventas por día, órdenes y productos más vendidos." },
-  { ruta: "/panel/productos", titulo: "Catálogo", texto: "Alta de productos con fotos, variantes (color, talla), precios y publicación. Publicar exige precio e imagen principal." },
-  { ruta: "/panel/categorias", titulo: "Categorías", texto: "Organiza el catálogo en categorías para que los compradores filtren en el mercado y en tu tienda." },
-  { ruta: "/panel/inventario", titulo: "Inventario", texto: "Stock por variante, ajustes con motivo y el historial de movimientos." },
-  { ruta: "/panel/ordenes", titulo: "Órdenes", texto: "Pedidos de la tienda con filtros. En el detalle: pago manual, preparar y despachar el envío, cancelar y reembolsar." },
-  { ruta: "/panel/cupones", titulo: "Cupones", texto: "Descuentos por porcentaje o monto, con vigencia y límite de usos." },
-  { ruta: "/panel/envios", titulo: "Tarifas de envío", texto: "Las tarifas entre las que elige el comprador al pagar, una por tienda." },
-  { ruta: "/panel/rutas", titulo: "Rutas de reparto", texto: "Agrupa envíos en rutas, inícialas, finalízalas y genera la guía de remisión." },
-  { ruta: "/panel/personal", titulo: "Personal", texto: "Agrega personas a tu equipo con un rol: administrador, gestor de catálogo o gestor de pedidos." },
-  { ruta: "/panel/configuracion", titulo: "Configuración de la tienda", texto: "Datos de la tienda y activación o desactivación (solo el propietario)." },
-  { ruta: "/panel/suscripcion", titulo: "Suscripción", texto: "Tu plan, el uso frente a los límites, el pago, el cambio de plan y la cancelación." },
-  { ruta: "/cuenta", titulo: "Tu cuenta", texto: "Perfil, direcciones, órdenes como comprador y seguridad (contraseña, verificación en dos pasos y sesiones)." },
+  { ruta: "/propietario", titulo: "Bienvenido al panel del propietario", texto: "Aquí gestionas tus tiendas. Este recorrido señala qué hace cada zona de cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
+  { ruta: "/propietario", titulo: "Tus cifras de un vistazo", texto: "Ventas netas de los últimos 30 días de todas tus tiendas, pedidos y el saldo por cobrar: tu parte después de las comisiones. Los montos van separados por moneda.", selector: KPIS },
+  { ruta: "/propietario", titulo: "Qué tienda vende más y qué atender", texto: "A la izquierda, las ventas de cada tienda comparadas. A la derecha, lo pendiente: órdenes por preparar y productos con poco stock, para que sepas por dónde empezar.", selector: '[data-tour="alertas"]' },
+  { ruta: "/cuenta/tiendas", titulo: "Mis tiendas", texto: "Cada tarjeta es una tienda donde participas, con tu rol. «Continuar» o «Abrir» la deja como tienda activa y te lleva a su panel. Con «Crear tienda» abres otra.", selector: '[data-tour="tiendas"]' },
+  { ruta: "/panel", titulo: "Dashboard de la tienda activa", texto: "Cambia el rango (hoy, 7 o 30 días) y las cifras se recalculan. Abajo, el enlace público de tu tienda: cópialo para compartirlo con tus compradores.", selector: KPIS },
+  { ruta: "/panel/productos", titulo: "Catálogo: buscar y filtrar", texto: "Busca por título, filtra por publicados o borradores y por categoría. Un producto nuevo nace como borrador: no se ve en el mercado hasta que lo publiques.", selector: FILTROS },
+  { ruta: "/panel/productos", titulo: "Agregar un producto", texto: "Aquí creas un producto con su foto, descripción, variantes (color, talla) y precios. Para publicar hacen falta precio e imagen principal.", selector: ACCIONES },
+  { ruta: "/panel/productos", titulo: "Tus productos", texto: "Cada tarjeta muestra la foto, el precio y si está activo en tienda. Ábrela para editar sus variantes, imágenes, categorías o despublicarla.", selector: LISTA },
+  { ruta: "/panel/categorias", titulo: "Categorías", texto: "Crea categorías y asígnalas a los productos: los compradores filtran por ellas en tu tienda y en el mercado.", selector: ACCIONES },
+  { ruta: "/panel/inventario", titulo: "Inventario", texto: "Elige un producto para ver el stock de cada variante. Ajusta la cantidad indicando un motivo: queda registrado en el historial de movimientos.", selector: ENCABEZADO },
+  { ruta: "/panel/ordenes", titulo: "Órdenes: filtros", texto: "Filtra por estado (abiertas, completadas, canceladas), busca por número o correo y abre más filtros por fecha. El indicador «en vivo» avisa cuando entra una orden nueva.", selector: FILTROS },
+  { ruta: "/panel/ordenes", titulo: "Órdenes: el listado", texto: "Cada fila muestra cliente, fecha, estado, pago y envío. Ábrela para el detalle: registrar el pago manual, preparar y despachar el envío, cancelar o reembolsar.", selector: TABLA },
+  { ruta: "/panel/cupones", titulo: "Cupones", texto: "Crea descuentos por porcentaje o por monto, con vigencia y límite de usos. El comprador los aplica en el carrito.", selector: ACCIONES },
+  { ruta: "/panel/envios", titulo: "Tarifas de envío", texto: "Define las tarifas entre las que elige el comprador al pagar. Cada tienda del carrito pide una tarifa.", selector: ACCIONES },
+  { ruta: "/panel/rutas", titulo: "Rutas de reparto", texto: "Agrupa envíos en una ruta con chofer y placa. «Iniciar» despacha todos sus envíos; en el detalle marcas cada parada como entregada o no entregada, y «Guía» imprime la guía de remisión.", selector: ACCIONES },
+  { ruta: "/panel/personal", titulo: "Personal", texto: "Agrega a una persona con cuenta a tu equipo y elige su rol: administrador, gestor de catálogo o gestor de pedidos. Cada rol ve solo lo que le corresponde.", selector: ACCIONES },
+  { ruta: "/panel/configuracion", titulo: "Configuración de la tienda", texto: "Los datos públicos de la tienda y, solo para el propietario, activarla o desactivarla.", selector: ENCABEZADO },
+  { ruta: "/panel/suscripcion", titulo: "Suscripción", texto: "Tu plan, cuánto usas frente a los límites (tiendas, productos, personal), el pago y el cambio o la cancelación del plan.", selector: ENCABEZADO },
+  { ruta: "/cuenta", titulo: "Tu cuenta", texto: "Tu perfil, tus direcciones, tus órdenes como comprador y la seguridad: contraseña, verificación en dos pasos y cierre de sesiones.", selector: ENCABEZADO },
 ]
 
 const ADMINISTRADOR: PasoTour[] = [
-  { ruta: "/plataforma", titulo: "Bienvenido a la administración", texto: "Control de toda la plataforma. Este recorrido muestra cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
-  { ruta: "/plataforma", titulo: "Resumen de la plataforma", texto: "Tiendas, usuarios y pedidos de un vistazo, con las tiendas que necesitan atención y la actividad reciente." },
-  { ruta: "/plataforma/tiendas", titulo: "Tiendas", texto: "Todas las tiendas con su dueño, equipo, suscripción y balance. Se pueden suspender y reactivar." },
-  { ruta: "/plataforma/usuarios", titulo: "Usuarios", texto: "Listado de personas con cuenta: bloquear o desbloquear y cerrar sus sesiones." },
-  { ruta: "/plataforma/administradores", titulo: "Administradores y roles", texto: "Quién administra la plataforma y con qué rol y permisos. Los menús se ajustan a los permisos de cada persona." },
-  { ruta: "/plataforma/planes", titulo: "Planes", texto: "Crea y edita los planes de suscripción. Los planes se retiran del catálogo, nunca se borran." },
-  { ruta: "/plataforma/suscripciones", titulo: "Suscripciones", texto: "Estado de la suscripción de cada tienda: activa, vencida o cancelada." },
-  { ruta: "/plataforma/comisiones", titulo: "Comisiones", texto: "Lo que gana la plataforma por las ventas de cada tienda." },
-  { ruta: "/plataforma/auditoria", titulo: "Auditoría", texto: "Registro de solo lectura de las acciones sensibles, con filtros." },
-  { ruta: "/plataforma/seguridad", titulo: "Seguridad y respaldos", texto: "Cuentas bloqueadas, eventos de seguridad y los respaldos de la base de datos: estado, respaldar ahora y archivos guardados." },
+  { ruta: "/plataforma", titulo: "Bienvenido a la administración", texto: "Control de toda la plataforma. Este recorrido señala qué hace cada zona de cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
+  { ruta: "/plataforma", titulo: "La plataforma de un vistazo", texto: "Cuántas tiendas, tiendas suspendidas, usuarios y pedidos hay. Debajo, las tiendas que necesitan atención y la actividad reciente.", selector: "main .grid" },
+  { ruta: "/plataforma/tiendas", titulo: "Tiendas: buscar y filtrar", texto: "Busca una tienda por nombre y filtra por estado (activas, suspendidas).", selector: FILTROS },
+  { ruta: "/plataforma/tiendas", titulo: "Tiendas: el listado", texto: "Dueño, plan, estado y pedidos de cada tienda. La acción de la derecha suspende o reactiva la tienda; suspendida, deja de vender.", selector: TABLA },
+  { ruta: "/plataforma/usuarios", titulo: "Usuarios: filtros", texto: "Busca por nombre o correo y filtra por activos, bloqueados o sin activar.", selector: FILTROS },
+  { ruta: "/plataforma/usuarios", titulo: "Usuarios: acciones", texto: "«Hacer administrador» le da un rol de administración a esa persona; «Cerrar sesiones» la saca de todos sus dispositivos; «Bloquear» impide que inicie sesión.", selector: TABLA },
+  { ruta: "/plataforma/administradores", titulo: "Administradores", texto: "Quién administra la plataforma y con qué permisos. «Nuevo administrador» busca a una persona con cuenta y le asigna un rol. Nadie cambia ni quita su propia cuenta.", selector: ACCIONES },
+  { ruta: "/plataforma/administradores", titulo: "Roles y permisos", texto: "Cada administrador tiene un rol con permisos concretos; los menús se ajustan a lo que cada uno puede hacer. Crea roles propios solo con permisos que tú tienes.", selector: LISTA },
+  { ruta: "/plataforma/planes", titulo: "Planes de suscripción", texto: "Crea y edita los planes que ven los propietarios: precio, límites de productos y personal, comisión. Un plan se retira del catálogo, nunca se borra.", selector: ACCIONES },
+  { ruta: "/plataforma/suscripciones", titulo: "Suscripciones", texto: "El estado de la suscripción de cada tienda. Puedes suspender o reactivar una tienda desde aquí.", selector: TABLA },
+  { ruta: "/plataforma/comisiones", titulo: "Comisiones", texto: "Lo que gana la plataforma por las ventas de cada tienda, según el plan que tiene.", selector: TABLA },
+  { ruta: "/plataforma/auditoria", titulo: "Auditoría", texto: "Registro de solo lectura de las acciones sensibles: quién hizo qué y cuándo. Filtra por seguridad o negocio.", selector: FILTROS },
+  { ruta: "/plataforma/seguridad", titulo: "Seguridad", texto: "Cuentas bloqueadas ahora, eventos de seguridad y personas con cuenta.", selector: "main .grid" },
+  { ruta: "/plataforma/seguridad", titulo: "Respaldos de la base de datos", texto: "Estado del respaldo programado, próxima hora y último intento. «Respaldar ahora» crea uno al instante y queda auditado. Los archivos no se descargan desde la web: se recogen del servidor.", selector: '[data-tour="respaldos"]' },
 ]
 
 const CIERRE: PasoTour = { ruta: "/", titulo: "Fin del tour", texto: "Gracias por recorrer OTemu. Pulsa Esc para cerrar; puedes repetir el tour desde el botón de la barra." }

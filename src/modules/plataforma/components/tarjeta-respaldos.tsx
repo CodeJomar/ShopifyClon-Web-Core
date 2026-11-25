@@ -42,7 +42,7 @@ export function TarjetaRespaldos() {
   }
 
   return (
-    <Card>
+    <Card data-tour="respaldos">
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-2">

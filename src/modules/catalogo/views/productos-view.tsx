@@ -132,7 +132,7 @@ export function ProductosView() {
                 id="filtro-categoria"
                 value={categoriaId}
                 onChange={(e) => { setPagina(0); setCategoriaId(e.target.value) }}
-                className="h-11 w-full cursor-pointer rounded-xl border-[1.8px] border-input bg-transparent px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18 sm:w-48"
+                className="h-11 w-full cursor-pointer rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18 sm:w-48"
               >
                 <option value={SIN_FILTRO}>Todas las categorías</option>
                 {categorias.map((c) => (

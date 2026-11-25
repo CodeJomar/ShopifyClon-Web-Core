@@ -158,6 +158,12 @@ export function TourVirtual() {
 
   const paso = estado ? estado.pasos[estado.indice] : null
 
+  // Precarga las pantallas de los dos pasos que siguen: al avanzar con la flecha ya están listas.
+  React.useEffect(() => {
+    if (!estado) return
+    for (const p of estado.pasos.slice(estado.indice + 1, estado.indice + 3)) router.prefetch(p.ruta)
+  }, [estado, router])
+
   // Busca la zona resaltada (la pantalla puede tardar en cargar) y la mantiene al hacer scroll o cambiar el tamaño.
   React.useEffect(() => {
     if (!paso?.selector || ruta !== paso.ruta) return
@@ -171,7 +177,7 @@ export function TourVirtual() {
         desplazado = true
       }
       const r = el.getBoundingClientRect()
-      if (!cancelado) setZona({ x: r.left, y: r.top, w: r.width, h: r.height })
+      if (!cancelado) setZona((z) => (z && z.x === r.left && z.y === r.top && z.w === r.width && z.h === r.height ? z : { x: r.left, y: r.top, w: r.width, h: r.height }))
       return true
     }
     const intervalo = window.setInterval(() => {
@@ -203,13 +209,13 @@ export function TourVirtual() {
       {zona ? (
         <div
           aria-hidden="true"
-          className="absolute rounded-2xl border-2 border-primary transition-all duration-500"
+          className="absolute rounded-2xl border-2 border-primary transition-[left,top,width,height] duration-300"
           style={{
             left: zona.x - margen,
             top: zona.y - margen,
             width: zona.w + margen * 2,
             height: zona.h + margen * 2,
-            boxShadow: "0 0 0 9999px rgb(0 0 0 / 0.62), 0 0 28px 2px rgb(0 230 153 / 0.7)",
+            boxShadow: "0 0 0 9999px rgb(0 0 0 / 0.62)",
           }}
         />
       ) : (
@@ -217,7 +223,7 @@ export function TourVirtual() {
       )}
 
       <div className={cn("absolute inset-x-0 flex justify-center px-4", arriba ? "top-24" : "bottom-0 pb-6 sm:pb-8")}>
-        <div className={cn("vidrio neon-anim w-full max-w-xl rounded-3xl bg-[#0b1519]/90 p-5 backdrop-blur-2xl sm:p-6")}>
+        <div className={cn("w-full max-w-xl rounded-3xl border border-primary/60 bg-[#0b1519] p-5 shadow-2xl sm:p-6")}>
           <div className="flex items-center justify-between gap-3 text-[11px] font-bold uppercase tracking-[0.14em] text-primary">
             <span>Tour virtual</span>
             <span aria-label={`Paso ${estado.indice + 1} de ${total}`}>
@@ -225,7 +231,7 @@ export function TourVirtual() {
             </span>
           </div>
           <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
-            <div className="h-full rounded-full bg-primary shadow-[0_0_10px_rgb(0_230_153/0.9)] transition-all duration-500" style={{ width: `${((estado.indice + 1) / total) * 100}%` }} />
+            <div className="h-full rounded-full bg-primary shadow-[0_0_10px_rgb(0_230_153/0.9)] transition-[width] duration-300" style={{ width: `${((estado.indice + 1) / total) * 100}%` }} />
           </div>
           <h2 className="mt-4 text-[22px] font-extrabold leading-tight tracking-tight text-white sm:text-[26px]">{paso.titulo}</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/75">{paso.texto}</p>

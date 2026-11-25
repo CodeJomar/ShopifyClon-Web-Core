@@ -7,21 +7,17 @@ import { toast } from "@/shared/components/ui/toast"
 import { cn } from "@/shared/utils/cn"
 
 /**
- * Etiqueta "outlined cut" (docs/diseno-web.md §4.2): centrada dentro del campo vacío; al enfocar o tener valor
- * sube y corta el borde superior con el fondo de la isla. Los selectores `peer-[...]` son el mismo estado para
- * input, select y textarea.
+ * Etiqueta flotante SIN fondo: centrada dentro del campo vacío; al enfocar o tener valor sube a la parte superior del propio campo
+ * (queda dentro, no corta el borde) y el texto escrito baja debajo de ella. Sin rectángulo detrás, así funciona sobre cualquier
+ * superficie (vidrio, tarjeta, lienzo). Los selectores `peer-[...]` son el mismo estado para input, select y textarea.
  */
-export const claseCorteEtiqueta = cn(
-  // Mitad superior = fondo del contenedor; mitad inferior = fondo del campo (muted en deshabilitado y solo lectura)
-  "[--etiqueta-corte:linear-gradient(to_bottom,var(--campo-exterior)_50%,var(--campo-fondo,var(--campo-exterior))_50%)]",
-  "peer-disabled:[--campo-fondo:var(--muted)] peer-[:is(input,textarea):read-only]:[--campo-fondo:var(--muted)]"
-)
+/** Espacio superior del texto escrito para dejar sitio a la etiqueta subida (input y select de 44 px). */
+export const clasePadCampoConEtiqueta = "pt-[15px]"
 
 export const claseEtiqueta = cn(
-  "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 px-1 text-[13px] font-medium text-muted-foreground transition-all duration-200",
-  claseCorteEtiqueta,
-  "peer-focus:top-0 peer-focus:[background-image:var(--etiqueta-corte)] peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-primary",
-  "peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:[background-image:var(--etiqueta-corte)] peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
+  "pointer-events-none absolute top-1/2 z-10 origin-left -translate-y-1/2 text-[13px] font-medium text-muted-foreground transition-all duration-200",
+  "peer-focus:top-[9px] peer-focus:translate-y-0 peer-focus:text-[10.5px] peer-focus:font-bold peer-focus:text-primary",
+  "peer-[:not(:placeholder-shown)]:top-[9px] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:text-[10.5px] peer-[:not(:placeholder-shown)]:font-bold",
   "peer-disabled:text-muted-foreground"
 )
 
@@ -92,7 +88,7 @@ const FloatingInput = React.forwardRef<HTMLInputElement, FloatingInputProps>(
             type={esContrasena && mostrar ? "text" : type}
             placeholder=" "
             aria-describedby={mensaje ? `${inputId}-ayuda` : undefined}
-            className={cn("peer h-11", izquierda ? "pl-11" : "pl-[22px]", hayAccion ? "pr-11" : "")}
+            className={cn("peer h-11", clasePadCampoConEtiqueta, izquierda ? "pl-11" : "pl-[22px]", hayAccion ? "pr-11" : "")}
             {...props}
           />
 

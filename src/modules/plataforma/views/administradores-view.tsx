@@ -147,7 +147,7 @@ function ListaAdministradores({ permisos, roles, admins, recargar }: { permisos:
 
   return (
     <>
-      <div className="flex justify-end">
+      <div data-tour="acciones" className="flex justify-end">
         <Button onClick={() => setAlta(true)} leftIcon={<Plus aria-hidden="true" />}>Nuevo administrador</Button>
       </div>
       <ul className="grid gap-4 md:grid-cols-2">

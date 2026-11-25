@@ -113,7 +113,7 @@ export function PanelGeneralView() {
 
       {tiendas && tiendas.length > 0 && resumen && (
         <>
-          <div className="grid gap-4 md:grid-cols-3">
+          <div data-tour="kpis" className="grid gap-4 md:grid-cols-3">
             <div className="rounded-3xl bg-primary p-6 text-sobre-marca md:col-span-1">
               <p className="flex items-center gap-2 text-[13px] font-bold">
                 <TrendingUp aria-hidden="true" className="size-4" /> Ventas de todas tus tiendas
@@ -133,7 +133,7 @@ export function PanelGeneralView() {
             <Kpi icono={Banknote} titulo="Saldo por cobrar" valor={totales.length === 0 ? formatearDinero(0, "PEN") : totales.map((t) => formatearDinero(t.saldo_pendiente, t.moneda)).join(" · ")} detalle="tu parte, después de comisiones" />
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
+          <div data-tour="alertas" className="grid gap-4 lg:grid-cols-[1.2fr_1fr]">
             <Card>
               <CardContent className="space-y-4">
                 <h2 className="text-[16px] font-extrabold tracking-tight text-foreground">Ventas por tienda</h2>

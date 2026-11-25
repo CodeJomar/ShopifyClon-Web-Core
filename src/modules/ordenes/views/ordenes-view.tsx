@@ -251,7 +251,7 @@ function CampoSelect({ etiqueta, valor, opciones, onCambiar }: { etiqueta: strin
   return (
     <label className="block space-y-1.5 text-[12px]">
       <span className="font-bold text-muted-foreground">{etiqueta}</span>
-      <select className="h-11 w-full cursor-pointer rounded-xl border-[1.8px] border-input bg-transparent px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18" value={valor} onChange={(e) => onCambiar(e.target.value)}>
+      <select className="h-11 w-full cursor-pointer rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18" value={valor} onChange={(e) => onCambiar(e.target.value)}>
         {opciones.map(([v, t]) => (
           <option key={v || "todos"} value={v}>
             {t}
@@ -266,7 +266,7 @@ function CampoFecha({ etiqueta, valor, onCambiar }: { etiqueta: string; valor?: 
   return (
     <label className="block space-y-1.5 text-[12px]">
       <span className="font-bold text-muted-foreground">{etiqueta}</span>
-      <input type="date" className="h-11 w-full rounded-xl border-[1.8px] border-input bg-transparent px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18" value={valor ?? ""} onChange={(e) => onCambiar(e.target.value || undefined)} />
+      <input type="date" className="h-11 w-full rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18" value={valor ?? ""} onChange={(e) => onCambiar(e.target.value || undefined)} />
     </label>
   )
 }

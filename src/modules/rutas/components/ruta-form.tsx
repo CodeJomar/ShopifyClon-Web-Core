@@ -126,7 +126,7 @@ export function RutaForm({ inicial }: { inicial?: RutaDetalle }) {
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
               aria-invalid={errores.fecha ? true : undefined}
-              className="h-11 w-full rounded-xl border-[1.8px] border-input bg-transparent px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18 aria-invalid:border-destructive"
+              className="h-11 w-full rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18 aria-invalid:border-destructive"
             />
             {errores.fecha && <span className="text-[12px] text-destructive-text">{errores.fecha}</span>}
           </label>
