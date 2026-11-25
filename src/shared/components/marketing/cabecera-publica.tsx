@@ -3,13 +3,14 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, ShoppingBag, Store } from "lucide-react"
+import { Menu, ShoppingBag, Store, Compass } from "lucide-react"
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 import { cn } from "@/shared/utils/cn"
 import { useCarrito } from "@/modules/carrito-global/carrito"
 import { useAcceso } from "@/modules/acceso/acceso"
 import { MenuCuenta, useEnlacesCuenta } from "./menu-cuenta"
+import { iniciarTour } from "@/modules/tour/tour-virtual"
 import { claseBotonContorno, claseBotonMarca } from "./estilos"
 
 const ENLACES = [
@@ -72,6 +73,16 @@ export function CabeceraPublica() {
               <span className="absolute -right-1.5 -top-1.5 flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-extrabold leading-5 text-sobre-marca">{cantidadTotal}</span>
             )}
           </Link>
+          <button
+            type="button"
+            onClick={iniciarTour}
+            aria-label="Iniciar el tour virtual"
+            title="Tour virtual (se maneja con las flechas ← →)"
+            className="hidden h-10 items-center gap-2 rounded-xl border-[1.8px] border-input px-3 text-[13px] font-bold text-foreground outline-none transition-colors hover:border-primary hover:text-brand-text focus-visible:border-primary sm:flex"
+          >
+            <Compass className="size-[18px]" aria-hidden="true" />
+            Tour
+          </button>
           <ThemeToggle />
           <MenuCuenta />
 

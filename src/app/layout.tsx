@@ -5,6 +5,7 @@ import { Toaster } from "@/shared/components/ui/toast"
 import { TEMA_UNICO } from "@/shared/config/tema"
 import { ConfirmProvider } from "@/shared/providers/confirm-provider"
 import { EstadoConexionModalGuard } from "@/shared/components/composed/estado-conexion-modal-guard"
+import { TourVirtual } from "@/modules/tour/tour-virtual"
 import "./globals.css";
 import "./otemu-capa-visual.css";
 
@@ -44,6 +45,7 @@ export default function RootLayout({
           <Toaster limit={3} timeout={5000}>
             <ConfirmProvider>{children}</ConfirmProvider>
             <EstadoConexionModalGuard />
+            <TourVirtual />
           </Toaster>
         </ThemeProvider>
       </body>

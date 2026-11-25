@@ -41,9 +41,15 @@ export function ProductoInteractivo({ subdominio, tienda, titulo, descripcion, m
   const variante = variantes[indice]
   const seleccion = valores[indice] ?? []
 
-  // Cada foto de variante tiene prioridad al elegir esa variante.
-  const irAFotoDe = (v: VarianteVitrina | undefined) => {
-    const i = fotos.findIndex((f) => v && f.variante_id === v.id)
+  // La foto de la variante elegida tiene prioridad; si esa variante no tiene foto propia, sirve la de otra que comparta el valor recién elegido
+  // (por ejemplo, la foto del «Negro / M» al elegir «Negro / S»).
+  const irAFotoDe = (v: VarianteVitrina | undefined, grupo: number, valor: string) => {
+    const propia = fotos.findIndex((f) => v && f.variante_id === v.id)
+    const compartida = fotos.findIndex((f) => {
+      const i = variantes.findIndex((x) => x.id === f.variante_id)
+      return i >= 0 && valores[i][grupo] === valor
+    })
+    const i = propia >= 0 ? propia : compartida
     if (i >= 0) setFoto(i)
   }
 
@@ -54,7 +60,7 @@ export function ProductoInteractivo({ subdominio, tienda, titulo, descripcion, m
     const cualquiera = alguna >= 0 ? alguna : valores.findIndex((f) => f[grupo] === valor)
     if (cualquiera < 0) return
     setIndice(cualquiera)
-    irAFotoDe(variantes[cualquiera])
+    irAFotoDe(variantes[cualquiera], grupo, valor)
   }
   /** ¿Hay alguna variante disponible con este valor, dadas las demás elecciones? */
   const disponible = (grupo: number, valor: string) => valores.some((f, i) => f[grupo] === valor && f.every((x, g) => g === grupo || x === seleccion[g]) && variantes[i].disponible)
@@ -68,7 +74,7 @@ export function ProductoInteractivo({ subdominio, tienda, titulo, descripcion, m
   return (
     <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12">
       {/* Galería */}
-      <div className="space-y-3">
+      <div className="space-y-3" data-tour="galeria">
         <div className="vidrio relative aspect-square overflow-hidden rounded-[28px]">
           <ImagenProducto tono={tonoDe(subdominio)} src={actual?.url_imagen} titulo={actual?.texto_alternativo ?? titulo} />
         </div>
@@ -95,7 +101,7 @@ export function ProductoInteractivo({ subdominio, tienda, titulo, descripcion, m
       </div>
 
       {/* Panel de compra */}
-      <div className="vidrio flex flex-col rounded-[28px] p-6 sm:p-8 lg:self-start">
+      <div className="vidrio flex flex-col rounded-[28px] p-6 sm:p-8 lg:self-start" data-tour="compra">
         <Link href={`/mercado/tienda/${tienda.subdominio}`} className="inline-flex w-fit items-center gap-2.5 rounded-xl pr-2 text-[14px] font-bold text-foreground outline-none hover:text-brand-text">
           <AvatarTienda tienda={tienda} className="size-9 rounded-xl text-[15px]" />
           {tienda.nombre}
@@ -113,7 +119,7 @@ export function ProductoInteractivo({ subdominio, tienda, titulo, descripcion, m
         {descripcion && <p className="mt-5 max-w-xl whitespace-pre-line text-[15.5px] leading-relaxed text-muted-foreground">{descripcion}</p>}
 
         {grupos.length > 0 && (
-          <div className="mt-6 space-y-5 border-t border-white/10 pt-6">
+          <div className="mt-6 space-y-5 border-t border-white/10 pt-6" data-tour="opciones">
             {grupos.map((g, gi) => (
               <fieldset key={g.nombre + gi}>
                 <legend className="mb-2.5 text-[13px] font-bold text-muted-foreground">

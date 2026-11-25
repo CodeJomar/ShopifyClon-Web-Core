@@ -46,7 +46,7 @@ function resumirTexto(texto: string | null | undefined, max = 110): string | nul
 export async function conDetalleParaTarjeta(productos: ProductoMercado[]): Promise<ProductoMercado[]> {
   return Promise.all(
     productos.map(async (p) => {
-      if (p.descripcion_corta !== undefined || p.variantes_resumen !== undefined) return p
+      if (p.cantidad_variantes !== undefined || p.descripcion_corta !== undefined || p.variantes_resumen !== undefined) return p
       const d = await obtenerProducto(p.tienda.subdominio, p.identificador_url)
       if (!d) return p
       const variantes = d.variantes.map((v) => ({ titulo: v.titulo, precio: Number(v.precio) }))

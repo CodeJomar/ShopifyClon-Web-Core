@@ -42,7 +42,7 @@ export function ListadoMercado({ titulo, descripcion, buscador, chips, resumen, 
       <h1 className="text-[34px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[44px]">{titulo}</h1>
       <p className="mt-2 max-w-2xl text-[15px] font-medium text-muted-foreground">{descripcion}</p>
 
-      <div className="vidrio mt-8 rounded-3xl p-4 sm:p-5">
+      <div className="vidrio mt-8 rounded-3xl p-4 sm:p-5" data-tour="filtros">
         <form action={buscador.accion} method="get" role="search" className="relative">
           {Object.entries(buscador.conservar ?? {}).map(([nombre, valor]) => (valor ? <input key={nombre} type="hidden" name={nombre} value={valor} /> : null))}
           <label className="block">
@@ -108,7 +108,7 @@ export function ListadoMercado({ titulo, descripcion, buscador, chips, resumen, 
 
       {hayResultados ? (
         <>
-          <div className="mt-8">{children}</div>
+          <div className="mt-8" data-tour="cuadricula">{children}</div>
           <Paginacion pagina={pagina} totalPaginas={totalPaginas} enlacePagina={enlacePagina} />
         </>
       ) : (
