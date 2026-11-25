@@ -9,7 +9,8 @@ import { cn } from "@/shared/utils/cn"
 
 /**
  * «Mi cuenta» vive en la zona pública (cabecera y pie del sitio), no en el panel de una tienda: es la cuenta de una persona, que
- * compra y, si quiere, también vende. Las rutas siguen protegidas por el guard de sesión.
+ * compra y, si quiere, también vende. Sin columna lateral: una tira de pestañas arriba y el contenido a todo el ancho.
+ * Las rutas siguen protegidas por el guard de sesión.
  */
 export default function CuentaLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -19,11 +20,8 @@ export default function CuentaLayout({ children }: { children: React.ReactNode }
           <FondoPublico />
           <CabeceraPublica />
           <main id="contenido" className="relative z-10 flex-1">
-            <div className={cn(claseContenedor, "grid grid-cols-[minmax(0,1fr)] gap-6 py-8 sm:py-12 lg:grid-cols-[220px_minmax(0,1fr)] lg:gap-10")}>
-              <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-                <p className="mb-3 hidden px-3.5 text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground lg:block">Mi cuenta</p>
-                <NavegacionCuenta />
-              </aside>
+            <div className={cn(claseContenedor, "space-y-6 py-8 sm:py-12")}>
+              <NavegacionCuenta />
               <div className="min-w-0">{children}</div>
             </div>
           </main>

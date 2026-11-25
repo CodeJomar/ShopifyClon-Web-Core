@@ -5,6 +5,7 @@ import Link from "next/link"
 import { ChevronRight, LogIn, PackageOpen } from "lucide-react"
 import { claseBotonMarca, claseContenedor } from "@/shared/components/marketing/estilos"
 import { useAcceso } from "@/modules/acceso/acceso"
+import { NavegacionCuenta } from "@/modules/cuenta/components/navegacion-cuenta"
 import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import { formatearFecha } from "@/shared/utils/fechas"
@@ -37,6 +38,9 @@ export function MisPedidosView() {
 
   return (
     <div className={cn(claseContenedor, "py-10 sm:py-14")}>
+      <div className="mb-6">
+        <NavegacionCuenta />
+      </div>
       <h1 className="text-[32px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[40px]">Mis pedidos</h1>
       <p className="mt-2 text-[15px] font-medium text-muted-foreground">Cada compra reúne los productos de todas las tiendas; cada tienda despacha lo suyo.</p>
 

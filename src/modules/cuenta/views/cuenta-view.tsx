@@ -10,8 +10,9 @@ import { useMounted } from "@/shared/hooks/use-mounted"
 import { TEMA_UNICO } from "@/shared/config/tema"
 import { PerfilForm } from "../components/perfil-form"
 import { usePerfilCuenta } from "../hooks/use-perfil-cuenta"
+import { SeguridadSecciones } from "./seguridad-view"
 
-/** «Mi cuenta · Perfil»: quién eres, tus datos de contacto y la apariencia del sitio. La seguridad y las direcciones tienen su propia pantalla. */
+/** «Mi cuenta»: a la izquierda quién eres y tus datos; a la derecha tu seguridad (contraseña, dos pasos y sesión). Las direcciones tienen su pantalla. */
 export function CuentaView() {
   const { perfil, setPerfil, error } = usePerfilCuenta()
   const { theme, setTheme } = useTheme()
@@ -21,8 +22,8 @@ export function CuentaView() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">Perfil</h1>
-        <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">Tus datos. Así te ven las tiendas donde compras.</p>
+        <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">Mi cuenta</h1>
+        <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">Tus datos, así te ven las tiendas donde compras, y tu seguridad.</p>
       </header>
 
       {error && (
@@ -35,7 +36,8 @@ export function CuentaView() {
       {!perfil && !error && <Skeleton className="h-72 rounded-3xl" aria-busy="true" aria-label="Cargando tus datos" />}
 
       {perfil && (
-        <>
+        <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div className="min-w-0 space-y-6">
           <section className="flex items-center gap-4 rounded-3xl vidrio p-5 sm:p-6" aria-label="Tu cuenta">
             <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-primary/14 text-brand-text ring-1 ring-primary/32" aria-hidden="true">
               <User className="size-8" />
@@ -79,8 +81,15 @@ export function CuentaView() {
             </div>
           </section>
           )}
-        </>
+          </div>
+
+          <div className="min-w-0">
+            <SeguridadSecciones perfil={perfil} setPerfil={setPerfil} />
+          </div>
+        </div>
       )}
+
+      {!perfil && !error && null}
     </div>
   )
 }

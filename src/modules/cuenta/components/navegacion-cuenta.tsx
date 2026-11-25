@@ -2,24 +2,25 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, MapPin, Receipt, ShieldCheck, Store, User } from "lucide-react"
+import { LayoutDashboard, MapPin, Receipt, Store, User } from "lucide-react"
 import { useAcceso } from "@/modules/acceso/acceso"
 import { cn } from "@/shared/utils/cn"
 
 /**
- * Menú de «Mi cuenta» de la zona pública: en escritorio una columna a la izquierda; en móvil, pestañas con desplazamiento.
- * Quien ya es propietario ve «Panel general»; quien no, «Vender en OTemu».
+ * Menú de «Mi cuenta» de la zona pública: una tira horizontal de pestañas sobre el contenido (sin columna lateral), igual en todas las
+ * pantallas de la cuenta, el panel general y «Mis pedidos». Solo se muestra con sesión iniciada. Quien ya es propietario ve «Panel
+ * general» y «Mis tiendas»; quien no, «Vender en OTemu».
  */
 export function NavegacionCuenta() {
   const ruta = usePathname()
   const { acceso } = useAcceso()
-  const esPropietario = acceso.estado === "autenticado" && acceso.esPropietario
+  if (acceso.estado !== "autenticado") return null
+  const esPropietario = acceso.esPropietario
 
   const enlaces = [
-    { href: "/cuenta", etiqueta: "Perfil", icono: User, activo: ruta === "/cuenta" },
-    { href: "/cuenta/seguridad", etiqueta: "Seguridad", icono: ShieldCheck, activo: ruta.startsWith("/cuenta/seguridad") },
+    { href: "/cuenta", etiqueta: "Mi cuenta", icono: User, activo: ruta === "/cuenta" },
     { href: "/cuenta/direcciones", etiqueta: "Direcciones", icono: MapPin, activo: ruta.startsWith("/cuenta/direcciones") },
-    { href: "/mis-pedidos", etiqueta: "Mis pedidos", icono: Receipt, activo: false },
+    { href: "/mis-pedidos", etiqueta: "Mis pedidos", icono: Receipt, activo: ruta.startsWith("/mis-pedidos") || ruta.startsWith("/cuenta/ordenes") },
     ...(esPropietario
       ? [
           { href: "/propietario", etiqueta: "Panel general", icono: LayoutDashboard, activo: ruta.startsWith("/propietario") },
@@ -29,8 +30,8 @@ export function NavegacionCuenta() {
   ]
 
   return (
-    <nav aria-label="Mi cuenta" className="-mx-4 overflow-x-auto px-4 lg:mx-0 lg:overflow-visible lg:px-0">
-      <ul className="flex gap-1.5 lg:flex-col lg:gap-1">
+    <nav aria-label="Mi cuenta" className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:overflow-visible sm:px-0">
+      <ul className="flex gap-1.5">
         {enlaces.map(({ href, etiqueta, icono: Icono, activo }) => (
           <li key={href} className="shrink-0">
             <Link
@@ -41,7 +42,7 @@ export function NavegacionCuenta() {
                 activo ? "bg-primary/14 text-brand-text" : "text-muted-foreground hover:bg-secondary hover:text-foreground",
               )}
             >
-              <Icono aria-hidden="true" className="size-[18px]" />
+              <Icono aria-hidden="true" className="size-[18px] shrink-0" />
               {etiqueta}
             </Link>
           </li>

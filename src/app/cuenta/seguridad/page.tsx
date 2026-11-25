@@ -1,10 +1,6 @@
-import { SeguridadView } from "@/modules/cuenta"
+import { redirect } from "next/navigation"
 
-export const metadata = {
-  title: "Seguridad | OTemu",
-  description: "Tu contraseña, la verificación en dos pasos y tus sesiones.",
-}
-
+// La seguridad se unificó con el perfil en «Mi cuenta» (dos columnas).
 export default function SeguridadPage() {
-  return <SeguridadView />
+  redirect("/cuenta")
 }

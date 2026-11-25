@@ -1,3 +1,4 @@
+import { PlanesDeMisTiendas } from "@/modules/mercado/components/planes-de-mis-tiendas"
 import Link from "next/link"
 import { Check } from "lucide-react"
 import { listarPlanes } from "@/modules/mercado/datos"
@@ -28,6 +29,8 @@ export default async function Planes() {
           Tu primera tienda no cuesta nada. Cuando necesites más productos, más tiendas o un equipo, cambias de plan sin perder nada de lo que ya publicaste.
         </p>
       </header>
+
+      <PlanesDeMisTiendas nombresPlanes={Object.fromEntries(planes.map((p) => [p.codigo, p.nombre]))} />
 
       <ul className="mt-10 grid gap-5 lg:grid-cols-3">
         {planes.map((plan) => (

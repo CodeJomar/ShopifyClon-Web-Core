@@ -10,12 +10,13 @@ import { cerrarSesionAction } from "@/modules/auth"
 import { ContrasenaForm } from "../components/contrasena-form"
 import { DosPasosSeccion } from "../components/dos-pasos-seccion"
 import { cerrarSesionesAction } from "../actions/cuenta.actions"
-import { usePerfilCuenta } from "../hooks/use-perfil-cuenta"
+import type { PerfilCuentaDto } from "@/dtos/cuenta"
+import type { ErrorApi } from "@/lib/api/error-api"
 
-/** «Mi cuenta · Seguridad»: contraseña, verificación en dos pasos y cierre de sesión. */
-export function SeguridadView() {
+/** Secciones de seguridad (contraseña, dos pasos, sesión): se usan dentro de «Mi cuenta», en la columna derecha. */
+export function SeguridadSecciones({ perfil, setPerfil }: { perfil: PerfilCuentaDto | null; setPerfil: (p: PerfilCuentaDto) => void }) {
   const confirmar = useConfirm()
-  const { perfil, setPerfil, error, setError } = usePerfilCuenta()
+  const [error, setError] = React.useState<ErrorApi | null>(null)
   const [cerrando, setCerrando] = React.useState(false)
   const [cerrandoTodas, setCerrandoTodas] = React.useState(false)
 
@@ -46,11 +47,6 @@ export function SeguridadView() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-[30px] font-extrabold leading-tight tracking-tight text-foreground sm:text-[36px]">Seguridad</h1>
-        <p className="mt-1 text-[14.5px] font-medium text-muted-foreground">Tu contraseña, la verificación en dos pasos y tus sesiones abiertas.</p>
-      </header>
-
       {error && (
         <Alert variant="destructive">
           <AlertTitle>No pudimos completar la acción</AlertTitle>
@@ -58,16 +54,16 @@ export function SeguridadView() {
         </Alert>
       )}
 
-      <section className="max-w-xl space-y-4 rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-contrasena">
+      <section className="space-y-4 rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-contrasena">
         <h2 id="seg-contrasena" className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Contraseña</h2>
         <ContrasenaForm />
       </section>
 
-      <section className="max-w-xl rounded-3xl vidrio p-5 sm:p-7">
+      <section className="rounded-3xl vidrio p-5 sm:p-7">
         {perfil ? <DosPasosSeccion perfil={perfil} onCambio={setPerfil} /> : <Skeleton className="h-24 rounded-2xl" aria-busy="true" aria-label="Cargando" />}
       </section>
 
-      <section className="max-w-xl rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-sesion">
+      <section className="rounded-3xl vidrio p-5 sm:p-7" aria-labelledby="seg-sesion">
         <h2 id="seg-sesion" className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Sesión y cuenta</h2>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Button variant="danger-outline" onClick={cerrarSesion} loading={cerrando} leftIcon={<LogOut aria-hidden="true" />}>
