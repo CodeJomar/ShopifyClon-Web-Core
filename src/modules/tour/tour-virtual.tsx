@@ -1,5 +1,6 @@
 "use client"
 
+import { fijarTiendaAction, misTiendasAction, tiendaActivaAction } from "@/modules/tienda/actions/tienda.actions"
 import * as React from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { peticionApi } from "@/lib/api/client"
@@ -89,6 +90,14 @@ export function TourVirtual() {
       esAdministrador: Boolean(perfil.ok && (acceso?.es_administrador_plataforma ?? perfil.datos.es_administrador_plataforma)),
       rutaProducto: ejemplo ? `/mercado/tienda/${ejemplo.tienda.subdominio}/${ejemplo.identificador_url}` : null,
     })
+    // Las pantallas del panel exigen una tienda activa: si no hay, se fija la primera del propietario.
+    if (perfil.ok && (acceso?.es_propietario ?? false)) {
+      const activa = await tiendaActivaAction()
+      if (!activa.ok) {
+        const mis = await misTiendasAction()
+        if (mis.ok && mis.datos.length > 0) await fijarTiendaAction(mis.datos[0].tienda_id)
+      }
+    }
     const nuevo = { pasos, indice: 0 }
     vigente.current = nuevo
     guardar(nuevo)
