@@ -6,16 +6,15 @@ import { usePathname, useRouter } from "next/navigation"
 import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import { cn } from "@/shared/utils/cn"
-import type { PerfilCuentaDto } from "@/dtos/cuenta"
 import type { ProductoMercado, PaginaMercado } from "@/dtos/mercado"
-import { armarPasos, type PasoTour } from "./pasos"
+import { armarPasos, zonaDeRuta, type PasoTour, type ZonaTour } from "./pasos"
 
 const CLAVE = "otemu-tour"
 const EVENTO_INICIAR = "otemu:tour-iniciar"
 
 /** Pide el inicio del tour desde cualquier botón (o desde `?tour=1`). */
-export function iniciarTour() {
-  window.dispatchEvent(new Event(EVENTO_INICIAR))
+export function iniciarTour(zona?: ZonaTour) {
+  window.dispatchEvent(new CustomEvent<ZonaTour | undefined>(EVENTO_INICIAR, { detail: zona }))
 }
 
 interface Guardado {
@@ -78,36 +77,38 @@ export function TourVirtual() {
     setZona(null)
   }, [])
 
-  const iniciar = React.useCallback(async () => {
-    const perfil = await resultado(peticionApi<PerfilCuentaDto>({ method: "GET", url: "/cuenta/perfil", sinRedireccion401: true }))
-    const productos = await resultado(peticionApi<PaginaMercado<ProductoMercado>>({ method: "GET", url: "/mercado/productos", params: { tamano: 12 } }))
-    const lista = productos.ok ? productos.datos.datos : []
-    const ejemplo = [...lista].sort((a, b) => (b.cantidad_variantes ?? 0) - (a.cantidad_variantes ?? 0))[0]
-    const acceso = perfil.ok ? perfil.datos.acceso : undefined
-    const pasos = armarPasos({
-      autenticado: perfil.ok,
-      esPropietario: Boolean(perfil.ok && (acceso?.es_propietario ?? false)),
-      esAdministrador: Boolean(perfil.ok && (acceso?.es_administrador_plataforma ?? perfil.datos.es_administrador_plataforma)),
-      rutaProducto: ejemplo ? `/mercado/tienda/${ejemplo.tienda.subdominio}/${ejemplo.identificador_url}` : null,
-    })
-    // Las pantallas del panel exigen una tienda activa: si no hay, se fija la primera del propietario.
-    if (perfil.ok && (acceso?.es_propietario ?? false)) {
-      const activa = await tiendaActivaAction()
-      if (!activa.ok) {
-        const mis = await misTiendasAction()
-        if (mis.ok && mis.datos.length > 0) await fijarTiendaAction(mis.datos[0].tienda_id)
+  const iniciar = React.useCallback(
+    async (pedida?: ZonaTour) => {
+      // Sin zona pedida, el recorrido es el de la zona donde se está (público, propietario o administración).
+      const zona = pedida ?? zonaDeRuta(window.location.pathname)
+      let rutaProducto: string | null = null
+      if (zona === "publico") {
+        const productos = await resultado(peticionApi<PaginaMercado<ProductoMercado>>({ method: "GET", url: "/mercado/productos", params: { tamano: 12 } }))
+        const lista = productos.ok ? productos.datos.datos : []
+        const ejemplo = [...lista].sort((a, b) => (b.cantidad_variantes ?? 0) - (a.cantidad_variantes ?? 0))[0]
+        rutaProducto = ejemplo ? `/mercado/tienda/${ejemplo.tienda.subdominio}/${ejemplo.identificador_url}` : null
       }
-    }
+      const pasos = armarPasos({ rutaProducto }, zona)
+      // Las pantallas del panel exigen una tienda activa: si no hay, se fija la primera de la persona.
+      if (zona === "propietario") {
+        const activa = await tiendaActivaAction()
+        if (!activa.ok) {
+          const mis = await misTiendasAction()
+          if (mis.ok && mis.datos.length > 0) await fijarTiendaAction(mis.datos[0].tienda_id)
+        }
+      }
     const nuevo = { pasos, indice: 0 }
     vigente.current = nuevo
     guardar(nuevo)
     setEstado(nuevo)
-    if (window.location.pathname !== pasos[0].ruta) router.push(pasos[0].ruta)
-  }, [router])
+      if (window.location.pathname !== pasos[0].ruta) router.push(pasos[0].ruta)
+    },
+    [router],
+  )
 
   // Inicio por evento (botón) o por ?tour=1 en la dirección.
   React.useEffect(() => {
-    const alIniciar = () => void iniciar()
+    const alIniciar = (e?: Event) => void iniciar((e as CustomEvent<ZonaTour | undefined> | undefined)?.detail)
     window.addEventListener(EVENTO_INICIAR, alIniciar)
     const autoinicio = new URLSearchParams(window.location.search).get("tour") === "1" && !leer() ? window.setTimeout(alIniciar, 0) : 0
     return () => {

@@ -75,7 +75,7 @@ export function CabeceraPublica() {
           </Link>
           <button
             type="button"
-            onClick={iniciarTour}
+            onClick={() => iniciarTour("publico")}
             aria-label="Iniciar el tour virtual"
             title="Tour virtual (se maneja con las flechas ← →)"
             className="hidden h-10 items-center gap-2 rounded-xl border-[1.8px] border-input px-3 text-[13px] font-bold text-foreground outline-none transition-colors hover:border-primary hover:text-brand-text focus-visible:border-primary sm:flex"

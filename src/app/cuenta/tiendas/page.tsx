@@ -1,6 +1,8 @@
-import { redirect } from "next/navigation"
+import { MisTiendasView } from "@/modules/tienda/views/mis-tiendas-view"
 
-// Las tiendas de la persona se ven en el panel general del propietario.
+export const metadata = { title: "Mis tiendas | OTemu" }
+
+// Las tiendas donde participa la persona (con su rol) y la elección de la tienda activa. El resumen de las que es propietaria está en /propietario.
 export default function MisTiendasPage() {
-  redirect("/propietario")
+  return <MisTiendasView />
 }

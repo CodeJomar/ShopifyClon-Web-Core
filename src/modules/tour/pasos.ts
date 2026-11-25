@@ -1,5 +1,5 @@
 // Pasos del tour virtual. Cada paso lleva a una pantalla (`ruta`), puede resaltar una zona (`selector`) y explica en pocas palabras qué hay ahí.
-// Las pantallas de propietario y de administración solo entran al tour si la persona tiene esa sesión iniciada (ver `armarPasos`).
+// Hay tres recorridos: el público, el del propietario y el de la administración; cada uno se lanza desde el botón «Tour» de su zona.
 
 export interface PasoTour {
   /** Ruta de la pantalla. «@producto» se reemplaza al iniciar por el producto de ejemplo con más variantes. */
@@ -11,9 +11,6 @@ export interface PasoTour {
 }
 
 export interface ContextoTour {
-  autenticado: boolean
-  esPropietario: boolean
-  esAdministrador: boolean
   /** Ruta del producto de ejemplo para el detalle (null si no hay productos). */
   rutaProducto: string | null
 }
@@ -42,27 +39,54 @@ const PUBLICOS_FIN: PasoTour[] = [
 ]
 
 const PROPIETARIO: PasoTour[] = [
-  { ruta: "/propietario", titulo: "Panel general del propietario", texto: "Un resumen de todas sus tiendas: ventas, pedidos y estado, por moneda." },
-  { ruta: "/panel/productos", titulo: "Catálogo", texto: "Alta de productos con fotos, variantes (color, talla), precios e inventario." },
-  { ruta: "/panel/ordenes", titulo: "Órdenes", texto: "Pedidos de la tienda: pago, envío, cancelaciones y reembolsos." },
+  { ruta: "/propietario", titulo: "Bienvenido al panel del propietario", texto: "Aquí gestionas tus tiendas. Este recorrido muestra cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
+  { ruta: "/propietario", titulo: "Panel general", texto: "Un resumen de todas tus tiendas: ventas, saldo, suscripción y alertas (órdenes por preparar, stock bajo), con totales por moneda." },
+  { ruta: "/cuenta/tiendas", titulo: "Mis tiendas", texto: "La lista de las tiendas donde participas y tu rol en cada una. Desde aquí eliges la tienda activa para entrar a su panel." },
+  { ruta: "/panel", titulo: "Dashboard de la tienda", texto: "Métricas de la tienda activa: ventas por día, órdenes y productos más vendidos." },
+  { ruta: "/panel/productos", titulo: "Catálogo", texto: "Alta de productos con fotos, variantes (color, talla), precios y publicación. Publicar exige precio e imagen principal." },
+  { ruta: "/panel/categorias", titulo: "Categorías", texto: "Organiza el catálogo en categorías para que los compradores filtren en el mercado y en tu tienda." },
+  { ruta: "/panel/inventario", titulo: "Inventario", texto: "Stock por variante, ajustes con motivo y el historial de movimientos." },
+  { ruta: "/panel/ordenes", titulo: "Órdenes", texto: "Pedidos de la tienda con filtros. En el detalle: pago manual, preparar y despachar el envío, cancelar y reembolsar." },
+  { ruta: "/panel/cupones", titulo: "Cupones", texto: "Descuentos por porcentaje o monto, con vigencia y límite de usos." },
+  { ruta: "/panel/envios", titulo: "Tarifas de envío", texto: "Las tarifas entre las que elige el comprador al pagar, una por tienda." },
+  { ruta: "/panel/rutas", titulo: "Rutas de reparto", texto: "Agrupa envíos en rutas, inícialas, finalízalas y genera la guía de remisión." },
+  { ruta: "/panel/personal", titulo: "Personal", texto: "Agrega personas a tu equipo con un rol: administrador, gestor de catálogo o gestor de pedidos." },
+  { ruta: "/panel/configuracion", titulo: "Configuración de la tienda", texto: "Datos de la tienda y activación o desactivación (solo el propietario)." },
+  { ruta: "/panel/suscripcion", titulo: "Suscripción", texto: "Tu plan, el uso frente a los límites, el pago, el cambio de plan y la cancelación." },
+  { ruta: "/cuenta", titulo: "Tu cuenta", texto: "Perfil, direcciones, órdenes como comprador y seguridad (contraseña, verificación en dos pasos y sesiones)." },
 ]
 
 const ADMINISTRADOR: PasoTour[] = [
-  { ruta: "/plataforma", titulo: "Administración de la plataforma", texto: "Control de tiendas, usuarios, planes, comisiones y suscripciones." },
-  { ruta: "/plataforma/auditoria", titulo: "Auditoría", texto: "Registro de las acciones sensibles realizadas en la plataforma." },
+  { ruta: "/plataforma", titulo: "Bienvenido a la administración", texto: "Control de toda la plataforma. Este recorrido muestra cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
+  { ruta: "/plataforma", titulo: "Resumen de la plataforma", texto: "Tiendas, usuarios y pedidos de un vistazo, con las tiendas que necesitan atención y la actividad reciente." },
+  { ruta: "/plataforma/tiendas", titulo: "Tiendas", texto: "Todas las tiendas con su dueño, equipo, suscripción y balance. Se pueden suspender y reactivar." },
+  { ruta: "/plataforma/usuarios", titulo: "Usuarios", texto: "Listado de personas con cuenta: bloquear o desbloquear y cerrar sus sesiones." },
+  { ruta: "/plataforma/administradores", titulo: "Administradores y roles", texto: "Quién administra la plataforma y con qué rol y permisos. Los menús se ajustan a los permisos de cada persona." },
+  { ruta: "/plataforma/planes", titulo: "Planes", texto: "Crea y edita los planes de suscripción. Los planes se retiran del catálogo, nunca se borran." },
+  { ruta: "/plataforma/suscripciones", titulo: "Suscripciones", texto: "Estado de la suscripción de cada tienda: activa, vencida o cancelada." },
+  { ruta: "/plataforma/comisiones", titulo: "Comisiones", texto: "Lo que gana la plataforma por las ventas de cada tienda." },
+  { ruta: "/plataforma/auditoria", titulo: "Auditoría", texto: "Registro de solo lectura de las acciones sensibles, con filtros." },
+  { ruta: "/plataforma/seguridad", titulo: "Seguridad y respaldos", texto: "Cuentas bloqueadas, eventos de seguridad y los respaldos de la base de datos: estado, respaldar ahora y archivos guardados." },
 ]
 
 const CIERRE: PasoTour = { ruta: "/", titulo: "Fin del tour", texto: "Gracias por recorrer OTemu. Pulsa Esc para cerrar; puedes repetir el tour desde el botón de la barra." }
+const CIERRE_PROPIETARIO: PasoTour = { ruta: "/propietario", titulo: "Fin del recorrido", texto: "Eso es todo del panel del propietario. Pulsa Esc para cerrar; puedes repetirlo con el botón Tour de la barra superior." }
+const CIERRE_ADMINISTRADOR: PasoTour = { ruta: "/plataforma", titulo: "Fin del recorrido", texto: "Eso es todo de la administración. Pulsa Esc para cerrar; puedes repetirlo con el botón Tour de la barra superior." }
 
-const SIN_SESION: PasoTour = {
-  ruta: "/mercado",
-  titulo: "Paneles de propietario y de administración",
-  texto: "Estas pantallas se recorren con sesión iniciada: entra con una cuenta de propietario o de administrador y vuelve a lanzar el tour para verlas.",
+/** Recorrido: lo que ve cualquier persona (público), el panel del propietario o la administración de la plataforma. */
+export type ZonaTour = "publico" | "propietario" | "administrador"
+
+/** Zona a la que pertenece una ruta (para el botón «Tour» de cada barra). */
+export function zonaDeRuta(pathname: string): ZonaTour {
+  if (pathname.startsWith("/plataforma")) return "administrador"
+  if (pathname.startsWith("/propietario") || pathname.startsWith("/panel") || pathname.startsWith("/cuenta")) return "propietario"
+  return "publico"
 }
 
-/** Arma la lista de pasos según quién navega. */
-export function armarPasos(ctx: ContextoTour): PasoTour[] {
+/** Arma la lista de pasos del recorrido pedido. */
+export function armarPasos(ctx: ContextoTour, zona: ZonaTour = "publico"): PasoTour[] {
+  if (zona === "propietario") return [...PROPIETARIO, CIERRE_PROPIETARIO]
+  if (zona === "administrador") return [...ADMINISTRADOR, CIERRE_ADMINISTRADOR]
   const producto = ctx.rutaProducto ? PUBLICOS_PRODUCTO.map((p) => ({ ...p, ruta: ctx.rutaProducto as string })) : []
-  const roles = [...(ctx.esPropietario ? PROPIETARIO : []), ...(ctx.esAdministrador ? ADMINISTRADOR : [])]
-  return [...PUBLICOS_INICIO, ...producto, ...PUBLICOS_FIN, ...(roles.length ? roles : [SIN_SESION]), CIERRE]
+  return [...PUBLICOS_INICIO, ...producto, ...PUBLICOS_FIN, CIERRE]
 }

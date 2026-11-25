@@ -4,7 +4,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { ArrowLeftRight, PanelLeftClose, PanelLeftOpen, LogOut, Settings, User } from "lucide-react"
+import { ArrowLeftRight, Compass, PanelLeftClose, PanelLeftOpen, LogOut, Settings, User } from "lucide-react"
 
 import {
   Breadcrumb,
@@ -16,6 +16,7 @@ import {
 } from "@/shared/components/ui/breadcrumb"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu"
 import { Separator } from "@/shared/components/ui/separator"
+import { iniciarTour } from "@/modules/tour/tour-virtual"
 import { UserProfile } from "@/shared/components/composed/user-profile"
 import { HOME_HREF, PERFIL_HREF, migasDe, rutaDe } from "@/shared/constants/navegacion"
 
@@ -90,6 +91,16 @@ export function WorkspaceHeader({
 
         {/* Zona Derecha: menú del usuario */}
         <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => iniciarTour()}
+            aria-label="Iniciar el tour virtual de esta zona"
+            title="Tour virtual de esta zona (se maneja con las flechas ← →)"
+            className="hidden h-10 cursor-pointer items-center gap-2 rounded-xl border-[1.8px] border-input px-3 text-[13px] font-bold text-foreground outline-none transition-colors hover:border-primary hover:text-brand-text focus-visible:border-primary sm:flex"
+          >
+            <Compass className="size-[18px]" aria-hidden="true" />
+            Tour
+          </button>
           <DropdownMenu>
           <DropdownMenuTrigger
             aria-label="Menú de la cuenta"
