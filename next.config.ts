@@ -41,7 +41,24 @@ const cabecerasSeguridad = [
     : []),
 ];
 
+/**
+ * Hosts de la API desde donde `next/image` puede cargar fotos (las URL de imagen llegan absolutas y apuntan a la API).
+ * `IMAGENES_HOSTS` (lista separada por comas, sin protocolo; admite puerto) las reemplaza; si no se define:
+ * la API local y la API de producción en Railway.
+ */
+const hostsImagenes = (process.env.IMAGENES_HOSTS || "localhost:8080,otemu-api-core-production.up.railway.app")
+  .split(",")
+  .map((h) => h.trim())
+  .filter(Boolean)
+
+const patronesImagenes: NonNullable<NonNullable<NextConfig["images"]>["remotePatterns"]> = hostsImagenes.map((h) => {
+  const [hostname, port] = h.split(":")
+  const local = hostname === "localhost" || hostname === "127.0.0.1"
+  return { protocol: local ? "http" : "https", hostname, ...(port ? { port } : {}) }
+})
+
 const nextConfig: NextConfig = {
+  images: { remotePatterns: patronesImagenes },
   output: "standalone",
   // No anunciar el framework en la cabecera X-Powered-By.
   poweredByHeader: false,
