@@ -1,5 +1,6 @@
 "use client"
 
+import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
@@ -20,6 +21,7 @@ import type { PlanDto } from "@/dtos/tienda"
 import type { ErrorApi } from "@/lib/api/error-api"
 
 export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: string; planInicial?: string }) {
+  const origen = useOrigen()
   const router = useRouter()
   const [planes, setPlanes] = React.useState<PlanDto[] | null>(null)
   const [errorPlanes, setErrorPlanes] = React.useState<ErrorApi | null>(null)
@@ -197,7 +199,7 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
               <FloatingInput
                 label="Subdominio"
                 leftIcon={<LinkIcon className="size-4" aria-hidden="true" />}
-                ayuda={`Tu tienda estará en otemu.com/tienda/${subdominio || "tu-tienda"}`}
+                ayuda={`Tu tienda estará en ${enlaceDeTienda(origen, subdominio || "tu-tienda", true)}`}
                 state={form.formState.errors.subdominio ? "error" : "default"}
                 mensajeError={form.formState.errors.subdominio?.message}
                 {...registroSubdominio}

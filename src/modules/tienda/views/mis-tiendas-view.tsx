@@ -1,5 +1,6 @@
 "use client"
 
+import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -21,6 +22,7 @@ const NOMBRE_ROL: Record<string, string> = {
 }
 
 export function MisTiendasView() {
+  const origen = useOrigen()
   const router = useRouter()
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -97,7 +99,7 @@ export function MisTiendasView() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <CardTitle className="truncate">{tienda.nombre}</CardTitle>
-                      <CardDescription className="font-mono text-[12px]">otemu.com/tienda/{tienda.subdominio}</CardDescription>
+                      <CardDescription className="font-mono text-[12px]">{enlaceDeTienda(origen, tienda.subdominio, true)}</CardDescription>
                     </div>
                     <Badge variant="estado" tono="contorno">{NOMBRE_ROL[tienda.rol] ?? tienda.rol}</Badge>
                   </div>

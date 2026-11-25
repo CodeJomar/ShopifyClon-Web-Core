@@ -1,5 +1,6 @@
 "use client"
 
+import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import { Banknote, Coins, Copy, ExternalLink, Percent, Wallet, Sparkles } from "lucide-react"
 import Link from "next/link"
@@ -56,7 +57,8 @@ export function InicioView() {
   const moneda = datos?.moneda ?? tienda?.moneda ?? "PEN"
   const ventasNetas = datos?.por_dia.reduce((total, dia) => total + dia.ventas_netas, 0) ?? 0
   const sinVentas = datos !== null && ventasNetas === 0 && (datos.top_productos.length === 0)
-  const enlace = tienda ? `otemu.com/tienda/${tienda.subdominio}` : ""
+  const origen = useOrigen()
+  const enlace = tienda ? enlaceDeTienda(origen, tienda.subdominio) : ""
 
   const copiarEnlace = async () => {
     try {
@@ -100,7 +102,7 @@ export function InicioView() {
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/60 bg-card px-4 py-3 shadow-isla">
           <div className="min-w-0">
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Enlace de tu tienda</p>
-            <p className="truncate font-mono text-[13px] font-medium text-foreground">{enlace}</p>
+            <p className="truncate font-mono text-[13px] font-medium text-foreground">{enlace.replace(/^https?:\/\//, "")}</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button variant="soft" size="sm" onClick={copiarEnlace} leftIcon={<Copy aria-hidden="true" />}>

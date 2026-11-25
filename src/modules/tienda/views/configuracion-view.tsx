@@ -1,5 +1,6 @@
 "use client"
 
+import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import { Badge } from "@/shared/components/ui/badge"
 import { Button } from "@/shared/components/ui/button"
@@ -20,6 +21,7 @@ import { ConfiguracionForm } from "../components/configuracion-form"
 import { CambiarEstadoTiendaForm, FORMULARIO_ESTADO_TIENDA } from "../components/cambiar-estado-tienda-form"
 
 export function ConfiguracionView() {
+  const origen = useOrigen()
   const { rol, puede } = usePanel()
   const puedeEditar = puede(PERMISO.TIENDA_CONFIGURAR)
   const esPropietario = rol === ROL.PROPIETARIO
@@ -95,7 +97,7 @@ export function ConfiguracionView() {
                   </span>
                   <div className="min-w-0">
                     <p className="truncate text-[15px] font-extrabold text-foreground">{tienda.nombre}</p>
-                    <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{tienda.subdominio}</p>
+                    <p className="truncate font-mono text-[12px] text-muted-foreground">{enlaceDeTienda(origen, tienda.subdominio, true)}</p>
                   </div>
                 </div>
 

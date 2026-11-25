@@ -1,5 +1,6 @@
 "use client"
 
+import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -27,6 +28,7 @@ const ROL: Record<string, string> = { PROPIETARIO: "Propietario", ADMINISTRADOR:
  * van por moneda porque monedas distintas no se suman. El rol sale de `/cuenta/tiendas`. Desde aquí se entra al panel de una tienda.
  */
 export function PanelGeneralView() {
+  const origen = useOrigen()
   const router = useRouter()
   const [tiendas, setTiendas] = React.useState<MiTiendaDto[] | null>(null)
   const [error, setError] = React.useState<ErrorApi | null>(null)
@@ -188,7 +190,7 @@ export function PanelGeneralView() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="truncate text-[16px] font-extrabold tracking-tight text-foreground">{t.nombre}</p>
-                          <p className="truncate font-mono text-[12px] text-muted-foreground">otemu.com/tienda/{t.subdominio}</p>
+                          <p className="truncate font-mono text-[12px] text-muted-foreground">{enlaceDeTienda(origen, t.subdominio, true)}</p>
                         </div>
                         <Badge variant="estado" tono={t.operativa ? "marca" : "aviso"}>{t.operativa ? "Operativa" : "Suscripción vencida"}</Badge>
                       </div>

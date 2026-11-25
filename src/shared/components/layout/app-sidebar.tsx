@@ -1,5 +1,6 @@
 "use client"
 
+import { MarcaOtemu } from "@/shared/components/marketing/marca-otemu"
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -8,7 +9,6 @@ import { Store } from "lucide-react"
 import { HOME_HREF, PERFIL_HREF, type NavItem } from "@/shared/constants/navegacion"
 import { SidebarNavItem } from "@/shared/components/composed/sidebar-nav-item"
 import { SidebarNavGroup } from "@/shared/components/composed/sidebar-nav-group"
-import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar"
 import { Separator } from "@/shared/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip"
 import { cn } from "@/shared/utils/cn"
@@ -50,11 +50,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
                     aria-label={nombreMarca}
                     className="flex items-center justify-center pt-1 rounded-2xl transition-opacity hover:opacity-90 outline-none select-none cursor-pointer"
                   >
-                    <Avatar className="size-12 shrink-0 border-none">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        <Store className="size-6" />
-                      </AvatarFallback>
-                    </Avatar>
+                    <MarcaOtemu className="size-12 rounded-full" />
                   </Link>
                 }
               />
@@ -63,11 +59,7 @@ export function AppSidebar({ items, isCollapsed = false, className, nombreMarca 
           ) : (
             <div className="flex items-center gap-3 pt-1 px-2">
               <Link href={homeHref} aria-label={nombreMarca} className="shrink-0 rounded-full outline-none transition-opacity hover:opacity-90 focus-visible:ring-[3px] focus-visible:ring-ring/25">
-                <Avatar className="size-12 border-none">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    <Store className="size-6" />
-                  </AvatarFallback>
-                </Avatar>
+                <MarcaOtemu className="size-12 rounded-full" />
               </Link>
 
               <div className="flex min-w-0 flex-col">

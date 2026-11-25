@@ -1,6 +1,7 @@
 import * as React from "react"
 import Link from "next/link"
-import { ArrowLeft, Store } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
+import { MarcaOtemu } from "@/shared/components/marketing/marca-otemu"
 import { FondoAurora } from "@/shared/components/marketing/fondo-aurora"
 import { ReciboDividido } from "@/shared/components/marketing/recibo-dividido"
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
@@ -16,9 +17,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <FondoAurora className="absolute inset-0 z-0" intensidad={0.95} />
 
         <Link href="/" className="relative z-10 flex w-fit items-center gap-3 rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40">
-          <span className="flex size-11 items-center justify-center rounded-xl bg-primary text-sobre-marca shadow-[0_10px_30px_-10px_rgb(0_230_153/0.7)]">
-            <Store className="size-6" aria-hidden="true" />
-          </span>
+          <MarcaOtemu className="size-11 shadow-[0_10px_30px_-10px_rgb(0_230_153/0.7)]" />
           <span className="text-2xl font-extrabold tracking-tight text-foreground">OTemu</span>
         </Link>
 
@@ -42,9 +41,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <ThemeToggle />
         </div>
         <Link href="/" className="flex items-center gap-2.5 rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40 lg:hidden">
-          <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-sobre-marca">
-            <Store className="size-5" aria-hidden="true" />
-          </span>
+          <MarcaOtemu className="size-10" />
           <span className="text-xl font-extrabold tracking-tight text-foreground">OTemu</span>
         </Link>
         <div className="otemu-auth-card w-full max-w-sm">{children}</div>

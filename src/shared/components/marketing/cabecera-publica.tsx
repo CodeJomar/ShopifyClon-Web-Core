@@ -1,9 +1,10 @@
 "use client"
 
+import { MarcaOtemu } from "./marca-otemu"
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, ShoppingBag, Store, Compass } from "lucide-react"
+import { Menu, ShoppingBag, Compass } from "lucide-react"
 import { ThemeToggle } from "@/shared/components/theme/theme-toggle"
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from "@/shared/components/ui/sheet"
 import { cn } from "@/shared/utils/cn"
@@ -22,9 +23,7 @@ const ENLACES = [
 export function Logo({ className }: { className?: string }) {
   return (
     <Link href="/" aria-label="OTemu, inicio" className={cn("flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-[3px] focus-visible:ring-ring/40", className)}>
-      <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-sobre-marca">
-        <Store className="size-[18px]" aria-hidden="true" />
-      </span>
+      <MarcaOtemu className="size-9" />
       <span className="text-[20px] font-extrabold tracking-tight text-foreground">OTemu</span>
     </Link>
   )
