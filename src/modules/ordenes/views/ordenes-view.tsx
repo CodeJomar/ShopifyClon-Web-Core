@@ -14,6 +14,7 @@ import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { BarraPaginacion } from "@/shared/components/composed/barra-paginacion"
 import { EncabezadoPagina } from "@/shared/components/composed/encabezado-pagina"
 import { ControlSegmentado } from "@/shared/components/composed/control-segmentado"
+import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { SearchInput } from "@/shared/components/composed/search-input"
 import { formatearDinero } from "@/shared/utils/dinero"
 import { formatearFecha } from "@/shared/utils/fechas"
@@ -263,10 +264,5 @@ function CampoSelect({ etiqueta, valor, opciones, onCambiar }: { etiqueta: strin
 }
 
 function CampoFecha({ etiqueta, valor, onCambiar }: { etiqueta: string; valor?: string; onCambiar: (valor: string | undefined) => void }) {
-  return (
-    <label className="block space-y-1.5 text-[12px]">
-      <span className="font-bold text-muted-foreground">{etiqueta}</span>
-      <input type="date" className="h-11 w-full rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18" value={valor ?? ""} onChange={(e) => onCambiar(e.target.value || undefined)} />
-    </label>
-  )
+  return <FloatingInput label={etiqueta} type="date" value={valor ?? ""} onChange={(e) => onCambiar(e.target.value || undefined)} />
 }

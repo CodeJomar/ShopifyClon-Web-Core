@@ -119,17 +119,7 @@ export function RutaForm({ inicial }: { inicial?: RutaDetalle }) {
           <CardTitle>Datos del reparto</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-5 sm:grid-cols-2">
-          <label className="block space-y-1.5 text-[12px]">
-            <span className="font-bold text-muted-foreground">Día del reparto</span>
-            <input
-              type="date"
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              aria-invalid={errores.fecha ? true : undefined}
-              className="h-11 w-full rounded-xl border-[1.8px] border-input bg-secondary px-3 text-[13px] font-medium text-foreground outline-none hover:border-border-hover focus-visible:border-primary focus-visible:ring-[3.5px] focus-visible:ring-primary/18 aria-invalid:border-destructive"
-            />
-            {errores.fecha && <span className="text-[12px] text-destructive-text">{errores.fecha}</span>}
-          </label>
+          <FloatingInput label="Día del reparto" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} state={estado("fecha")} mensajeError={errores.fecha} />
           <FloatingInput label="Placa del vehículo" value={placa} onChange={(e) => setPlaca(e.target.value)} state={estado("placa")} mensajeError={errores.placa} />
           <div className="sm:col-span-2">
             <FloatingInput label="Chofer" value={chofer} onChange={(e) => setChofer(e.target.value)} state={estado("chofer")} mensajeError={errores.chofer} />

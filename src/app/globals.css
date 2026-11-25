@@ -412,3 +412,22 @@ select:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .neon-anim, .neon-anim::after { animation: none; }
 }
+
+/* Campos de fecha y hora: selector nativo en tema oscuro y con el icono del calendario a la vista (tenue, más nítido al pasar el cursor). */
+input[type="date"],
+input[type="datetime-local"],
+input[type="time"] {
+  color-scheme: dark;
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}

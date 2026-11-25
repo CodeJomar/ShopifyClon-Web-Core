@@ -109,10 +109,7 @@ export function EnvioForm({
       <FloatingInput label="Empresa de transporte (opcional)" value={datos.empresa_transporte} onChange={set("empresa_transporte")} />
       <FloatingInput label="Número de guía (opcional)" value={datos.numero_guia} onChange={set("numero_guia")} />
       <FloatingInput label="URL de seguimiento (https, opcional)" value={datos.url_seguimiento} onChange={set("url_seguimiento")} />
-      <label className="block space-y-1.5 text-[13px]">
-        <span className="font-bold">Entrega estimada (opcional)</span>
-        <input type="date" className="h-11 w-full rounded-xl border border-border bg-card px-3 text-[13px]" value={datos.fecha_entrega_estimada} onChange={set("fecha_entrega_estimada")} />
-      </label>
+      <FloatingInput label="Entrega estimada (opcional)" type="date" value={datos.fecha_entrega_estimada} onChange={set("fecha_entrega_estimada")} />
     </form>
   )
 }
