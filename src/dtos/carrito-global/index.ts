@@ -15,6 +15,10 @@ export interface LineaCarritoDto {
   url_imagen?: string | null
   cantidad: number
   precio_unitario: number
+  /** Precio de lista original (solo si hay campaña). */
+  precio_comparacion?: number | null
+  descuento_campana_porcentaje?: number
+  campana?: string
   total_linea: number
   disponible: boolean
   requiere_envio: boolean
@@ -32,7 +36,10 @@ export interface TiendaCarritoDto {
   impuestos_total: number
   total: number
   requiere_envio: boolean
-  advertencias: string[]
+  /** Monto ahorrado en esta tienda por la campaña vigente. */
+  ahorro_campana?: number
+  /** Texto, o `{codigo, mensaje}` (p. ej. CAM-002: la campaña supera al cupón y el cupón no se aplicó). */
+  advertencias: (string | { codigo: string; mensaje: string })[]
 }
 
 export interface CarritoGlobalDto {

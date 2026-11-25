@@ -1,4 +1,5 @@
 import { CabeceraPublica } from "@/shared/components/marketing/cabecera-publica"
+import { BannerCampana } from "@/shared/components/marketing/banner-campana"
 import { PiePublico } from "@/shared/components/marketing/pie-publico"
 import { CarritoProvider } from "@/modules/carrito-global/carrito"
 import { AccesoProvider } from "@/modules/acceso/acceso"
@@ -12,6 +13,7 @@ export default function LayoutPublico({ children }: { children: React.ReactNode 
       <div className="zona-vidrio flex min-h-screen flex-col bg-background">
         <FondoPublico />
         <CabeceraPublica />
+        <BannerCampana />
         <main id="contenido" className="relative z-10 flex-1">
           {children}
         </main>

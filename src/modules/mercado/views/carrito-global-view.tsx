@@ -62,6 +62,14 @@ export function CarritoGlobalView() {
                   Subtotal <span className="ml-1 text-[15px] font-extrabold text-foreground">{formatearDinero(g.subtotal, g.moneda)}</span>
                 </p>
               </header>
+              {g.ahorro_campana != null && g.ahorro_campana > 0 && (
+                <p className="border-b border-border/60 bg-primary/10 px-5 py-2.5 text-[13px] font-bold text-brand-text">
+                  Ahorras {formatearDinero(g.ahorro_campana, g.moneda)} con la campaña en esta tienda.
+                </p>
+              )}
+              {g.advertencias?.map((a, i) => (
+                <p key={i} className="border-b border-border/60 bg-warning/10 px-5 py-2.5 text-[13px] font-semibold text-foreground">{typeof a === "string" ? a : a.mensaje}</p>
+              ))}
               <ul className="divide-y divide-border/60">
                 {g.lineas.map((l) => (
                   <li key={l.variante_id} className="flex gap-4 px-5 py-4">
@@ -71,7 +79,13 @@ export function CarritoGlobalView() {
                     <div className="min-w-0 flex-1">
                       <p className="line-clamp-2 text-[14.5px] font-bold leading-snug text-foreground">{l.titulo_producto}</p>
                       {l.titulo_variante && l.titulo_variante !== "Predeterminada" && <p className="text-[12.5px] font-medium text-muted-foreground">{l.titulo_variante}</p>}
-                      <p className="mt-0.5 text-[13px] font-medium text-muted-foreground">{formatearDinero(l.precio_unitario, g.moneda)} c/u</p>
+                      <p className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[13px] font-medium text-muted-foreground">
+                        <span>{formatearDinero(l.precio_unitario, g.moneda)} c/u</span>
+                        {l.precio_comparacion != null && l.precio_comparacion > l.precio_unitario && <span className="line-through opacity-70">{formatearDinero(l.precio_comparacion, g.moneda)}</span>}
+                        {l.descuento_campana_porcentaje != null && l.descuento_campana_porcentaje > 0 && (
+                          <span className="rounded-full bg-primary/15 px-2 py-0.5 text-[11.5px] font-extrabold text-brand-text">−{l.descuento_campana_porcentaje} %</span>
+                        )}
+                      </p>
                       {!l.disponible && <p className="mt-1 text-[12.5px] font-bold text-destructive-text">Sin stock suficiente: ajusta la cantidad o quítalo.</p>}
                       <div className="mt-2.5 flex flex-wrap items-center gap-3">
                         <div className="flex h-9 items-center rounded-lg border-[1.8px] border-input" role="group" aria-label={`Cantidad de ${l.titulo_producto}`}>

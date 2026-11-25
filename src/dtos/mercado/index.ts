@@ -25,6 +25,9 @@ export interface ProductoMercado {
   identificador_url: string
   precio_desde: number
   precio_comparacion_desde?: number | null
+  /** Campaña vigente (entero) y su código: el precio ya viene con el descuento. */
+  descuento_campana_porcentaje?: number
+  campana?: string
   moneda: string
   imagen_url?: string | null
   es_digital: boolean

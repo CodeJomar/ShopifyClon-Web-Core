@@ -34,6 +34,9 @@ export interface VarianteVitrina {
   titulo: string
   precio: Dinero | number
   precio_comparacion?: Dinero | number | null
+  /** Campaña vigente (entero) y su código: el precio ya viene con el descuento. */
+  descuento_campana_porcentaje?: number
+  campana?: string
   disponible: boolean
   requiere_envio: boolean
 }
