@@ -13,6 +13,8 @@ export interface PasoTour {
 export interface ContextoTour {
   /** Ruta del producto de ejemplo para el detalle (null si no hay productos). */
   rutaProducto: string | null
+  /** El propietario aún no tiene ninguna tienda: las pantallas del panel no se pueden abrir y el recorrido se acorta. */
+  sinTiendas?: boolean
 }
 
 const PUBLICOS_INICIO: PasoTour[] = [
@@ -68,6 +70,15 @@ const PROPIETARIO: PasoTour[] = [
   { ruta: "/cuenta", titulo: "Tu cuenta", texto: "Tu perfil, tus direcciones, tus órdenes como comprador y la seguridad: contraseña, verificación en dos pasos y cierre de sesiones.", selector: ENCABEZADO },
 ]
 
+/** Recorrido de quien todavía no tiene tienda: lo que verá cuando la cree, sin abrir pantallas del panel que exigen una tienda activa. */
+const PROPIETARIO_SIN_TIENDA: PasoTour[] = [
+  { ruta: "/propietario", titulo: "Bienvenido al panel del propietario", texto: "Aquí gestionarás tus tiendas. Todavía no tienes ninguna, así que este recorrido muestra lo esencial y cómo crear la primera. Avanza con → y retrocede con ←. Esc cierra el tour." },
+  { ruta: "/propietario", titulo: "Tus cifras, cuando vendas", texto: "Aquí verás las ventas, los pedidos y el saldo por cobrar de todas tus tiendas, y qué atender primero. Aún no hay datos: aparecerán con tu primera venta." },
+  { ruta: "/cuenta/tiendas/nueva", titulo: "Crea tu primera tienda", texto: "Eliges un plan (hay uno gratuito), el nombre y la dirección de tu tienda. Después, desde su panel, cargas productos, configuras envíos y recibes pedidos." },
+  { ruta: "/planes", titulo: "Planes para vender", texto: "El plan gratuito permite empezar sin costo; los de pago amplían productos, tiendas y equipo." },
+  { ruta: "/cuenta", titulo: "Tu cuenta", texto: "Tu perfil, tus direcciones y la seguridad: contraseña, verificación en dos pasos y cierre de sesiones.", selector: ENCABEZADO },
+]
+
 const ADMINISTRADOR: PasoTour[] = [
   { ruta: "/plataforma", titulo: "Bienvenido a la administración", texto: "Control de toda la plataforma. Este recorrido señala qué hace cada zona de cada pantalla; avanza con → y retrocede con ←. Esc cierra el tour." },
   { ruta: "/plataforma", titulo: "La plataforma de un vistazo", texto: "Cuántas tiendas, tiendas suspendidas, usuarios y pedidos hay. Debajo, las tiendas que necesitan atención y la actividad reciente.", selector: "main .grid" },
@@ -102,7 +113,7 @@ export function zonaDeRuta(pathname: string): ZonaTour {
 
 /** Arma la lista de pasos del recorrido pedido. */
 export function armarPasos(ctx: ContextoTour, zona: ZonaTour = "publico"): PasoTour[] {
-  if (zona === "propietario") return [...PROPIETARIO, CIERRE_PROPIETARIO]
+  if (zona === "propietario") return [...(ctx.sinTiendas ? PROPIETARIO_SIN_TIENDA : PROPIETARIO), CIERRE_PROPIETARIO]
   if (zona === "administrador") return [...ADMINISTRADOR, CIERRE_ADMINISTRADOR]
   const producto = ctx.rutaProducto ? PUBLICOS_PRODUCTO.map((p) => ({ ...p, ruta: ctx.rutaProducto as string })) : []
   return [...PUBLICOS_INICIO, ...producto, ...PUBLICOS_FIN, CIERRE]

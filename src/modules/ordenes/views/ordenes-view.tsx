@@ -121,7 +121,7 @@ export function OrdenesView() {
             <ControlSegmentado aria-label="Estado de la orden" opciones={ESTADOS} valor={filtros.estado ?? TODOS} onCambiar={(v) => actualizar({ estado: v || undefined })} />
             <div className="flex flex-1 items-center gap-2 lg:max-w-xl">
               <div className="min-w-0 flex-1">
-                <SearchInput value={texto} onValueChange={setTexto} placeholder="Buscar por número o correo" />
+                <SearchInput value={texto} onValueChange={setTexto} placeholder="Buscar por número, nombre o correo" />
               </div>
               <Button variant={avanzados ? "soft" : "neutral"} className="h-11 shrink-0" aria-expanded={masFiltros} onClick={() => setMasFiltros((v) => !v)} leftIcon={<SlidersHorizontal aria-hidden="true" />} rightIcon={<ChevronDown aria-hidden="true" className={cn("transition-transform", masFiltros && "rotate-180")} />}>
                 Filtros{avanzados ? ` (${avanzados})` : ""}

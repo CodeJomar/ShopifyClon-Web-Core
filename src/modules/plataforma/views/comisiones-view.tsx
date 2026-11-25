@@ -83,7 +83,7 @@ export function ComisionesView() {
 
       {!cargando && !error && items.length > 0 && (
         <>
-          <div className="rounded-xl border bg-card">
+          <div className="overflow-hidden rounded-[19px] bg-card">
             <Table>
               <TableHeader>
                 <TableRow>

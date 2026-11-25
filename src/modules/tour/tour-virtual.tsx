@@ -55,6 +55,8 @@ export function TourVirtual() {
   const ruta = usePathname()
   const [estado, setEstado] = React.useState<Guardado | null>(null)
   const [zona, setZona] = React.useState<Zona | null>(null)
+  /** La zona del paso no existe en la pantalla (todavía no hay datos): se muestra un aviso en la tarjeta. */
+  const [sinDatos, setSinDatos] = React.useState(false)
   const montado = React.useRef(false)
   // El estado vigente se lee de una referencia para encadenar pulsaciones rápidas y navegar fuera de la actualización de estado.
   const vigente = React.useRef<Guardado | null>(null)
@@ -88,15 +90,17 @@ export function TourVirtual() {
         const ejemplo = [...lista].sort((a, b) => (b.cantidad_variantes ?? 0) - (a.cantidad_variantes ?? 0))[0]
         rutaProducto = ejemplo ? `/mercado/tienda/${ejemplo.tienda.subdominio}/${ejemplo.identificador_url}` : null
       }
-      const pasos = armarPasos({ rutaProducto }, zona)
-      // Las pantallas del panel exigen una tienda activa: si no hay, se fija la primera de la persona.
+      // Las pantallas del panel exigen una tienda activa: si no hay, se fija la primera de la persona; sin tiendas, el recorrido se acorta.
+      let sinTiendas = false
       if (zona === "propietario") {
-        const activa = await tiendaActivaAction()
-        if (!activa.ok) {
-          const mis = await misTiendasAction()
-          if (mis.ok && mis.datos.length > 0) await fijarTiendaAction(mis.datos[0].tienda_id)
+        const mis = await misTiendasAction()
+        sinTiendas = mis.ok && mis.datos.length === 0
+        if (!sinTiendas) {
+          const activa = await tiendaActivaAction()
+          if (!activa.ok && mis.ok) await fijarTiendaAction(mis.datos[0].tienda_id)
         }
       }
+      const pasos = armarPasos({ rutaProducto, sinTiendas }, zona)
     const nuevo = { pasos, indice: 0 }
     vigente.current = nuevo
     guardar(nuevo)
@@ -169,8 +173,15 @@ export function TourVirtual() {
     if (!paso?.selector || ruta !== paso.ruta) return
     let cancelado = false
     let desplazado = false
+    let intentos = 0
+    // Pantalla sin datos (lista o tabla vacía): tras ~2 s se resalta el encabezado y se avisa que la zona aún está vacía.
+    const RESPALDO = '[data-tour="encabezado"], main h1'
     const medir = () => {
-      const el = document.querySelector<HTMLElement>(paso.selector as string)
+      intentos += 1
+      let el = document.querySelector<HTMLElement>(paso.selector as string)
+      const vacia = !el && intentos > 14
+      if (vacia) el = document.querySelector<HTMLElement>(RESPALDO)
+      if (!cancelado) setSinDatos(vacia)
       if (!el) return false
       if (!desplazado) {
         el.scrollIntoView({ block: "center", behavior: "smooth" })
@@ -191,6 +202,7 @@ export function TourVirtual() {
     return () => {
       cancelado = true
       setZona(null)
+      setSinDatos(false)
       window.clearInterval(intervalo)
       window.clearInterval(seguir)
       window.clearTimeout(parar)
@@ -235,6 +247,7 @@ export function TourVirtual() {
           </div>
           <h2 className="mt-4 text-[22px] font-extrabold leading-tight tracking-tight text-white sm:text-[26px]">{paso.titulo}</h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/75">{paso.texto}</p>
+          {sinDatos && <p className="mt-2 rounded-xl bg-white/8 px-3 py-2 text-[13px] font-semibold text-white/70">Esta zona aún no tiene datos en tu cuenta: aparecerá aquí cuando los haya.</p>}
           <p className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12.5px] font-semibold text-white/55">
             <span className="flex items-center gap-1.5">
               <Tecla>←</Tecla> anterior
