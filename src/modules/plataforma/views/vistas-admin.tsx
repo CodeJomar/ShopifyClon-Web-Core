@@ -357,7 +357,7 @@ export function UsuariosAdminView() {
                         <TableCell className="whitespace-nowrap text-[12.5px] text-muted-foreground">{formatearFecha(u.fecha_creacion)}</TableCell>
                         <TableCell className="pr-6 text-right">
                           {(puedeSeguridad || puedeAdministradores) && u.esta_activo && !u.es_administrador_plataforma && (
-                            <div className="flex flex-wrap justify-end gap-2">
+                            <div className="flex justify-end gap-2">
                               {puedeAdministradores && !u.bloqueado && (
                                 <Button size="sm" className="accion-icono" variant="soft" onClick={() => setHaciendoAdmin(u)} leftIcon={<ShieldCheck aria-hidden="true" />}>Hacer administrador</Button>
                               )}
