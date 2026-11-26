@@ -4,6 +4,7 @@ import * as React from "react"
 import { Check, ImageUp, Palette, Trash2 } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
+import { FloatingInput } from "@/shared/components/composed/floating-input"
 import { toast } from "@/shared/components/ui/toast"
 import { cn } from "@/shared/utils/cn"
 import {
@@ -135,6 +136,8 @@ export function AparienciaForm({ tienda, puedeEditar, onActualizado }: { tienda:
   const [guardando, setGuardando] = React.useState(false)
   const [subiendo, setSubiendo] = React.useState(false)
   const inputLogo = React.useRef<HTMLInputElement>(null)
+  const [urlLogo, setUrlLogo] = React.useState("")
+  const [errorUrl, setErrorUrl] = React.useState<string | null>(null)
   const cambiado = JSON.stringify(a) !== JSON.stringify(guardada)
   const poner = <K extends keyof AparienciaTienda>(k: K) => (v: AparienciaTienda[K]) => setA((x) => ({ ...x, [k]: v }))
 
@@ -150,6 +153,14 @@ export function AparienciaForm({ tienda, puedeEditar, onActualizado }: { tienda:
     if (!res.ok) return void toast.add({ type: "error", title: "No se pudo subir el logo", description: res.error.message })
     setA((x) => ({ ...x, logo_url: res.datos.url }))
     toast.add({ type: "success", title: "Logo cargado", description: "Pulsa «Guardar apariencia» para publicarlo." })
+  }
+
+  const usarUrlLogo = () => {
+    const url = urlLogo.trim()
+    if (!/^https:\/\/[^\s]+$/i.test(url) || url.length > 500) return setErrorUrl("Escribe una dirección que empiece con https:// (hasta 500 caracteres).")
+    setErrorUrl(null)
+    setA((x) => ({ ...x, logo_url: url }))
+    setUrlLogo("")
   }
 
   const guardar = async () => {
@@ -201,6 +212,12 @@ export function AparienciaForm({ tienda, puedeEditar, onActualizado }: { tienda:
                     </Button>
                   )}
                 </div>
+              </div>
+              <div className="flex flex-wrap items-start gap-2">
+                <div className="min-w-0 flex-1 basis-64">
+                  <FloatingInput label="…o pega la dirección de una imagen (https://…)" value={urlLogo} onChange={(e) => { setUrlLogo(e.target.value); setErrorUrl(null) }} state={errorUrl ? "error" : "default"} mensajeError={errorUrl ?? undefined} />
+                </div>
+                <Button type="button" size="sm" variant="neutral" className="mt-1.5" onClick={usarUrlLogo} disabled={!urlLogo.trim()}>Usar esta dirección</Button>
               </div>
             </fieldset>
             <Grupo titulo="Paleta de color" opciones={PALETAS} valor={a.paleta} onCambiar={poner("paleta")} deshabilitado={!puedeEditar}
