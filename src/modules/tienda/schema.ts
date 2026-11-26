@@ -21,6 +21,7 @@ export const crearTiendaSchema = z.object({
   moneda: z.enum(["PEN", "USD"]),
   codigo_plan: z.string().min(1, "Elige un plan."),
   ruc: z.string().trim().min(1, "Escribe el RUC de tu tienda.").superRefine((valor, ctx) => {
+    if (!valor) return
     const mensaje = mensajeRuc(valor)
     if (mensaje) ctx.addIssue({ code: "custom", message: mensaje })
   }),
