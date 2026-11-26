@@ -12,6 +12,8 @@ export interface AparienciaTienda {
   tamano_letra: TamanoLetra
   diseno: Diseno
   modo: Modo
+  /** Logo de la tienda (URL de una imagen subida con POST /panel/archivos/imagenes); ausente o null = sin logo. */
+  logo_url?: string | null
 }
 
 export const APARIENCIA_POR_DEFECTO: AparienciaTienda = {
@@ -20,6 +22,7 @@ export const APARIENCIA_POR_DEFECTO: AparienciaTienda = {
   tamano_letra: "NORMAL",
   diseno: "CUADRICULA",
   modo: "OSCURO",
+  logo_url: null,
 }
 
 export interface Opcion<T extends string> {
@@ -75,6 +78,7 @@ export function normalizarApariencia(a?: Partial<AparienciaTienda> | null): Apar
     tamano_letra: valido(TAMANOS, a?.tamano_letra, APARIENCIA_POR_DEFECTO.tamano_letra),
     diseno: valido(DISENOS, a?.diseno, APARIENCIA_POR_DEFECTO.diseno),
     modo: valido(MODOS, a?.modo, APARIENCIA_POR_DEFECTO.modo),
+    logo_url: typeof a?.logo_url === "string" && a.logo_url.startsWith("http") ? a.logo_url : null,
   }
 }
 

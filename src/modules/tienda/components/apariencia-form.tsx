@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Check, Palette } from "lucide-react"
+import { Check, ImageUp, Palette, Trash2 } from "lucide-react"
 import { Button } from "@/shared/components/ui/button"
 import { Card, CardContent } from "@/shared/components/ui/card"
 import { toast } from "@/shared/components/ui/toast"
@@ -20,6 +20,8 @@ import {
   type Opcion,
 } from "@/modules/apariencia/catalogo"
 import type { TiendaActivaDto } from "@/dtos/tienda"
+import { subirImagenAction } from "@/modules/catalogo/actions/catalogo.actions"
+import { LogoTienda } from "@/modules/vitrina/components/logo-tienda"
 import { actualizarAparienciaAction } from "../actions/tienda.actions"
 
 /** Un grupo de opciones fijas: una tarjeta por opción, con teclado (flechas) y la elegida marcada. */
@@ -101,7 +103,7 @@ function VistaPrevia({ a, nombre }: { a: AparienciaTienda; nombre: string }) {
   return (
     <div {...atributosApariencia(a)} className="apariencia-tienda overflow-hidden rounded-2xl border border-border">
       <div className="flex items-center gap-2 border-b border-border bg-card px-3.5 py-2.5">
-        <span className="flex size-6 items-center justify-center rounded-md bg-primary text-[12px] font-extrabold text-primary-foreground">{nombre.trim()[0]?.toUpperCase() ?? "T"}</span>
+        <LogoTienda nombre={nombre} logoUrl={a.logo_url} className="size-6 rounded-md text-[12px]" />
         <span className="text-[13px] font-extrabold">{nombre}</span>
         <span className="ml-auto text-[11px] text-muted-foreground">Inicio · Productos</span>
       </div>
@@ -131,8 +133,24 @@ export function AparienciaForm({ tienda, puedeEditar, onActualizado }: { tienda:
   const guardada = React.useMemo(() => normalizarApariencia(tienda.apariencia), [tienda.apariencia])
   const [a, setA] = React.useState<AparienciaTienda>(guardada)
   const [guardando, setGuardando] = React.useState(false)
+  const [subiendo, setSubiendo] = React.useState(false)
+  const inputLogo = React.useRef<HTMLInputElement>(null)
   const cambiado = JSON.stringify(a) !== JSON.stringify(guardada)
   const poner = <K extends keyof AparienciaTienda>(k: K) => (v: AparienciaTienda[K]) => setA((x) => ({ ...x, [k]: v }))
+
+  const elegirLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const archivo = e.target.files?.[0]
+    e.target.value = ""
+    if (!archivo) return
+    if (!["image/jpeg", "image/png", "image/webp"].includes(archivo.type)) return void toast.add({ type: "error", title: "Formato no válido", description: "Sube una imagen JPG, PNG o WebP." })
+    if (archivo.size > 5 * 1024 * 1024) return void toast.add({ type: "error", title: "La imagen pesa demasiado", description: "El máximo es 5 MB." })
+    setSubiendo(true)
+    const res = await subirImagenAction(archivo)
+    setSubiendo(false)
+    if (!res.ok) return void toast.add({ type: "error", title: "No se pudo subir el logo", description: res.error.message })
+    setA((x) => ({ ...x, logo_url: res.datos.url }))
+    toast.add({ type: "success", title: "Logo cargado", description: "Pulsa «Guardar apariencia» para publicarlo." })
+  }
 
   const guardar = async () => {
     setGuardando(true)
@@ -164,6 +182,27 @@ export function AparienciaForm({ tienda, puedeEditar, onActualizado }: { tienda:
 
         <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
           <div className="min-w-0 space-y-6">
+            <fieldset className="space-y-2.5" disabled={!puedeEditar}>
+              <legend className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-muted-foreground">Logo de tu tienda</legend>
+              <div className="flex flex-wrap items-center gap-4 rounded-2xl border-[1.8px] border-input p-3.5">
+                <LogoTienda nombre={tienda.nombre} logoUrl={a.logo_url} className="size-16 rounded-2xl text-[26px]" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[14px] font-bold text-foreground">{a.logo_url ? "Tu logo" : "Aún no tienes logo"}</p>
+                  <p className="text-[12.5px] text-muted-foreground">Se ve en la cabecera y en la portada de tu vitrina. JPG, PNG o WebP, hasta 5 MB; mejor cuadrado.</p>
+                </div>
+                <input ref={inputLogo} type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={elegirLogo} aria-label="Elegir archivo del logo" />
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" size="sm" variant="soft" loading={subiendo} onClick={() => inputLogo.current?.click()} leftIcon={<ImageUp aria-hidden="true" />}>
+                    {a.logo_url ? "Cambiar logo" : "Subir logo"}
+                  </Button>
+                  {a.logo_url && (
+                    <Button type="button" size="sm" variant="danger-outline" onClick={() => setA((x) => ({ ...x, logo_url: null }))} leftIcon={<Trash2 aria-hidden="true" />}>
+                      Quitar
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </fieldset>
             <Grupo titulo="Paleta de color" opciones={PALETAS} valor={a.paleta} onCambiar={poner("paleta")} deshabilitado={!puedeEditar}
               extra={(o) => <span aria-hidden="true" className="mt-0.5 size-6 shrink-0 rounded-full ring-1 ring-white/20" style={{ background: PALETAS.find((p) => p.codigo === o.codigo)?.muestra }} />} />
             <Grupo titulo="Tipografía" opciones={TIPOGRAFIAS} valor={a.tipografia} onCambiar={poner("tipografia")} deshabilitado={!puedeEditar}

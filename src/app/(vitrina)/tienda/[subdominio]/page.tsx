@@ -9,6 +9,7 @@ import {
   obtenerProductos,
   obtenerTienda,
 } from "@/modules/vitrina/actions/vitrina.actions"
+import { LogoTienda } from "@/modules/vitrina/components/logo-tienda"
 import { GrillaProductos } from "@/modules/vitrina/components/grilla-productos"
 import { normalizarApariencia } from "@/modules/apariencia/catalogo"
 import { cn } from "@/shared/utils/cn"
@@ -80,9 +81,7 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-64 rounded-full bg-info/12 blur-3xl" />
         <div className={cn("otemu-store-hero-copy relative flex max-w-2xl flex-col gap-5", diseno === "PORTADA" && "mx-auto items-center")}>
           <span className="otemu-shop-kicker"><Sparkles className="size-3.5" aria-hidden="true"/> UNA TIENDA PARA DESCUBRIR</span>
-          <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-[24px] font-extrabold text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)]" aria-hidden="true">
-            {tienda.nombre.trim()[0]?.toUpperCase() ?? "T"}
-          </span>
+          <LogoTienda nombre={tienda.nombre} logoUrl={normalizarApariencia(tienda.apariencia).logo_url} className="size-14 rounded-2xl text-[24px]" />
           <div className="space-y-2">
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">{tienda.nombre}</h1>
             <p className="text-[15px] text-muted-foreground sm:text-base">Descubre lo nuevo de la tienda y compra en pocos pasos.</p>
