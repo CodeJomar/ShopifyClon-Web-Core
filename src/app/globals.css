@@ -481,3 +481,19 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 .apariencia-tienda[data-tipografia="COMPACTA"] { font-family: var(--font-inter), system-ui, sans-serif; letter-spacing: -0.01em; }
 .apariencia-tienda[data-tamano="GRANDE"] { zoom: 1.1; }
 .apariencia-tienda[data-tamano="MUY_GRANDE"] { zoom: 1.2; }
+
+/* La portada y el aviso de la vitrina llevaban colores fijos de la capa visual antigua: con otra paleta o modo toman los de la vitrina. */
+.dark .apariencia-tienda .otemu-store-hero,
+.apariencia-tienda .otemu-store-hero {
+  background: linear-gradient(110deg, color-mix(in srgb, var(--primary) 16%, var(--card)) 0%, var(--card) 70%);
+  border-color: var(--border);
+}
+.dark .apariencia-tienda .otemu-shop-announcement,
+.apariencia-tienda .otemu-shop-announcement {
+  background: color-mix(in srgb, var(--primary) 18%, var(--card));
+  color: var(--foreground);
+}
+.dark .apariencia-tienda .otemu-shop-kicker,
+.apariencia-tienda .otemu-shop-kicker {
+  color: var(--brand-text);
+}
