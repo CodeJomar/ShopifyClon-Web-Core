@@ -1,3 +1,4 @@
+import { atributosApariencia, normalizarApariencia } from "@/modules/apariencia/catalogo"
 import * as React from "react"
 import Link from "next/link"
 
@@ -35,7 +36,7 @@ export default async function VitrinaLayout({
   }
 
   return (
-    <div className="otemu-storefront min-h-screen flex flex-col bg-background text-foreground antialiased">
+    <div {...atributosApariencia(normalizarApariencia(tienda.apariencia))} className="otemu-storefront apariencia-tienda min-h-screen flex flex-col bg-background text-foreground antialiased">
       <div className="otemu-shop-announcement">Bienvenido a {tienda.nombre} <span aria-hidden="true">·</span> Explora nuestros productos</div>
       {/* Encabezado de la vitrina */}
       <header className="otemu-shop-header sticky top-0 z-40 w-full border-b border-border bg-card/95 backdrop-blur-md">

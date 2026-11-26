@@ -431,3 +431,53 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover,
 input[type="time"]::-webkit-calendar-picker-indicator:hover {
   opacity: 1;
 }
+
+/* ---------- Apariencia de la vitrina de cada tienda ----------
+   El propietario elige paleta, tipografía, tamaño de letra, diseño y modo (opciones fijas). Todo se aplica con atributos data-* sobre
+   `.apariencia-tienda`, que redefine los tokens de color solo dentro de la vitrina. */
+.apariencia-tienda[data-paleta="OCEANO"] {
+  --primary: #38bdf8; --primary-foreground: #04283a; --sobre-marca: #04283a; --ring: #38bdf8;
+  --brand-strong: #0ea5e9; --brand-text: #7dd3fc; --brand-rgb: 56 189 248;
+  --background: #060d17; --card: #0d1826; --secondary: #14233a; --muted: #14233a; --accent: #14233a; --border: #1f3350; --input: #1f3350;
+}
+.apariencia-tienda[data-paleta="ATARDECER"] {
+  --primary: #fb923c; --primary-foreground: #3a1a04; --sobre-marca: #3a1a04; --ring: #fb923c;
+  --brand-strong: #f97316; --brand-text: #fdba74; --brand-rgb: 251 146 60;
+  --background: #120a05; --card: #1c1209; --secondary: #2a1b0e; --muted: #2a1b0e; --accent: #2a1b0e; --border: #43301d; --input: #43301d;
+}
+.apariencia-tienda[data-paleta="BOSQUE"] {
+  --primary: #a3e635; --primary-foreground: #1a2e05; --sobre-marca: #1a2e05; --ring: #a3e635;
+  --brand-strong: #84cc16; --brand-text: #bef264; --brand-rgb: 163 230 53;
+  --background: #080f06; --card: #101a0c; --secondary: #182714; --muted: #182714; --accent: #182714; --border: #274020; --input: #274020;
+}
+.apariencia-tienda[data-paleta="GRAFITO"] {
+  --primary: #e5e7eb; --primary-foreground: #111827; --sobre-marca: #111827; --ring: #e5e7eb;
+  --brand-strong: #d1d5db; --brand-text: #e5e7eb; --brand-rgb: 229 231 235;
+  --background: #09090b; --card: #131316; --secondary: #1d1d22; --muted: #1d1d22; --accent: #1d1d22; --border: #2c2c33; --input: #2c2c33;
+}
+.apariencia-tienda[data-paleta="ROSA"] {
+  --primary: #f472b6; --primary-foreground: #3b0a22; --sobre-marca: #3b0a22; --ring: #f472b6;
+  --brand-strong: #ec4899; --brand-text: #f9a8d4; --brand-rgb: 244 114 182;
+  --background: #12060d; --card: #1c0c15; --secondary: #2a1220; --muted: #2a1220; --accent: #2a1220; --border: #43203a; --input: #43203a;
+}
+/* Modo claro: fondo claro con la paleta elegida; el texto de marca se oscurece para leerse sobre blanco. */
+.apariencia-tienda[data-modo="CLARO"] {
+  color-scheme: light;
+  --background: #f7f9fc; --foreground: #0f1b2d; --card: #ffffff; --card-foreground: #0f1b2d; --popover: #ffffff; --popover-foreground: #0f1b2d;
+  --secondary: #eef2f7; --secondary-foreground: #0f1b2d; --muted: #eef2f7; --muted-foreground: #4a5b75; --accent: #eef2f7; --accent-foreground: #0f1b2d;
+  --border: #d5dde8; --input: #cbd5e1; --island-border: rgb(15 27 45 / 0.12);
+  --brand-text: color-mix(in srgb, var(--primary) 55%, #000);
+}
+/* Alto contraste: negro, blanco y amarillo, con bordes bien marcados. */
+.apariencia-tienda[data-modo="ALTO_CONTRASTE"] {
+  --background: #000000; --foreground: #ffffff; --card: #000000; --card-foreground: #ffffff; --popover: #000000; --popover-foreground: #ffffff;
+  --secondary: #111111; --secondary-foreground: #ffffff; --muted: #111111; --muted-foreground: #e5e5e5; --accent: #1a1a1a; --accent-foreground: #ffffff;
+  --border: #ffffff; --input: #ffffff; --island-border: #ffffff;
+  --primary: #ffd600; --primary-foreground: #000000; --sobre-marca: #000000; --ring: #ffd600; --brand-strong: #ffd600; --brand-text: #ffd600; --brand-rgb: 255 214 0;
+}
+.apariencia-tienda { background-color: var(--background); color: var(--foreground); }
+.apariencia-tienda[data-tipografia="CLASICA"] { font-family: var(--font-lora), Georgia, serif; }
+.apariencia-tienda[data-tipografia="REDONDEADA"] { font-family: var(--font-nunito), ui-rounded, system-ui, sans-serif; }
+.apariencia-tienda[data-tipografia="COMPACTA"] { font-family: var(--font-inter), system-ui, sans-serif; letter-spacing: -0.01em; }
+.apariencia-tienda[data-tamano="GRANDE"] { zoom: 1.1; }
+.apariencia-tienda[data-tamano="MUY_GRANDE"] { zoom: 1.2; }

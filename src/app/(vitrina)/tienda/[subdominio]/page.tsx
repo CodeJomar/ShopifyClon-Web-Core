@@ -9,7 +9,9 @@ import {
   obtenerProductos,
   obtenerTienda,
 } from "@/modules/vitrina/actions/vitrina.actions"
-import { TarjetaProducto } from "@/modules/vitrina/components/tarjeta-producto"
+import { GrillaProductos } from "@/modules/vitrina/components/grilla-productos"
+import { normalizarApariencia } from "@/modules/apariencia/catalogo"
+import { cn } from "@/shared/utils/cn"
 import { EstadoVacio } from "@/shared/components/composed/estado-vacio"
 import { Button, buttonVariants } from "@/shared/components/ui/button"
 
@@ -68,14 +70,15 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
   ])
 
   const productos = productosPaginados.datos
+  const diseno = normalizarApariencia(tienda.apariencia).diseno
 
   return (
     <div className="otemu-store-home flex flex-col gap-10">
       {/* Portada de la tienda */}
-      <section className="otemu-store-hero relative overflow-hidden rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-12">
+      <section className={cn("otemu-store-hero relative overflow-hidden rounded-3xl border border-island-border bg-card p-6 shadow-isla sm:p-12", diseno === "PORTADA" && "min-h-[420px] items-center text-center sm:p-20", diseno === "LISTA" && "sm:p-8")}>
         <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full bg-primary/18 blur-3xl" />
         <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-64 rounded-full bg-info/12 blur-3xl" />
-        <div className="otemu-store-hero-copy relative flex max-w-2xl flex-col gap-5">
+        <div className={cn("otemu-store-hero-copy relative flex max-w-2xl flex-col gap-5", diseno === "PORTADA" && "mx-auto items-center")}>
           <span className="otemu-shop-kicker"><Sparkles className="size-3.5" aria-hidden="true"/> UNA TIENDA PARA DESCUBRIR</span>
           <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-[24px] font-extrabold text-primary-foreground [text-shadow:0_1px_2px_rgb(0_0_0/.14)]" aria-hidden="true">
             {tienda.nombre.trim()[0]?.toUpperCase() ?? "T"}
@@ -149,16 +152,7 @@ export default async function PortadaVitrinaPage({ params }: PortadaPageProps) {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 sm:gap-6">
-            {productos.map((prod) => (
-              <TarjetaProducto
-                key={prod.identificador_url}
-                producto={prod}
-                subdominio={subdominio}
-                moneda={tienda.moneda}
-              />
-            ))}
-          </div>
+          <GrillaProductos productos={productos} subdominio={subdominio} moneda={tienda.moneda} diseno={diseno} />
         )}
       </section>
     </div>

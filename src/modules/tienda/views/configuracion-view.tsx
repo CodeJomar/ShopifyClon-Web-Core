@@ -1,5 +1,6 @@
 "use client"
 
+import { AparienciaForm } from "../components/apariencia-form"
 import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import { Badge } from "@/shared/components/ui/badge"
@@ -78,6 +79,7 @@ export function ConfiguracionView() {
       )}
 
       {tienda && (
+        <>
         <div className="grid items-start gap-5 lg:grid-cols-3">
           <div className="lg:col-span-2">
             <ConfiguracionForm
@@ -169,6 +171,8 @@ export function ConfiguracionView() {
             )}
           </div>
         </div>
+        <AparienciaForm tienda={tienda} puedeEditar={puedeEditar} onActualizado={cargar} />
+        </>
       )}
 
       <FormPanel

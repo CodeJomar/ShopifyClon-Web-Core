@@ -1,3 +1,4 @@
+import type { AparienciaTienda } from "@/modules/apariencia/catalogo"
 import type { Dinero } from "@/dtos/core/dinero"
 
 /** Tienda pública de la vitrina (GET /vitrina/{subdominio}). TIE-009 */
@@ -7,6 +8,8 @@ export interface TiendaVitrina {
   moneda: string
   correo_contacto: string
   precios_incluyen_impuesto: boolean
+  /** Apariencia elegida por el propietario; ausente en tiendas antiguas (se usan los valores por defecto). */
+  apariencia?: Partial<AparienciaTienda>
 }
 
 /** Categoría pública de la vitrina (GET /vitrina/{subdominio}/categorias). */

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Inter, Lora, Nunito, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "@/shared/providers/theme-provider"
 import { Toaster } from "@/shared/components/ui/toast"
 import { TEMA_UNICO } from "@/shared/config/tema"
@@ -18,6 +18,11 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
+// Tipografías que puede elegir cada tienda para su vitrina (solo se descargan al usarse): clásica, redondeada y compacta.
+const lora = Lora({ subsets: ["latin"], variable: "--font-lora", display: "swap" });
+const nunito = Nunito({ subsets: ["latin"], variable: "--font-nunito", display: "swap" });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+
 export const metadata: Metadata = {
   title: "OTemu",
   description: "Crea tu tienda en línea y vende por redes",
@@ -31,7 +36,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${spaceGrotesk.variable} h-full antialiased${TEMA_UNICO === "dark" ? " dark" : ""}`}
+      className={`${spaceGrotesk.variable} ${lora.variable} ${nunito.variable} ${inter.variable} h-full antialiased${TEMA_UNICO === "dark" ? " dark" : ""}`}
       suppressHydrationWarning
     >
       <body className="otemu-studio min-h-full flex flex-col" suppressHydrationWarning>

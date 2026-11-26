@@ -1,3 +1,4 @@
+import type { AparienciaTienda } from "@/modules/apariencia/catalogo"
 // Contrato de tiendas de la API (tiendas-y-personal.md). JSON en snake_case, sin conversión.
 
 /** Elemento de GET /planes (público). */
@@ -54,6 +55,8 @@ export interface TiendaActivaDto {
   operativa: boolean
   suscripcion: { estado: string; codigo_plan: string; fin_periodo_actual: string }
   fecha_creacion: string
+  /** Apariencia de la vitrina; ausente hasta que el propietario la elija. */
+  apariencia?: Partial<AparienciaTienda>
 }
 
 export type TiendaConfiguracionDto = TiendaActivaDto

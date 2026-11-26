@@ -1,3 +1,4 @@
+import type { AparienciaTienda } from "@/modules/apariencia/catalogo"
 import { peticionApi } from "@/lib/api/client"
 import { resultado } from "@/lib/api/resultado"
 import type {
@@ -41,3 +42,7 @@ export const activarTiendaAction = (datos?: CambioEstadoTiendaRequest) =>
 /** Desactiva la tienda (solo PROPIETARIO). */
 export const desactivarTiendaAction = (datos?: CambioEstadoTiendaRequest) =>
   resultado(peticionApi<TiendaActivaDto>({ method: "POST", url: "/panel/tienda/desactivar", data: datos ?? {} }))
+
+/** Guarda la apariencia de la vitrina (permiso TIENDA_CONFIGURAR). Devuelve la apariencia guardada. */
+export const actualizarAparienciaAction = (datos: AparienciaTienda) =>
+  resultado(peticionApi<AparienciaTienda>({ method: "PUT", url: "/panel/tienda/apariencia", data: datos }))

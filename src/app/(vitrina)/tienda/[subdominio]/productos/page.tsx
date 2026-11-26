@@ -10,7 +10,8 @@ import {
 } from "@/modules/vitrina/actions/vitrina.actions"
 import { FiltrosCatalogo } from "@/modules/vitrina/components/filtros-catalogo"
 import { PaginacionCatalogo } from "@/modules/vitrina/components/paginacion-catalogo"
-import { TarjetaProducto } from "@/modules/vitrina/components/tarjeta-producto"
+import { GrillaProductos } from "@/modules/vitrina/components/grilla-productos"
+import { normalizarApariencia } from "@/modules/apariencia/catalogo"
 import { EstadoVacioCatalogo } from "@/modules/vitrina/components/estado-vacio-catalogo"
 
 interface CatalogoPageProps {
@@ -102,16 +103,7 @@ export default async function CatalogoVitrinaPage({ params, searchParams }: Cata
         </div>
       ) : (
         <div className="flex flex-col gap-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 sm:gap-6">
-            {productos.map((prod) => (
-              <TarjetaProducto
-                key={prod.identificador_url}
-                producto={prod}
-                subdominio={subdominio}
-                moneda={tienda.moneda}
-              />
-            ))}
-          </div>
+          <GrillaProductos productos={productos} subdominio={subdominio} moneda={tienda.moneda} diseno={normalizarApariencia(tienda.apariencia).diseno} />
 
           {/* Barra de paginación */}
           <PaginacionCatalogo
