@@ -68,7 +68,7 @@ export function GuiaRemisionView({ id }: { id: string }) {
             <p className="text-[11px] font-bold uppercase tracking-widest text-neutral-500">Guía de remisión</p>
             <h1 className="mt-1 text-[22px] font-extrabold">{ruta.tienda.nombre}</h1>
             <p className="mt-1 text-neutral-600">
-              {[ruta.tienda.direccion, ruta.tienda.telefono, ruta.tienda.correo_electronico].filter(Boolean).join(" · ")}
+              {[ruta.tienda.ruc ? `RUC ${ruta.tienda.ruc}` : null, ruta.tienda.direccion, ruta.tienda.telefono, ruta.tienda.correo_electronico].filter(Boolean).join(" · ")}
             </p>
           </div>
           <div className="shrink-0 rounded-md border-2 border-neutral-900 px-4 py-2 text-center">

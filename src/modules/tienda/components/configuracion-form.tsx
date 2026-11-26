@@ -1,5 +1,8 @@
 "use client"
 
+import { usePanel } from "@/modules/panel/hooks/use-panel"
+import { ROL } from "@/shared/constants/permisos"
+import { normalizarRuc } from "@/shared/utils/ruc"
 import * as React from "react"
 import Link from "next/link"
 import { useForm, useWatch } from "react-hook-form"
@@ -49,6 +52,7 @@ const mapeoCampos: Record<string, keyof ConfiguracionTiendaValues> = {
   precios_incluyen_impuesto: "precios_incluyen_impuesto",
   zonaHoraria: "zona_horaria",
   zona_horaria: "zona_horaria",
+  ruc: "ruc",
 }
 
 interface ConfiguracionFormProps {
@@ -59,6 +63,8 @@ interface ConfiguracionFormProps {
 
 export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: ConfiguracionFormProps) {
   const [error, setError] = React.useState<ErrorApi | null>(null)
+  const { rol } = usePanel()
+  const esPropietario = rol === ROL.PROPIETARIO
 
   // La tasa de impuesto se almacena como fracción (ej. 0.18) y se edita como porcentaje (ej. 18)
   const tasaPorcentajeInicial = String(Math.round((tienda.tasa_impuesto ?? 0) * 10000) / 100)
@@ -73,6 +79,7 @@ export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: Config
       tasa_impuesto_porcentaje: tasaPorcentajeInicial,
       precios_incluyen_impuesto: tienda.precios_incluyen_impuesto ?? false,
       zona_horaria: tienda.zona_horaria || "America/Lima",
+      ruc: tienda.ruc ?? "",
     },
   })
 
@@ -90,6 +97,9 @@ export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: Config
       precios_incluyen_impuesto: valores.precios_incluyen_impuesto,
       zona_horaria: valores.zona_horaria.trim(),
     }
+    // El RUC solo viaja si se escribió y cambió: el servidor lo acepta únicamente del propietario.
+    const ruc = normalizarRuc(valores.ruc ?? "")
+    if (ruc && ruc !== (tienda.ruc ?? "")) datos.ruc = ruc
 
     const res = await actualizarTiendaAction(datos)
     if (!res.ok) {
@@ -100,7 +110,9 @@ export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: Config
           form.setError(campoMapeado, { message: mensaje })
         }
       }
-      if (res.error.codigo === "TIE-006") {
+      if (res.error.codigo === "TIE-010" || res.error.codigo === "TIE-012") {
+        form.setError("ruc", { message: res.error.message })
+      } else if (res.error.codigo === "TIE-006") {
         form.setError("zona_horaria", { message: res.error.message })
       } else if (res.error.codigo === "TIE-005") {
         form.setError("moneda", { message: res.error.message })
@@ -156,6 +168,18 @@ export function ConfiguracionForm({ tienda, puedeEditar, onActualizado }: Config
             mensajeError={form.formState.errors.nombre?.message}
             disabled={!puedeEditar}
             {...form.register("nombre")}
+          />
+
+          <FloatingInput
+            label="RUC"
+            inputMode="numeric"
+            maxLength={13}
+            autoComplete="off"
+            state={form.formState.errors.ruc ? "error" : "default"}
+            mensajeError={form.formState.errors.ruc?.message}
+            ayuda={esPropietario ? "11 dígitos (empieza con 10 o 20). Aparece en tu guía de remisión. Un RUC no puede pertenecer a dos propietarios distintos." : "Solo el propietario de la tienda puede cambiar el RUC."}
+            disabled={!puedeEditar || !esPropietario}
+            {...form.register("ruc")}
           />
 
           <FloatingInput

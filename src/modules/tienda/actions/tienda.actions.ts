@@ -20,6 +20,7 @@ export const crearTiendaAction = (datos: {
   correo_contacto?: string
   moneda: string
   codigo_plan: string
+  ruc: string
 }) => resultado(peticionApi<TiendaCreadaDto>({ method: "POST", url: "/cuenta/tiendas", data: datos }))
 
 export const misTiendasAction = () => resultado(peticionApi<MiTiendaDto[]>({ method: "GET", url: "/cuenta/tiendas" }))

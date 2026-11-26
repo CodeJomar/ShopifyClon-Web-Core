@@ -48,6 +48,8 @@ export interface ParadaRuta {
 
 export interface TiendaRemitente {
   nombre: string
+  /** RUC del emisor de la guía (ausente en tiendas que aún no lo tienen). */
+  ruc?: string | null
   correo_electronico?: string | null
   telefono?: string | null
   direccion?: string | null

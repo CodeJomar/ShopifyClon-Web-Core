@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { mensajeRuc } from "@/shared/utils/ruc"
 
 // Reglas de TIE-001 (tiendas-y-personal.md). La web avisa antes; la API decide (es única en toda la plataforma).
 export const SUBDOMINIOS_RESERVADOS = ["www", "api", "admin", "app", "panel", "vitrina", "auth", "plataforma", "soporte", "mail"]
@@ -19,6 +20,10 @@ export const crearTiendaSchema = z.object({
   correo_contacto: z.string().trim().min(1, "Escribe un correo de contacto.").email("Ingresa un correo válido."),
   moneda: z.enum(["PEN", "USD"]),
   codigo_plan: z.string().min(1, "Elige un plan."),
+  ruc: z.string().trim().min(1, "Escribe el RUC de tu tienda.").superRefine((valor, ctx) => {
+    const mensaje = mensajeRuc(valor)
+    if (mensaje) ctx.addIssue({ code: "custom", message: mensaje })
+  }),
 })
 
 export type CrearTiendaValues = z.infer<typeof crearTiendaSchema>
@@ -42,6 +47,12 @@ export const configuracionTiendaSchema = z
       .trim()
       .max(150, "El dominio no puede superar los 150 caracteres.")
       .optional(),
+    // Vacío = sin RUC todavía (tiendas anteriores a este dato); si se escribe, debe ser válido.
+    ruc: z.string().trim().optional().superRefine((valor, ctx) => {
+      if (!valor) return
+      const mensaje = mensajeRuc(valor)
+      if (mensaje) ctx.addIssue({ code: "custom", message: mensaje })
+    }),
     moneda: z
       .string()
       .trim()

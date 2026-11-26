@@ -78,6 +78,13 @@ export function ConfiguracionView() {
         </div>
       )}
 
+      {tienda && !tienda.ruc && (
+        <Alert variant="warning">
+          <AlertTitle>Falta el RUC de tu tienda</AlertTitle>
+          <AlertDescription>Completa el RUC (11 dígitos, empieza con 10 o 20) en el formulario de abajo. Aparece en tu guía de remisión.</AlertDescription>
+        </Alert>
+      )}
+
       {tienda && (
         <>
         <div className="grid items-start gap-5 lg:grid-cols-3">

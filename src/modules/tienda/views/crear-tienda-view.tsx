@@ -1,5 +1,6 @@
 "use client"
 
+import { normalizarRuc } from "@/shared/utils/ruc"
 import { enlaceDeTienda, useOrigen } from "@/shared/hooks/use-origen"
 import * as React from "react"
 import { useRouter } from "next/navigation"
@@ -60,7 +61,7 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
 
   const form = useForm<CrearTiendaValues>({
     resolver: zodResolver(crearTiendaSchema),
-    defaultValues: { nombre: "", subdominio: "", correo_contacto: correoPerfil ?? "", moneda: "PEN", codigo_plan: "" },
+    defaultValues: { nombre: "", subdominio: "", correo_contacto: correoPerfil ?? "", moneda: "PEN", codigo_plan: "", ruc: "" },
   })
   const subdominio = useWatch({ control: form.control, name: "subdominio" })
   React.useEffect(() => {
@@ -98,9 +99,11 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
 
   const crear = form.handleSubmit(async (valores) => {
     setError(null)
-    const res = await crearTiendaAction(valores)
+    const res = await crearTiendaAction({ ...valores, ruc: normalizarRuc(valores.ruc) })
     if (!res.ok) {
       const e = res.error
+      if (e.validaciones?.ruc) form.setError("ruc", { message: e.validaciones.ruc })
+      if (e.codigo === "TIE-010") form.setError("ruc", { message: e.message })
       if (e.codigo === "TIE-001") form.setError("subdominio", { message: e.message })
       else if (e.codigo === "SUS-018") {
         // Ya tiene su tienda gratuita: se vuelve al paso de planes para que elija uno de pago.
@@ -207,6 +210,16 @@ export function CrearTiendaView({ correoPerfil, planInicial }: { correoPerfil?: 
                   evento.target.value = evento.target.value.toLowerCase()
                   registroSubdominio.onChange(evento)
                 }}
+              />
+              <FloatingInput
+                label="RUC de tu negocio"
+                inputMode="numeric"
+                maxLength={13}
+                autoComplete="off"
+                ayuda="11 dígitos: empieza con 10 (persona natural) o 20 (empresa). Aparece en tu guía de remisión."
+                state={form.formState.errors.ruc ? "error" : "default"}
+                mensajeError={form.formState.errors.ruc?.message}
+                {...form.register("ruc")}
               />
               <FloatingInput
                 label="Correo de contacto"

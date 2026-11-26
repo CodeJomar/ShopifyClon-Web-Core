@@ -28,6 +28,7 @@ export interface MiTiendaDto {
   rol: string
   esta_activa: boolean
   operativa: boolean
+  ruc?: string
 }
 
 /** `datos` de POST /cuenta/tiendas (201). */
@@ -55,6 +56,8 @@ export interface TiendaActivaDto {
   operativa: boolean
   suscripcion: { estado: string; codigo_plan: string; fin_periodo_actual: string }
   fecha_creacion: string
+  /** RUC de la tienda; ausente en las anteriores a este dato. */
+  ruc?: string
   /** Apariencia de la vitrina; ausente hasta que el propietario la elija. */
   apariencia?: Partial<AparienciaTienda>
 }
@@ -62,6 +65,8 @@ export interface TiendaActivaDto {
 export type TiendaConfiguracionDto = TiendaActivaDto
 
 export interface ActualizarTiendaRequest {
+  /** RUC (11 dígitos); ausente conserva el actual. Solo lo cambia el propietario. */
+  ruc?: string
   nombre: string
   correo_contacto: string
   dominio_personalizado?: string | null
